@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./components/head') %>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+
+  <body style="background-color: #0302533f">
+    <div style="background-color: #0302533f" class="container-scroller">
+      <div style="background-color: #0302533f" class="container-fluid page-body-wrapper full-page-wrapper">
+        <div style="background-color: #0302533f" class="row w-100 m-0">
+          <div style="background-color: #0302533f" class="content-wrapper full-page-wrapper d-flex align-items-center">
+            <div class="card col-lg-4 mx-auto">
+              <div class="card-body px-5 py-5">
+                <form>
+                  <div class="text-center">
+                    <br>
+                    <center>
+                      <p style="font-family: 'Roboto Mono', monospace;">Authentication Page</p>
+                      <h3><bold>Welcome!</bold></h3>
+                    </center>
+                    <br>
+                    <% if (!req.session.userinfo)  { %>
+                    <a role="button" style="font-size: 18px;" class="btn btn-primary btn-lg" href="<%= extra.home.buttontext.loggedout.link %>">Login</a>
+                    <% } else { %>
+                      <a role="button" style="font-size: 18px;" class="btn btn-primary btn-lg" href="<%= extra.home.buttontext.loggedin.link %>">Login as <%= req.session.userinfo.username %>#<%= req.session.userinfo.discriminator %></a><br />
+                      <a role="button" style="font-size: 18px; margin-top: 6px;" class="btn btn-primary btn-lg" href="<%= extra.home.buttontext.loggedout.link %>">Login on a different account</a>
+                    <% } %>
+                    <br><br>
+                    <h5 class="text-gray">By logging in, you agree to the <a href="../tos">Terms of Service</a> and <a href="../pp">Privacy Policy</a></h5>
+                    <br>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <%- include('./components/ads') %>
+          <!-- content-wrapper ends -->
+        </div>
+        <!-- row ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <%- include('./components/scripts') %>
+  </body>
+
+</html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="description" content="Login to access the dashboard.">
+  <meta name="keywords" content="hosting, free hosting, mc, mc hosting, minecraft, witchly, witchlyhost, witchly.host">
+  <meta name="author" content="Dashboard">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>

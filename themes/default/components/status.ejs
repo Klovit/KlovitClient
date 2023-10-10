@@ -1,0 +1,74 @@
+<div class="row">
+    <%
+      let ram = 0;
+      let disk = 0;
+      let cpu = 0;
+      let servers = pterodactyl.relationships.servers.data.length;
+      for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+          ram = ram + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+          disk = disk + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+          cpu = cpu + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+      }
+    %>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card">
+        <div style="background-image: url('https://media.discordapp.net/attachments/1152228144993022014/1160196778843443280/valentin-beauvais-yVUQlyRlJSw-unsplash.jpg'); background-color: #0302533f; border: thick solid white;" class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <h6 class="card-title text-uppercase text-muted mb-0">YOUR CPU QUOTA</h6>
+              <div class="d-flex align-items-center align-self-start">
+                <h5>Used / Total </h5>
+                <br>
+                <h3 class="mb-0"> <%= cpu/100 %> / <%= packages.cpu/100 + extraresources.cpu/100 %>  Core(s)</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card">
+        <div style="background-image: url('https://media.discordapp.net/attachments/1152228144993022014/1160196778843443280/valentin-beauvais-yVUQlyRlJSw-unsplash.jpg'); background-color: #0302533f; border: thick solid white;" class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <h6 class="card-title text-uppercase text-muted mb-0">YOUR RAM QUOTA</h6>
+              <div class="d-flex align-items-center align-self-start">
+                <h5>Used / Total</h5>
+                <h3 class="mb-0"><%= ram/1024 %> / <%= packages.ram/1024 + extraresources.ram/1024 %> GB(s)</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card">
+        <div style="background-image: url('https://media.discordapp.net/attachments/1152228144993022014/1160196778843443280/valentin-beauvais-yVUQlyRlJSw-unsplash.jpg'); background-color: #0302533f; border: thick solid white;" class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <h6 class="card-title text-uppercase text-muted mb-0">YOUR DISK QUOTA</h6>
+              <div class="d-flex align-items-center align-self-start">
+                <h5>Used / Total</h5>
+                <h3 class="mb-0"><%= disk/1024 %> / <%= packages.disk/1024 + extraresources.disk/1024 %> GB(s)</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+      <div class="card">
+        <div style="background-image: url('https://media.discordapp.net/attachments/1152228144993022014/1160196778843443280/valentin-beauvais-yVUQlyRlJSw-unsplash.jpg'); background-color: #0302533f; border: thick solid white;" class="card-body">
+          <div class="row">
+            <div class="col-9">
+              <h6 class="card-title text-uppercase text-muted mb-0">YOUR SLOTS QUOTA</h6>
+              <div class="d-flex align-items-center align-self-start">
+                <h5>Used / Total </h5>
+                <h3 class="mb-0"> <%= servers %> / <%= packages.servers + extraresources.servers %> Slots</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
