@@ -1,0 +1,36 @@
+<nav style="background-image: url('https://media.discordapp.net/attachments/1152228144993022014/1160196778843443280/valentin-beauvais-yVUQlyRlJSw-unsplash.jpg'); background-color: #0302533f" class="navbar p-0 fixed-top d-flex flex-row">
+    <div class="navbar-brand-wrapper d-flex d-lg-none align-items-center justify-content-center">
+      <a class="navbar-brand brand-logo-mini text-white" href="../dashboard"><img src="<%= settings.icon %>"></a>
+    </div>
+    <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+      <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+        <span class="mdi mdi-menu"></span>
+      </button>
+    <div class="navbar-menu-wrapper flex-grow d-flex align-items-stretch">
+      <ul class="navbar-nav navbar-nav-right">
+        <li>
+         <span>You have <span id="balance"></span> coins</span>
+        </li>
+      </ul>
+            <script>
+              let balance = document.getElementById("balance")
+              balance.textContent = Math.floor(<%= coins %> * 100) / 100
+            </script>
+      <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+        <span class="mdi mdi-format-line-spacing"></span>
+      </button>
+    </div>
+</nav>
+<script>
+  function openNav() {
+    document.getElementById("sidebar").style.width = "250px";
+    document.getElementById("nav").style.width = "250px";
+    document.getElementById("main").style.marginLeft = "250px";
+  }
+  
+  function closeNav() {
+    document.getElementById("sidebar").style.width = "0";
+    document.getElementById("nav").style.width = "0";
+    document.getElementById("main").style.marginLeft= "0";
+  }
+  </script>

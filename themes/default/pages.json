@@ -1,0 +1,91 @@
+{
+    "index": "index.ejs",
+    "notfound": "404.ejs",
+    "redirect": {
+        "callback": "/dashboard",
+        "logout": "/",
+       	"createserver": "/dashboard?err=CREATED",
+        "deleteserver": "/dashboard",
+        "updateservers": "/dashboard",
+        "failedcreateserver": "/dashboard",
+        "failedmodifyserver": "/dashboard/edit",
+        "setplan": "/admin",
+        "failedsetplan": "/admin",
+        "createserverdisabled": "/dashboard?err=disabled",
+        "modifyserverdisabled": "/dashboard?err=disabled",
+        "deleteserverdisabled": "/dashboard?err=disabled",
+        "regenpassword": "/settings",
+        "setresources": "/admin",
+        "failedsetresources": "/admin",
+        "giftresources": "/gift",
+        "failedgiftresources": "/gift",
+        "renewserver": "/dashboard",	
+        "setcoins": "/admin",	
+        "failedsetcoins": "/admin",	
+        "purchaseram": "/store",	
+        "failedpurchaseram": "/store",	
+        "purchasedisk": "/store",	
+        "failedpurchasedisk": "/store",	
+        "purchasecpu": "/store",	
+        "failedpurchasecpu": "/store",	
+        "purchaseservers": "/store",	
+        "failedpurchaseservers": "/store",
+        "missingorinvalidcouponcode": "/redeem",
+        "successfullyredeemedcoupon": "/redeem",
+        "couponcreationfailed": "/admin",
+        "couponcreationsuccess": "/admin",
+        "couponrevokefailed": "/admin",
+        "couponrevokesuccess": "/admin",
+        "removeaccountfailed": "/admin",
+        "removeaccountsuccess": "/admin"
+    },
+    "pages": {
+        "auth":"auth.ejs",
+        "login": "login.ejs",
+        "dashboard": "dashboard.ejs",
+        "dashboard/new": "create.ejs",
+        "dashboard/edit": "edit.ejs",
+        "admin": "admin.ejs",
+        "admin/plans": "admin-plans.ejs",
+        "admin/resources": "admin-resources.ejs",
+        "admin/coupons": "admin-coupons.ejs",
+        "admin/coins": "admin-coins.ejs",
+        "redeem": "redeem.ejs",
+        "settings": "settings.ejs",
+        "gift": "gift.ejs",
+        "earn": "earn.ejs",
+        "store": "store.ejs",
+        "credits": "credits.ejs"
+    },
+    "mustbeloggedin": [
+        "/dashboard",
+        "/servers/new",
+        "/servers/edit",
+        "/settings",
+        "/j4r",
+        "/gift",
+        "/store",
+        "/coins",
+        "/lv"
+    ],
+    "mustbeadmin": [
+        "/admin",
+        "/admin/plans",
+        "/admin/resources",
+        "/admin/coupons",
+        "/admin/coins"
+    ],
+    "variables": {
+        "home": {
+            "admin": "admin",
+            "buttontext": {
+                "loggedin": {
+                    "link": "/dashboard"
+                },
+                "loggedout": {
+                    "link": "/login"
+                }
+            }
+        }
+    }
+}
