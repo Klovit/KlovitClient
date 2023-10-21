@@ -1,0 +1,272 @@
+<html lang="en">
+  <%- include('./components/head') %>
+    <body>
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      <div style="background-color: #0a0a0a3f" class="container-scroller">
+        <!-- partial:partials/_sidebar.html -->
+      <%- include('./components/sidebar') %>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+          <!-- partial:partials/_navbar.html -->
+           <%- include('./components/topnav') %>
+          <!-- partial -->
+        <div style="background-color: #0a0a0a3f" class="main-panel">
+          <div style="background-color: #0a0a0a3f" class="content-wrapper">
+            <div class="card-body" id="loading-panel">
+              <center><h3>Loading...</h3></center>
+            </div>
+            <% if (settings.linkvertise.enabled) { %>
+           <h2>Linkvertise</h2>
+           <p class="text-gray">Earn coins by completing Linkvertise links.</p>
+            <% if (req.query.err) { %>
+              <div style="border-radius: 15px;" class="alert">
+                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
+                    You must complete the captcha to prove you are human!
+                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
+                    You submitted an invalid captcha response, try again.
+                <% } %>
+              </div>
+            <% } %>
+            <% if (req.query.success) { %>
+              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
+                Success! <%= settings.linkvertise.coins%> coins were added to your account.
+            </div>
+            <% } %>
+              <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                    <div style="background-color: #0a0a0a3f;" class="card-body" style="display: none;" id="generate-panel">
+                      <p>Every time you complete a linkvertise link, you will earn <%= settings.linkvertise.coins%> coins!<br>Generate a link below:<br><br>
+                        <button style="background-color: #0a0a0a3f;" class="btn btn-primary btn-lg" onclick="generatelv()">Generate Link</button></p></center>
+                      </div>
+                  <script type="text/javascript">
+                    function generatelv() {
+                      window.location.replace(`/earn/lv/gen`)
+                    }
+                  </script>
+              </div>
+            </div>
+            </div>
+            <% } %>
+            <% if (settings.atglinks.enabled) { %>
+              <h2>ATGLinks</h2>
+           <p class="text-gray">Earn coins by completing ATGLinks links.</p>
+            <% if (req.query.err) { %>
+              <div style="border-radius: 15px;" class="alert">
+                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
+                    You must complete the captcha to prove you are human!
+                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
+                    You submitted an invalid captcha response, try again.
+                <% } %>
+              </div>
+            <% } %>
+            <% if (req.query.success) { %>
+              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
+                Success! <%= settings.atglinks.coins%> coins were added to your account.
+            </div>
+            <% } %>
+              <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                    <div style="background-color: #0a0a0a3f;" class="card-body" style="display: none;" id="generate-panel">
+                      <p>Every time you complete a ATGLinks link, you will earn <%= settings.atglinks.coins%> coins!<br>Generate a link below:<br><br>
+                        <button style="background-color: #0a0a0a3f;" id="generateatgBtn" class="btn btn-primary btn-lg">Generate Link</button></p></center>
+                        <script type="text/javascript">
+                                const generateBtn = document.getElementById('generateatgBtn');
+                             generateBtn.addEventListener('click', async () => {
+                            try {
+                               const response = await fetch('/earn/atg/gen');
+                               const data = await response.json();
+                               if (response.ok) {
+                                 Swal.fire({
+                                   title: 'Success',
+                                   text: 'ATGLinks link generated successfully.',
+                                   icon: 'success',
+                                   html: `Your ATGLinks link: <a style="color: aqua" href="${data.link}"> Link</a>`
+                                 });
+                               } else {
+                                 Swal.fire({
+                                   title: 'Error',
+                                   text: 'Error generating ATGLinks link. Please try again later.',
+                                   icon: 'error'
+                                 });
+                               }
+                            } catch (error) {
+                             console.error('Error generating ATGLinks link:', error);
+                             Swal.fire({
+                               title: 'Error',
+                               text: 'Error generating ATGLinks link. Please try again later.',
+                               icon: 'error'
+                             });
+                           }
+                          });
+                        </script>
+                        </div>
+            </div>
+          </div>
+        </div>
+            <% } %>
+            <% if (settings.linkpays.enabled) { %>
+              <h2>LinkPays</h2>
+           <p class="text-gray">Earn coins by completing LinkPays links.</p>
+            <% if (req.query.err) { %>
+              <div style="border-radius: 15px;" class="alert">
+                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
+                    You must complete the captcha to prove you are human!
+                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
+                    You submitted an invalid captcha response, try again.
+                <% } %>
+              </div>
+            <% } %>
+            <% if (req.query.success) { %>
+              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
+                Success! <%= settings.linkpays.coins%> coins were added to your account.
+            </div>
+            <% } %>
+              <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                    <div style="background-color: #0a0a0a3f;" class="card-body" style="display: none;" id="generate-panel">
+                      <p>Every time you complete a LinkPays link, you will earn <%= settings.linkpays.coins%> coins!<br>Generate a link below:<br><br>
+                        <button style="background-color: #0a0a0a3f;" id="generatelpBtn" class="btn btn-primary btn-lg">Generate Link</button></p></center>
+                        <script type="text/javascript">
+                                const generatelpBtn = document.getElementById('generatelpBtn');
+                             generatelpBtn.addEventListener('click', async () => {
+                            try {
+                               const response = await fetch('/earn/lp/gen');
+                               const data = await response.json();
+                               if (response.ok) {
+                                 Swal.fire({
+                                   title: 'Success',
+                                   text: 'LinkPays link generated successfully.',
+                                   icon: 'success',
+                                   html: `Your LinkPays link: <a style="color: aqua" href="${data.link}"> Link</a>`
+                                 });
+                               } else {
+                                 Swal.fire({
+                                   title: 'Error',
+                                   text: 'Error generating LinkPays link. Please try again later.',
+                                   icon: 'error'
+                                 });
+                               }
+                            } catch (error) {
+                             console.error('Error generating LinkPays link:', error);
+                             Swal.fire({
+                               title: 'Error',
+                               text: 'Error generating LinkPays link. Please try again later.',
+                               icon: 'error'
+                             });
+                           }
+                          });
+                        </script>
+                        </div>
+            </div>
+          </div>
+        </div>
+            <% } %>
+            <% if (settings.exeio.enabled) { %>
+              <h2>ExeIO</h2>
+           <p class="text-gray">Earn coins by completing ExeIO links.</p>
+            <% if (req.query.err) { %>
+              <div style="border-radius: 15px;" class="alert">
+                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
+                    You must complete the captcha to prove you are human!
+                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
+                    You submitted an invalid captcha response, try again.
+                <% } %>
+              </div>
+            <% } %>
+            <% if (req.query.success) { %>
+              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
+                Success! <%= settings.exeio.coins%> coins were added to your account.
+            </div>
+            <% } %>
+              <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                    <div style="background-color: #0a0a0a3f;" class="card-body" style="display: none;" id="generate-panel">
+                      <p>Every time you complete a ExeIO link, you will earn <%= settings.exeio.coins%> coins!<br>Generate a link below:<br><br>
+                        <button style="background-color: #0a0a0a3f;" id="generateexeioBtn" class="btn btn-primary btn-lg">Generate Link</button></p></center>
+                        <script type="text/javascript">
+                                const generateexeioBtn = document.getElementById('generateexeioBtn');
+                             generatelpBtn.addEventListener('click', async () => {
+                            try {
+                               const response = await fetch('/earn/exeio/gen');
+                               const data = await response.json();
+                               if (response.ok) {
+                                 Swal.fire({
+                                   title: 'Success',
+                                   text: 'ExeIO link generated successfully.',
+                                   icon: 'success',
+                                   html: `Your ExeIO link: <a style="color: aqua" href="${data.link}"> Link</a>`
+                                 });
+                               } else {
+                                 Swal.fire({
+                                   title: 'Error',
+                                   text: 'Error generating ExeIO link. Please try again later.',
+                                   icon: 'error'
+                                 });
+                               }
+                            } catch (error) {
+                             console.error('Error generating ExeIO link:', error);
+                             Swal.fire({
+                               title: 'Error',
+                               text: 'Error generating ExeIO link. Please try again later.',
+                               icon: 'error'
+                             });
+                           }
+                          });
+                        </script>
+                        </div>
+            </div>
+          </div>
+        </div>
+            <% } %>
+            <%- include('./components/ads') %>
+            <h2> Join for Rewards</h2>
+            <p class="text-gray">Join discord servers and get extra credits.</p>
+             <div class="row">
+               <% for (let i = 0, len = settings.api.client.j4r.ads.length; i < len; i++) { %>
+                 <div class="col-md-6 grid-margin stretch-card">
+                   <div class="card">
+                     <div style="background-color: #0a0a0a3f; border: think solid white;" class="card-body">
+                       <h4 class="card-title"><%= settings.api.client.j4r.ads[i].name %></h4>
+                       <p class="card-description"> Join this server to receive: <br> <%= settings.api.client.j4r.ads[i].coins %> Credits </p>
+                       <form class="forms-sample">
+                         <a style="background-color: #0a0a0a3f;" role="button" class="btn btn-primary btn-lg" href="<%= settings.api.client.j4r.ads[i].invite %>" target="_blank">Join Server</a> <a style="background-color: #0a0a0a3f;" class="btn btn-primary btn-lg" href="../login">Claim reward</a>
+                       </form>
+                     </div>
+                   </div>
+                 </div>
+               <% } %>
+             </div>
+           </div>
+            <!-- content-wrapper ends -->
+          <%- include('./components/footer') %>
+          </div>
+          <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+      </div>
+      <!-- container-scroller -->
+      <!-- plugins:js -->
+      <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+      <!-- endinject -->
+      <!-- Plugin js for this page -->
+      <script src="../../assets/vendors/select2/select2.min.js"></script>
+      <script src="../../assets/vendors/typeahead.js/typeahead.bundle.min.js"></script>
+      <!-- End plugin js for this page -->
+      <!-- inject:js -->
+      <script src="../../assets/js/off-canvas.js"></script>
+      <script src="../../assets/js/hoverable-collapse.js"></script>
+      <script src="../../assets/js/misc.js"></script>
+      <script src="../../assets/js/settings.js"></script>
+      <script src="../../assets/js/todolist.js"></script>
+      <!-- endinject -->
+      <!-- Custom js for this page -->
+      <script src="../../assets/js/file-upload.js"></script>
+      <script src="../../assets/js/typeahead.js"></script>
+      <script src="../../assets/js/select2.js"></script>
+      <!-- End custom js for this page -->
+    </body>
+  </html>

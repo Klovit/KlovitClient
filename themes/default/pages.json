@@ -1,0 +1,96 @@
+{
+    "index": "index.ejs",
+    "notfound": "404.ejs",
+    "redirect": {
+        "callback": "/dashboard",
+        "logout": "/",
+        "createserver": "/dashboard?err=CREATED",
+        "deleteserver": "/dashboard",
+        "updateservers": "/dashboard",
+        "failedcreateserver": "/dashboard/new",
+        "failedmodifyserver": "/dashboard/edit",
+        "setplan": "/admin",
+        "failedsetplan": "/admin",
+        "createserverdisabled": "/dashboard/new?err=disabled",
+        "modifyserverdisabled": "/dashboard/modify?err=disabled",
+        "deleteserverdisabled": "/delete?err=disabled",
+        "regenpassword": "/settings",
+        "setresources": "/admin",
+        "failedsetresources": "/admin",
+        "giftresources": "/gift",
+        "failedgiftresources": "/gift",
+        "renewserver": "/dashboard",	
+        "setcoins": "/admin",	
+        "failedsetcoins": "/admin",	
+        "purchaseram": "/store",	
+        "failedpurchaseram": "/store",	
+        "purchasedisk": "/store",	
+        "failedpurchasedisk": "/store",	
+        "purchasecpu": "/store",	
+        "failedpurchasecpu": "/store",	
+        "purchaseservers": "/store",	
+        "failedpurchaseservers": "/store",
+        "arcioerror": "/afk",
+        "missingorinvalidcouponcode": "/redeem",
+        "successfullyredeemedcoupon": "/redeem",
+        "couponcreationfailed": "/admin",
+        "couponcreationsuccess": "/admin",
+        "couponrevokefailed": "/admin",
+        "couponrevokesuccess": "/admin",
+        "removeaccountfailed": "/admin",
+        "removeaccountsuccess": "/admin"
+    },
+    "pages": {
+        "auth": "auth.ejs",
+        "dashboard": "dashboard.ejs",
+        "dashboard/new": "create.ejs",
+        "dashboard/edit": "edit.ejs",
+        "admin": "admin.ejs",
+        "admin/plans": "admin-plans.ejs",
+        "admin/resources": "admin-resources.ejs",
+        "admin/coupons": "admin-coupons.ejs",
+        "admin/coins": "admin-coins.ejs",
+        "redeem": "redeem.ejs",
+        "settings": "settings.ejs",
+        "gift-coins": "gift-coins.ejs",
+        "gift-resources": "gift-resources.ejs",
+        "buy": "buy.ejs",
+        "store": "store.ejs",
+        "servers": "servers.ejs",
+        "earn":"earn.ejs",
+        "pp":"privacy-policy.ejs",
+        "tos":"terms-of-service.ejs"
+    },
+    "mustbeloggedin": [
+        "/dashboard",
+        "/servers/new",
+        "/servers/edit",
+        "/settings",
+        "/j4r",
+        "/gift",
+        "/store",
+        "/coins",
+        "/lv"
+    ],
+    "mustbeadmin": [
+        "/admin",
+        "/admin/plans",
+        "/admin/resources",
+        "/admin/coupons",
+        "/admin/coins"
+    ],
+    "variables": {
+        "faviconlink": "https://media.discordapp.net/attachments/793010792177074217/1164935356047708211/image.png",
+        "home": {
+            "admin": "admin",
+            "buttontext": {
+                "loggedin": {
+                    "link": "/dashboard"
+                },
+                "loggedout": {
+                    "link": "/login"
+                }
+            }
+        }
+    }
+}
