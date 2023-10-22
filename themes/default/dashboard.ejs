@@ -78,7 +78,7 @@
                    <a role="button" style="background-color: #0a0a0a3f" class="btn btn-primary btn-lg" href="/dashboard/edit?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>">Edit Resources</a>
                    <% if (settings.renewals.status) { %> 
                     <br>
-                    <p>Delay - <%= settings.api.renewals.delay %> Day(s) | Grace Period - <%= settings.api.renewals.delay %> Day(s) </p>
+                    <p>Delay - <%= settings.renewals.delay %> Day(s) | Grace Period - <%= settings.renewals.delay %> Day(s) </p>
                     <a role="button" style="background-color: #0a0a0a3f; border-radius: 15px;" class="btn btn-warning btn-lg" href="/renew?id=<%= pterodactyl.relationships.servers.data[i].attributes.id %>">Renew</a>
                   <% } %>
                  </div>
