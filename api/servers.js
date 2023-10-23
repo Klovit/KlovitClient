@@ -181,7 +181,7 @@ module.exports.load = async function (app, db) {
             const cost = settings.servercreation.cost
             if (createdStatus && coins < cost) {
               cb()
-              return res.redirect(`/servers/new?err=TOOLITTLECOINS`)
+              return res.redirect(`/dashboard/new?err=TOOLITTLECOINS`)
             }
 
             let serverinfo = await fetch(
