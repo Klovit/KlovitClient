@@ -212,8 +212,8 @@ module.exports.load = async function (app, db) {
             await db.set(`createdserver-${req.session.userinfo.id}`, true)
 
             cb()
-            log('created server', `${req.session.userinfo.username}#${req.session.userinfo.discriminator} created a new server named \`${name}\` with the following specs:\n\`\`\`Memory: ${ram} MB\nCPU: ${cpu}%\nDisk: ${disk}\`\`\``)
-            return res.redirect("/dashboard?err=CREATEDSERVER");
+            log('create server', `${req.session.userinfo.username}#${req.session.userinfo.discriminator} created a new server named \`${name}\` with the following specs:\n\`\`\`Memory: ${ram} MB\nCPU: ${cpu}%\nDisk: ${disk}\`\`\``)
+            return res.redirect("/server?err=CREATEDSERVER");
           } else {
             cb()
             res.redirect(`${redirectlink}?err=NOTANUMBER`);
