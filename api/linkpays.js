@@ -58,7 +58,7 @@ module.exports.load = async function (app, db) {
     }
   });
 
-  app.get(`/lp/redeem/:code`, async (req, res) => {
+  app.get(`/earn/lp/redeem/:code`, async (req, res) => {
     if (!req.session.pterodactyl) return res.redirect("/");
 
     if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
