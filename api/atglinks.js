@@ -58,44 +58,45 @@ module.exports.load = async function (app, db) {
     }
   });
 
-  app.get(`/atg/redeem/:code`, async (req, res) => {
-    if (!req.session.pterodactyl) return res.redirect("/");
+    app.get(`/earn/atg/redeem/:code`, async (req, res) => {
+        if (!req.session.pterodactyl) return res.redirect("/");
 
-    if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
-        return res.redirect(`/earn`)
-    } else if (cooldowns[req.session.userinfo.id]) {
-        delete cooldowns[req.session.userinfo.id]
-    }
+        if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
+            return res.redirect(`/lv`)
+        } else if (cooldowns[req.session.userinfo.id]) {
+            delete cooldowns[req.session.userinfo.id]
+        }
 
-    const code = req.params.code
+        // We get the code from the paramters, eg (client.domain.com/lv/redeem/abc123) here "abc123" is the code
+        const code = req.params.code
 
-    const usercode = atgcodes[req.session.userinfo.id]
-    if (!usercode) return res.redirect(`/earn`)
-    if (usercode.code !== code) return res.redirect(`/earn`)
-    delete atgcodes[req.session.userinfo.id]
+        const usercode = atgcodes[req.session.userinfo.id]
+        if (!usercode) return res.redirect(`/lv`)
+        if (usercode.code !== code) return res.redirect(`/earn`)
+        delete atgcodes[req.session.userinfo.id]
 
-    // Checking at least the minimum allowed time passed between generation and completion
-    if (((Date.now() - usercode.generated) / 1000) < settings.atglinks.minTimeToComplete) {
-        return res.send('<p>Hm... our systems detected something going on! Please make sure you are not using an ad blocker (or linkvertise bypasser). <a href="/lv">Generate another link</a></p> <img src="https://i.imgur.com/lwbn3E9.png" alt="robot" height="300">')
-    }
+        // Checking at least the minimum allowed time passed between generation and completion
+        if (((Date.now() - usercode.generated) / 1000) < settings.atglinks.minTimeToComplete) {
+            return res.send('<p>Hm... our systems detected something going on! Please make sure you are not using an ad blocker (or atglinks bypasser). <a href="/earn">Generate another link</a></p> <img src="https://i.imgur.com/lwbn3E9.png" alt="robot" height="300">')
+        }
 
-    cooldowns[req.session.userinfo.id] = Date.now() + (settings.atglinks.cooldown * 1000)
+        cooldowns[req.session.userinfo.id] = Date.now() + (settings.atglinks.cooldown * 1000)
 
-    // Adding to daily total
-    const dailyTotal = await db.get(`dailyatglinks-${req.session.userinfo.id}`)
-    if (dailyTotal && dailyTotal >= settings.linkvertise.dailyLimit) {
-        return res.redirect(`/earn?err=REACHEDDAILYLIMIT`)
-    }
-    if (dailyTotal) await db.set(`dailyatglinks-${req.session.userinfo.id}`, dailyTotal + 1)
-    else await db.set(`dailyatglinks-${req.session.userinfo.id}`, 1)
-    if (dailyTotal + 1 >= settings.linkvertise.dailyLimit) {
-        await db.set(`atglimitdate-${req.session.userinfo.id}`, Date.now(), 43200000)
-    }
+        // Adding to daily total
+        const dailyTotal = await db.get(`dailyatglinks-${req.session.userinfo.id}`)
+        if (dailyTotal && dailyTotal >= settings.atglinks.dailyLimit) {
+            return res.redirect(`/earn?err=REACHEDDAILYLIMIT`)
+        }
+        if (dailyTotal) await db.set(`dailyatglinks-${req.session.userinfo.id}`, dailyTotal + 1)
+        else await db.set(`dailyatglinks-${req.session.userinfo.id}`, 1)
+        if (dailyTotal + 1 >= settings.atglinks.dailyLimit) {
+            await db.set(`atglimitdate-${req.session.userinfo.id}`, Date.now(), 43200000)
+        }
 
-    // Adding coins
-    const coins = await db.get(`coins-${req.session.userinfo.id}`)
-    await db.set(`coins-${req.session.userinfo.id}`, coins + settings.atglinks.coins)
+        // Adding coins
+        const coins = await db.get(`coins-${req.session.userinfo.id}`)
+        await db.set(`coins-${req.session.userinfo.id}`, coins + settings.atglinks.coins)
 
-    res.redirect(`/earn?success=true`)
-})
+        res.redirect(`/earn?success=true`)
+    })
 };
