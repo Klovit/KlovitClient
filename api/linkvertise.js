@@ -27,7 +27,7 @@ module.exports.load = async function (app, db) {
         if (!referer.endsWith(`/`)) referer += `/`
 
         const code = makeid(12)
-        const lvurl = linkvertise(settings.linkvertise.userid, referer + `redeem/${code}`)
+        const lvurl = linkvertise(settings.linkvertise.userid, referer + `lv/redeem/${code}`)
 
         lvcodes[req.session.userinfo.id] = {
             code: code,
@@ -49,7 +49,6 @@ module.exports.load = async function (app, db) {
 
         // We get the code from the paramters, eg (client.domain.com/lv/redeem/abc123) here "abc123" is the code
         const code = req.params.code
-        if (!code) return res.send('An error occured with your browser!')
         if (!req.headers.referer || !req.headers.referer.includes('linkvertise.com')) return res.send('<p>Hm... our systems detected something going on! Please make sure you are not using an ad blocker (or linkvertise bypasser).</p> <img src="https://i.imgur.com/lwbn3E9.png" alt="robot" height="300">')
 
         const usercode = lvcodes[req.session.userinfo.id]
