@@ -63,14 +63,12 @@
     },
     "mustbeloggedin": [
         "/dashboard",
-        "/servers/new",
-        "/servers/edit",
+        "/dashboard/new",
+        "/dashboard/edit",
         "/settings",
-        "/j4r",
         "/gift",
         "/store",
-        "/coins",
-        "/lv"
+        "/earn"
     ],
     "mustbeadmin": [
         "/admin",
