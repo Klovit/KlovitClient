@@ -36,7 +36,7 @@ module.exports.load = async function (app, db) {
         res.redirect(lvurl)
     })
 
-    app.get(`/lv/redeem/:code`, async (req, res) => {
+    app.get(`/earn/lv/redeem/:code`, async (req, res) => {
         if (!req.session.pterodactyl) return res.redirect("/");
 
         if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
