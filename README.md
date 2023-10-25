@@ -106,5 +106,10 @@ Making the dashboard runs on startup:
 
 To stop a currently running KlovitClient instance, use `pm2 stop klovitclient`
 
+# Legacy Deprecation Notice
+
+KlovitClient V0.1, V0.2 are now deprecated as listed in our Discord and should not be used.
+Please update to KlovitClient V0.3.
+
 # Credits
 README.md template [Heliactyl](https://sryden.com)
