@@ -2,7 +2,7 @@
 
 <hr>
 
-# KlovitClient V0.1
+# KlovitClient V0.3
 
 All features:
 - Easy Ads Management
