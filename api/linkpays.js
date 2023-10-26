@@ -47,7 +47,7 @@ module.exports.load = async function (app, db) {
       const data = await response.json();
       if (response.ok) {
         res.json({ link: data.shortenedUrl });
-        console.log(`${req.session.userinfo.username} generated a ATGLinks link: `, data.shortenedUrl);
+        console.log(`${req.session.userinfo.username} generated a LinkPays link: `, data.shortenedUrl);
       } else {
         console.error('Error generating ATGLinks link:', data);
         res.status(500).json({ error: 'lplinkERROR' });
