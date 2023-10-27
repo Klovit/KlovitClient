@@ -12,6 +12,8 @@
         <!-- partial -->
         <div class="main-panel">
           <div style="background-color: #0a0a0a" class="content-wrapper">
+            <% if (settings.api.client.coins.enabled) { %>
+            <% if (settings.api.client.coins.store.enabled) { %>
            <h2>Resources Store</h2>
            <p class="text-gray">Buy extra resources to upgrade your server.</p>
             <% if (req.query.err) { %>
@@ -110,6 +112,66 @@
               </div>
             </div>
           </div>
+          <% } else { %>
+            <body class="is-header-blur dark x-bind=">
+              <div style="background-color: aqua; color: white; align-content: center;" id="root">
+                <div class="container-scroller">
+                  <div class="container-fluid page-body-wrapper full-page-wrapper">
+                    <div class="content-wrapper d-flex align-items-center text-center error-page">
+                      <div class="row flex-grow">
+                        <div class="col-lg-7 mx-auto text-white">
+                          <div class="row align-items-center d-flex flex-row">
+                    <div class="col-lg-6 text-lg-right pr-lg-4">
+                      <h1 style="font-size: 250px; color: white; text-align: center;" class="display-1 mb-0">STORE IS DISABLED</h1>
+                    </div>
+                    <div class="col-lg-6 error-page-divider text-lg-left pl-lg-4">
+                      <h2 style="font-size: 60px; color: white; text-align: center;">ERROR!</h2>
+                      <br>
+                      <h3 class="font-weight-light">Uh oh! looks like the Store is disabled.</h3>
+                    </div>
+                  <div class="row mt-5">
+                    <div class="col-12 text-center mt-xl-2">
+                      <a class="text-white font-weight-medium" href="/dashboard">Back to Dashboard</a>
+                    </div>
+              </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            <% } %>
+            <% } else { %>
+              <body class="is-header-blur dark x-bind=">
+                <div style="background-color: aqua; color: white; align-content: center;" id="root">
+                  <div class="container-scroller">
+                    <div class="container-fluid page-body-wrapper full-page-wrapper">
+                      <div class="content-wrapper d-flex align-items-center text-center error-page">
+                        <div class="row flex-grow">
+                          <div class="col-lg-7 mx-auto text-white">
+                            <div class="row align-items-center d-flex flex-row">
+                      <div class="col-lg-6 text-lg-right pr-lg-4">
+                        <h1 style="font-size: 250px; color: white; text-align: center;" class="display-1 mb-0">COINS ARE DISABLED</h1>
+                      </div>
+                      <div class="col-lg-6 error-page-divider text-lg-left pl-lg-4">
+                        <h2 style="font-size: 60px; color: white; text-align: center;">ERROR!</h2>
+                        <br>
+                        <h3 class="font-weight-light">Uh oh! looks like Coins are disabled.</h3>
+                      </div>
+                    <div class="row mt-5">
+                      <div class="col-12 text-center mt-xl-2">
+                        <a class="text-white font-weight-medium" href="/dashboard">Back to Dashboard</a>
+                      </div>
+                </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              <% } %>
           <!-- content-wrapper ends -->
           <%- include('./components/footer') %>
         </div>

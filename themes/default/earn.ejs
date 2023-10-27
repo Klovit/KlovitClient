@@ -11,6 +11,7 @@
            <%- include('./components/topnav') %>
           <!-- partial -->
         <div style="background-color: #0a0a0a3f" class="main-panel">
+          <% if (settings.api.client.coins.enabled) { %>
           <div style="background-color: #0a0a0a3f" class="content-wrapper">
             <% if (req.query.successlv) { %>
               <div class="alert" style="background-color: #00b950; border-radius: 15px;">
@@ -202,6 +203,36 @@
                <% } %>
              </div>
            </div>
+          <% } else { %>
+              <body class="is-header-blur dark x-bind=">
+                <div style="background-color: aqua; color: white; align-content: center;" id="root">
+                  <div class="container-scroller">
+                    <div class="container-fluid page-body-wrapper full-page-wrapper">
+                      <div class="content-wrapper d-flex align-items-center text-center error-page">
+                        <div class="row flex-grow">
+                          <div class="col-lg-7 mx-auto text-white">
+                            <div class="row align-items-center d-flex flex-row">
+                      <div class="col-lg-6 text-lg-right pr-lg-4">
+                        <h1 style="font-size: 250px; color: white; text-align: center;" class="display-1 mb-0">COINS ARE DISABLED</h1>
+                      </div>
+                      <div class="col-lg-6 error-page-divider text-lg-left pl-lg-4">
+                        <h2 style="font-size: 60px; color: white; text-align: center;">ERROR!</h2>
+                        <br>
+                        <h3 class="font-weight-light">Uh oh! looks like Coins are disabled.</h3>
+                      </div>
+                    <div class="row mt-5">
+                      <div class="col-12 text-center mt-xl-2">
+                        <a class="text-white font-weight-medium" href="/dashboard">Back to Dashboard</a>
+                      </div>
+                </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              </div>
+              <% } %>
             <!-- content-wrapper ends -->
           <%- include('./components/footer') %>
           </div>
