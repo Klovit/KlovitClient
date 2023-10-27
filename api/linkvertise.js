@@ -23,7 +23,6 @@ module.exports.load = async function (app, db) {
         if (!referer) return res.send('An error occured with your browser!')
         referer = referer.toLowerCase()
         if (referer.includes('?')) referer = referer.split('?')[0]
-        if (!referer.endsWith(`/lv`) && !referer.endsWith(`/lv/`)) return res.send('An error occured with your browser!')
         if (!referer.endsWith(`/`)) referer += `/`
 
         const code = makeid(12)
