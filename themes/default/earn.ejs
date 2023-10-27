@@ -185,6 +185,7 @@
         </div>
             <% } %>
             <%- include('./components/ads') %>
+            <% if (settings.api.client.j4r.enabled) { %>
             <h2> Join for Rewards</h2>
             <p class="text-gray">Join discord servers and get extra credits.</p>
              <div class="row">
@@ -202,6 +203,7 @@
                  </div>
                <% } %>
              </div>
+             <% } %>
            </div>
           <% } else { %>
               <body class="is-header-blur dark x-bind=">
