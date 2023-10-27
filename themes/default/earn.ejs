@@ -12,26 +12,29 @@
           <!-- partial -->
         <div style="background-color: #0a0a0a3f" class="main-panel">
           <div style="background-color: #0a0a0a3f" class="content-wrapper">
-            <div class="card-body" id="loading-panel">
-              <center><h3>Loading...</h3></center>
-            </div>
-            <% if (settings.linkvertise.enabled) { %>
-           <h2>Linkvertise</h2>
-           <p class="text-gray">Earn coins by completing Linkvertise links.</p>
-            <% if (req.query.err) { %>
-              <div style="border-radius: 15px;" class="alert">
-                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
-                    You must complete the captcha to prove you are human!
-                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
-                    You submitted an invalid captcha response, try again.
-                <% } %>
-              </div>
-            <% } %>
-            <% if (req.query.success) { %>
+            <% if (req.query.successlv) { %>
               <div class="alert" style="background-color: #00b950; border-radius: 15px;">
                 Success! <%= settings.linkvertise.coins%> coins were added to your account.
             </div>
             <% } %>
+            <% if (req.query.successatg) { %>
+              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
+                Success! <%= settings.atglinks.coins%> coins were added to your account.
+            </div>
+            <% } %>
+            <% if (req.query.successlp) { %>
+              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
+                Success! <%= settings.linkpays.coins%> coins were added to your account.
+            </div>
+            <% } %>
+            <% if (req.query.successexe) { %>
+              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
+                Success! <%= settings.exeio.coins%> coins were added to your account.
+            </div>
+            <% } %>
+            <% if (settings.linkvertise.enabled) { %>
+           <h2>Linkvertise</h2>
+           <p class="text-gray">Earn coins by completing Linkvertise links.</p>
               <div class="row">
                 <div class="col-md-12 grid-margin stretch-card">
                     <div class="card">
@@ -51,20 +54,6 @@
             <% if (settings.atglinks.enabled) { %>
               <h2>ATGLinks</h2>
            <p class="text-gray">Earn coins by completing ATGLinks links.</p>
-            <% if (req.query.err) { %>
-              <div style="border-radius: 15px;" class="alert">
-                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
-                    You must complete the captcha to prove you are human!
-                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
-                    You submitted an invalid captcha response, try again.
-                <% } %>
-              </div>
-            <% } %>
-            <% if (req.query.success) { %>
-              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
-                Success! <%= settings.atglinks.coins%> coins were added to your account.
-            </div>
-            <% } %>
               <div class="row">
                 <div class="col-md-12 grid-margin stretch-card">
                     <div class="card">
@@ -109,20 +98,6 @@
             <% if (settings.linkpays.enabled) { %>
               <h2>LinkPays</h2>
            <p class="text-gray">Earn coins by completing LinkPays links.</p>
-            <% if (req.query.err) { %>
-              <div style="border-radius: 15px;" class="alert">
-                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
-                    You must complete the captcha to prove you are human!
-                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
-                    You submitted an invalid captcha response, try again.
-                <% } %>
-              </div>
-            <% } %>
-            <% if (req.query.success) { %>
-              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
-                Success! <%= settings.linkpays.coins%> coins were added to your account.
-            </div>
-            <% } %>
               <div class="row">
                 <div class="col-md-12 grid-margin stretch-card">
                     <div class="card">
@@ -167,20 +142,6 @@
             <% if (settings.exeio.enabled) { %>
               <h2>ExeIO</h2>
            <p class="text-gray">Earn coins by completing ExeIO links.</p>
-            <% if (req.query.err) { %>
-              <div style="border-radius: 15px;" class="alert">
-                  <% if (req.query.err == "MUSTCOMPLETECAPTCHA") { %>
-                    You must complete the captcha to prove you are human!
-                <% } else if (req.query.err == "INVALIDCAPTCHARESPONSE") { %>
-                    You submitted an invalid captcha response, try again.
-                <% } %>
-              </div>
-            <% } %>
-            <% if (req.query.success) { %>
-              <div class="alert" style="background-color: #00b950; border-radius: 15px;">
-                Success! <%= settings.exeio.coins%> coins were added to your account.
-            </div>
-            <% } %>
               <div class="row">
                 <div class="col-md-12 grid-margin stretch-card">
                     <div class="card">

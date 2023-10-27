@@ -47,7 +47,7 @@ module.exports.load = async function (app, db) {
       const data = await response.json();
       if (response.ok) {
         res.json({ link: data.shortenedUrl });
-        console.log(`${req.session.userinfo.username} generated a LinkPays link: `, data.shortenedUrl);
+        console.log(`${req.session.userinfo.username} generated a ATGLinks link: `, data.shortenedUrl);
       } else {
         console.error('Error generating ATGLinks link:', data);
         res.status(500).json({ error: 'lplinkERROR' });
@@ -58,7 +58,7 @@ module.exports.load = async function (app, db) {
     }
   });
 
-  app.get(`/earn/lp/redeem/:code`, async (req, res) => {
+  app.get(`/lp/redeem/:code`, async (req, res) => {
     if (!req.session.pterodactyl) return res.redirect("/");
 
     if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
@@ -96,6 +96,6 @@ module.exports.load = async function (app, db) {
     const coins = await db.get(`coins-${req.session.userinfo.id}`)
     await db.set(`coins-${req.session.userinfo.id}`, coins + settings.linkpays.coins)
 
-    res.redirect(`/earn?success=true`)
+    res.redirect(`/earn?err=SUCCESSLP`)
 })
 };

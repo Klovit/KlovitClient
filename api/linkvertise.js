@@ -5,7 +5,7 @@ module.exports.load = async function (app, db) {
     const lvcodes = {}
     const cooldowns = {}
 
-    app.get(`/earn/lv/gen`, async (req, res) => {
+    app.get(`/lv/gen`, async (req, res) => {
         if (!req.session.pterodactyl) return res.redirect("/login");
 
         if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
@@ -16,16 +16,18 @@ module.exports.load = async function (app, db) {
 
         const dailyTotal = await db.get(`dailylinkvertise-${req.session.userinfo.id}`)
         if (dailyTotal && dailyTotal >= settings.linkvertise.dailyLimit) {
-            return res.redirect(`/earn?err=REACHEDDAILYLIMIT`)
+            return res.redirect(`/lv?err=REACHEDDAILYLIMIT`)
         }
 
         let referer = req.headers.referer
+        if (!referer) return res.send('An error occured with your browser!')
         referer = referer.toLowerCase()
         if (referer.includes('?')) referer = referer.split('?')[0]
+        if (!referer.endsWith(`/lv`) && !referer.endsWith(`/lv/`)) return res.send('An error occured with your browser!')
         if (!referer.endsWith(`/`)) referer += `/`
 
         const code = makeid(12)
-        const lvurl = linkvertise(settings.linkvertise.userid, referer + `lv/redeem/${code}`)
+        const lvurl = linkvertise(settings.linkvertise.userid, referer + `redeem/${code}`)
 
         lvcodes[req.session.userinfo.id] = {
             code: code,
@@ -36,7 +38,7 @@ module.exports.load = async function (app, db) {
         res.redirect(lvurl)
     })
 
-    app.get(`/earn/lv/redeem/:code`, async (req, res) => {
+    app.get(`/lv/redeem/:code`, async (req, res) => {
         if (!req.session.pterodactyl) return res.redirect("/");
 
         if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
@@ -47,11 +49,12 @@ module.exports.load = async function (app, db) {
 
         // We get the code from the paramters, eg (client.domain.com/lv/redeem/abc123) here "abc123" is the code
         const code = req.params.code
+        if (!code) return res.send('An error occured with your browser!')
         if (!req.headers.referer || !req.headers.referer.includes('linkvertise.com')) return res.send('<p>Hm... our systems detected something going on! Please make sure you are not using an ad blocker (or linkvertise bypasser).</p> <img src="https://i.imgur.com/lwbn3E9.png" alt="robot" height="300">')
 
         const usercode = lvcodes[req.session.userinfo.id]
-        if (!usercode) return res.redirect(`/earn`)
-        if (usercode.code !== code) return res.redirect(`/earn`)
+        if (!usercode) return res.redirect(`/lv`)
+        if (usercode.code !== code) return res.redirect(`/lv`)
         delete lvcodes[req.session.userinfo.id]
 
         // Checking at least the minimum allowed time passed between generation and completion
@@ -64,7 +67,7 @@ module.exports.load = async function (app, db) {
         // Adding to daily total
         const dailyTotal = await db.get(`dailylinkvertise-${req.session.userinfo.id}`)
         if (dailyTotal && dailyTotal >= settings.linkvertise.dailyLimit) {
-            return res.redirect(`/earn?err=REACHEDDAILYLIMIT`)
+            return res.redirect(`/lv?err=REACHEDDAILYLIMIT`)
         }
         if (dailyTotal) await db.set(`dailylinkvertise-${req.session.userinfo.id}`, dailyTotal + 1)
         else await db.set(`dailylinkvertise-${req.session.userinfo.id}`, 1)
@@ -76,7 +79,7 @@ module.exports.load = async function (app, db) {
         const coins = await db.get(`coins-${req.session.userinfo.id}`)
         await db.set(`coins-${req.session.userinfo.id}`, coins + settings.linkvertise.coins)
 
-        res.redirect(`/earn?success=true`)
+        res.redirect(`/earn?err=SUCCESSLV`)
     })
     
     app.get(`/api/lvcooldown`, async (req, res) => {
