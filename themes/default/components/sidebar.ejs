@@ -29,27 +29,27 @@
           <span class="menu-title">Account Settings</span>
         </a>
       </li>
+      <% if (settings.api.client.coins.enabled) { %>
           <li class="nav-item nav-category">
             <span class="nav-link text-white"><h4>Coins & Resources</h4></span>
           </li>
+          <% if (settings.api.client.coins.store.enabled) { %>
+
       <li class="nav-item menu-items">
         <a class="nav-link" href="../store">
           <span class="menu-title">Resources Store</span>
         </a>
       </li>
+      <% } %>
       <li class="nav-item menu-items">
         <a class="nav-link" href="../earn">
           <span class="menu-title">Earn Coins</span>
         </a>
       </li>
+      <% } %>
       <li class="nav-item menu-items">
-        <a class="nav-link" href="../gift-coins">
-          <span class="menu-title">Gift Coins</span>
-        </a>
-      </li>
-      <li class="nav-item menu-items">
-        <a class="nav-link" href="../gift-resources">
-          <span class="menu-title">Gift Resources</span>
+        <a class="nav-link" href="../gift">
+          <span class="menu-title">Gift</span>
         </a>
       </li>
       <li class="nav-item menu-items">
