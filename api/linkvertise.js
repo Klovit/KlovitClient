@@ -5,18 +5,18 @@ module.exports.load = async function (app, db) {
     const lvcodes = {}
     const cooldowns = {}
 
-    app.get(`/lv/gen`, async (req, res) => {
+    app.get(`/earn/lv/gen`, async (req, res) => {
         if (!req.session.pterodactyl) return res.redirect("/login");
 
         if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
-            return res.redirect(`/lv`)
+            return res.redirect(`/earn`)
         } else if (cooldowns[req.session.userinfo.id]) {
             delete cooldowns[req.session.userinfo.id]
         }
 
         const dailyTotal = await db.get(`dailylinkvertise-${req.session.userinfo.id}`)
         if (dailyTotal && dailyTotal >= settings.linkvertise.dailyLimit) {
-            return res.redirect(`/lv?err=REACHEDDAILYLIMIT`)
+            return res.redirect(`/earn?err=REACHEDDAILYLIMIT`)
         }
 
         let referer = req.headers.referer
@@ -27,7 +27,7 @@ module.exports.load = async function (app, db) {
         if (!referer.endsWith(`/`)) referer += `/`
 
         const code = makeid(12)
-        const lvurl = linkvertise(settings.linkvertise.userid, referer + `redeem/${code}`)
+        const lvurl = linkvertise(settings.linkvertise.userid, referer + `lv/redeem/${code}`)
 
         lvcodes[req.session.userinfo.id] = {
             code: code,
@@ -38,11 +38,11 @@ module.exports.load = async function (app, db) {
         res.redirect(lvurl)
     })
 
-    app.get(`/lv/redeem/:code`, async (req, res) => {
+    app.get(`/earn/lv/redeem/:code`, async (req, res) => {
         if (!req.session.pterodactyl) return res.redirect("/");
 
         if (cooldowns[req.session.userinfo.id] && cooldowns[req.session.userinfo.id] > Date.now()) {
-            return res.redirect(`/lv`)
+            return res.redirect(`/earn`)
         } else if (cooldowns[req.session.userinfo.id]) {
             delete cooldowns[req.session.userinfo.id]
         }
@@ -54,7 +54,7 @@ module.exports.load = async function (app, db) {
 
         const usercode = lvcodes[req.session.userinfo.id]
         if (!usercode) return res.redirect(`/lv`)
-        if (usercode.code !== code) return res.redirect(`/lv`)
+        if (usercode.code !== code) return res.redirect(`/earn`)
         delete lvcodes[req.session.userinfo.id]
 
         // Checking at least the minimum allowed time passed between generation and completion
@@ -67,7 +67,7 @@ module.exports.load = async function (app, db) {
         // Adding to daily total
         const dailyTotal = await db.get(`dailylinkvertise-${req.session.userinfo.id}`)
         if (dailyTotal && dailyTotal >= settings.linkvertise.dailyLimit) {
-            return res.redirect(`/lv?err=REACHEDDAILYLIMIT`)
+            return res.redirect(`/earn?err=REACHEDDAILYLIMIT`)
         }
         if (dailyTotal) await db.set(`dailylinkvertise-${req.session.userinfo.id}`, dailyTotal + 1)
         else await db.set(`dailylinkvertise-${req.session.userinfo.id}`, 1)
