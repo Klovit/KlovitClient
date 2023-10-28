@@ -31,7 +31,7 @@ Please do keep the footer though.
 | Feature | KlovitClient | Dashactyl | Heliactyl | NorthClient  | HolaClient | Meteor | 
 | :---:   | :---: | :---: | :--: | :--: | :--: | :--: |
 | Essentials Options | ✅|✅|✅|✅|✅|✅|
-| API (Client/Admin) |✅|❌|✅|✅|✅| ✅|
+| API (Client/Admin) |✅|✅|✅|✅|✅| ✅|
 | Payment Options | ✅|❌|✅|✅|✅|✅|
 | J4R | ✅|✅|✅|✅|✅|✅|
 | Referrals |🔄|✅|✅|✅|✅|✅|
