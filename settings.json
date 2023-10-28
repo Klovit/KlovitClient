@@ -9,7 +9,7 @@
   "timezone": "Asia/Kolkata",
   "resources": {
     "_note": "Options: MB, GB. This is only used on the user side, admin will use GB.",
-    "type": "MB"
+    "type": "GB"
   },
   "website": {
     "port": 8081,
@@ -25,7 +25,7 @@
     "note-2": "put scripts in ./themes/default/components/ads.ejs"
   },
   "linkvertise": {
-    "enabled": true,
+    "enabled": false,
     "userid": "243856",
     "coins": 2,
     "dailyLimit": "null",
@@ -34,7 +34,7 @@
     "cooldown": "null"
   },
   "atglinks": {
-    "enabled": true,
+    "enabled": false,
     "apikey": "785159b542f060cb98b55b27a09b2034df506bff",
     "coins": 2,
     "dailyLimit": "null",
@@ -43,7 +43,7 @@
     "cooldown": "null"
   },
   "linkpays": {
-    "enabled": true,
+    "enabled": false,
     "apikey": "d159f15a31bf7d11cb1d7b3886b174e778acd31b",
     "coins": 2,
     "dailyLimit": "null",
@@ -52,7 +52,7 @@
     "cooldown": "null"
   },
   "exeio": {
-    "enabled": true,
+    "enabled": false,
     "apikey": "c47725e9a61f5984b64ea13df6d4eb6d927435b5",
     "coins": 2,
     "dailyLimit": "null",
@@ -67,7 +67,7 @@
     "servers": "8"
   },
   "stripe": {
-    "enabled": true,
+    "enabled": false,
     "note": "The key is the stripe API key and the coins is the amount per £1. If the stripe API key is invalid and stripe purchases are enabled, KlovitClient will crash when attempting to do transactions.",
     "key": "100000000000000",
     "coins": 100
@@ -80,7 +80,7 @@
         "code": "Default API Key (Change this to any string you want)"
       },
       "j4r": {
-        "enabled": true,
+        "enabled": false,
         "ads": [
           {
             "name": "Example server 1",
@@ -211,7 +211,7 @@
           }
       },
       "gift": {
-        "enabled": true
+        "enabled": false
       },
       "coins": {
         "enabled": true,
@@ -224,15 +224,15 @@
           },
           "disk": {
             "cost": 100,
-            "per": 5120
+            "per": 1024
           },
           "cpu": {
             "cost": 100,
-            "per": 75
+            "per": 100
           },
           "servers": {
             "cost": 100,
-            "per": 2
+            "per": 1
           }
         }
       }
