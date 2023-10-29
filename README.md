@@ -28,17 +28,17 @@ Please do keep the footer though.
 
 # KlovitClient vs Other Client Panels.
 
-| Feature | KlovitClient | Dashactyl | Heliactyl | NorthClient  | HolaClient | Meteor | 
-| :---:   | :---: | :---: | :--: | :--: | :--: | :--: |
-| Essentials Options | ✅|✅|✅|✅|✅|✅|
-| API (Client/Admin) |✅|✅|✅|✅|✅| ✅|
-| Payment Options | ✅|❌|✅|✅|✅|✅|
-| J4R | ✅|✅|✅|✅|✅|✅|
-| Referrals |🔄|✅|✅|✅|✅|✅|
-| Linkvertise | ✅|❌|✅|✅|✅|✅|
-| Custom Ads | ✅|❌|❌|✅|✅|✅|
-| Purge System | 🔄|⚠️|⚠️|⚠️|✅|✅|
-| Easy Customizations | ✅|❌|❌|❌|❌|⚠️|
+| Feature | KlovitClient | Dashactyl | Heliactyl | NorthClient  | HolaClient  |
+| :---:   | :---: | :---: | :--: | :--: | :--: |
+| Essentials Options | ✅|✅|✅|✅|✅|
+| API (Client/Admin) |✅|✅|✅|✅|✅| 
+| Payment Options | ✅|❌|✅|✅|✅|
+| J4R | ✅|✅|✅|✅|✅|
+| Referrals |🔄|✅|✅|✅|✅|
+| Linkvertise | ✅|❌|✅|✅|✅|
+| Custom Ads | ✅|❌|❌|✅|✅|
+| Purge System | 🔄|⚠️|⚠️|⚠️|✅|
+| Easy Customizations | ✅|❌|❌|❌|❌|
 
 
 # Linux Install Guide
