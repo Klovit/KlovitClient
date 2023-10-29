@@ -1,5 +1,5 @@
 {
-    "index": "index.ejs",
+    "index": "auth.ejs",
     "notfound": "404.ejs",
     "redirect": {
         "callback": "/dashboard",
@@ -41,7 +41,6 @@
         "removeaccountsuccess": "/admin"
     },
     "pages": {
-        "auth": "auth.ejs",
         "dashboard": "dashboard.ejs",
         "dashboard/new": "create.ejs",
         "dashboard/edit": "edit.ejs",
