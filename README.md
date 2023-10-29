@@ -127,4 +127,6 @@ Please update to KlovitClient V0.3.
 
 # Credits
 README.md template [Heliactyl](https://sryden.com)
+
 Thanks to [Dashactyl](https://github.com/Votion-development/Dashactyl) and [Heliactyl](https://sryden.com) for making this possible.
+KlovitClient is a Fork/Continuation of [Heliactyl](https://sryden.com)
