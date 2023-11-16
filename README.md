@@ -30,7 +30,7 @@ Please do keep the footer though.
 # KlovitClient vs Other Client Panels.
 
 | Feature | KlovitClient | Dashactyl | Heliactyl | NorthClient  | HolaClient  | Meteor  |
-| :---:   | :---: | :---: | :--: | :--: | :--: |
+| :---:   | :---: | :---: | :--: | :--: | :--: | :--: |
 | Essentials Options |✅|✅|✅|✅|✅|✅|
 | API (Client/Admin) |✅|✅|✅|✅|✅|✅|
 | Payment Options |✅|❌|✅|✅|❌|✅|
