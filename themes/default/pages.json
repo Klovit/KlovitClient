@@ -6,6 +6,7 @@
         "dashboard": "dashboard.ejs",
         "settings": "settings.ejs",
         "dashboard/new": "create.ejs",
+        "dashboard/edit": "edit.ejs",
         "admin": "admin.ejs",
         "admin/plans": "admin-plans.ejs",
         "admin/resources": "admin-resources.ejs",
@@ -15,6 +16,8 @@
         "store": "store.ejs",
         "earn": "earn.ejs",
         "gift": "gift.ejs",
+        "redeem": "redeem.ejs",
+        "buy": "buy.ejs",
         "pp":"privacy-policy.ejs",
         "tos":"terms-of-service.ejs"
     },
