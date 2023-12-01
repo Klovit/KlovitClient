@@ -79,8 +79,6 @@
         "enabled": false,
         "code": "Default API Key (Change this to any string you want)"
       },
-
-
       "j4r": {
         "enabled": false,
         "ads": [
@@ -286,7 +284,7 @@
       }, 
       "admin": {
         "set coins": true,
-        "add ": true,
+        "add coins": true,
         "set resources": true,
         "set plan": true,
         "create coupon": true,
