@@ -8,7 +8,7 @@
   <div id="root" class="min-h-100vh flex grow bg-zinc-900">
       <!-- Sidebar -->
 <%- include('./components/sidebar') %>
-
+<%- include('./components/topnav') %>
     <!-- Main Content Wrapper -->
     <main class="main-content w-full pb-8">
       <% if  (req.query.err === "CANNOTAFFORDRENEWAL") { %>
@@ -142,7 +142,15 @@
   <script>
     window.addEventListener("DOMContentLoaded", () => Alpine.start());
   </script>
-  <%- include('./components/footer') %>
+  <script>
+    window.addEventListener("DOMContentLoaded", () => Alpine.start());
+  </script>      <%- include('./components/footer') %>
+
+
+
+
+
+
 </body>
 
 </html>

@@ -66,9 +66,7 @@
       </main>
   </div>
   <div id="x-teleport-target"></div>
-  <script>
-    window.addEventListener("DOMContentLoaded", () => Alpine.start());
-  </script>
+
     <script>
     fetch("https://zexade.com/kcv.txt")
              .then(res => Promise.resolve(res.json()).then(ver => {
@@ -82,7 +80,15 @@
                  };
              }));
      </script>
-        <%- include('./components/footer') %>
+        <script>
+    window.addEventListener("DOMContentLoaded", () => Alpine.start());
+  </script>      <%- include('./components/footer') %>
+
+
+
+
+
+
 </body>
 
 </html>
