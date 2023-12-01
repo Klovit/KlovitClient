@@ -67,6 +67,7 @@
     "mustbeloggedin": [
         "/dashboard",
         "/dashboard/new",
+        "/dashboard/edit",
         "/store",
         "/earn",
         "/settings",
