@@ -34,7 +34,7 @@ Please do keep the footer though.
 | :---:   | :---: | :---: | :--: | :--: | :--: | :--: |
 | Essentials Options |✅|✅|✅|✅|✅|✅|
 | API (Client/Admin) |✅|✅|✅|✅|✅|✅|
-| Payment Options |✅|❌|✅|✅|❌|✅|
+| Payment Options |✅|❌|✅|✅|✅|✅|
 | J4R |✅|✅|✅|✅|✅|✅|
 | Referrals |🔄|✅|✅|✅|✅|✅|
 | 3+ Earning options |✅|❌|❌|❌|✅|✅|
@@ -43,7 +43,7 @@ Please do keep the footer though.
 | Leaderboard |✅|❌|❌|❌|❌|✅|
 | Session Preservation |✅|❌|❌|❌|✅|✅|
 | Miscellenus Admin Options (E.g. GetIP, Remove Account, etc.) |✅|❌|❌|❌|✅|✅|
-| Easy Customizations |✅|❌|❌|❌|❌|✅|
+| Easy Customizations |✅|❌|❌|❌|✅|✅|
 
 
 # Documention is moved to https://docs.klovit.tech
