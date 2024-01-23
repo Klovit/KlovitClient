@@ -34,11 +34,11 @@ Please do keep the footer though.
 | :---:   | :---: | :---: | :--: | :--: | :--: |
 | Essentials Options |✅|✅|✅|✅|✅|
 | API (Client/Admin) |✅|✅|✅|✅|✅|
-| Payment Options |✅|❌|✅|✅|✅|
+| Payment Options |✅|✅|✅|✅|✅|
 | J4R |✅|✅|✅|✅|✅|
 | Referrals |🔄|❌|❌|❌|✅|
 | 3+ Earning options |✅|❌|❌|❌|✅|
-| Custom Ads |✅|❌|❌|✅|✅|
+| Custom Ads |✅|❌|❌|❌|✅|
 | Purge System |✅|❌|❌|❌|✅|
 | Leaderboard |✅|❌|❌|❌|❌|
 | Session Preservation |✅|❌|❌|❌|✅|
