@@ -30,20 +30,20 @@ Please do keep the footer though.
 
 # KlovitClient vs Other Client Panels.
 
-| Feature | KlovitClient | Dashactyl | Heliactyl | NorthClient  | HolaClient  | Meteor  |
-| :---:   | :---: | :---: | :--: | :--: | :--: | :--: |
-| Essentials Options |✅|✅|✅|✅|✅|✅|
-| API (Client/Admin) |✅|✅|✅|✅|✅|✅|
-| Payment Options |✅|❌|✅|✅|✅|✅|
-| J4R |✅|✅|✅|✅|✅|✅|
-| Referrals |🔄|✅|✅|✅|✅|✅|
-| 3+ Earning options |✅|❌|❌|❌|✅|✅|
-| Custom Ads |✅|❌|❌|✅|✅|✅|
-| Purge System |✅|⚠️|⚠️|⚠️|✅|✅|
-| Leaderboard |✅|❌|❌|❌|❌|✅|
-| Session Preservation |✅|❌|❌|❌|✅|✅|
-| Miscellenus Admin Options (E.g. GetIP, Remove Account, etc.) |✅|❌|❌|❌|✅|✅|
-| Easy Customizations |✅|❌|❌|❌|✅|✅|
+| Feature | KlovitClient | Dashactyl | Heliactyl | NorthClient  | HolaClient  |
+| :---:   | :---: | :---: | :--: | :--: | :--: |
+| Essentials Options |✅|✅|✅|✅|✅|
+| API (Client/Admin) |✅|✅|✅|✅|✅|
+| Payment Options |✅|❌|✅|✅|✅|
+| J4R |✅|✅|✅|✅|✅|
+| Referrals |🔄|❌|❌|❌|✅|
+| 3+ Earning options |✅|❌|❌|❌|✅|
+| Custom Ads |✅|❌|❌|✅|✅|
+| Purge System |✅|❌|❌|❌|✅|
+| Leaderboard |✅|❌|❌|❌|❌|
+| Session Preservation |✅|❌|❌|❌|✅|
+| Miscellenus Admin Options (E.g. GetIP, Remove Account, etc.) |✅|❌|❌|❌|✅|
+| Easy Customizations |✅|❌|❌|❌|✅|
 
 
 # Documention is moved to https://docs.klovit.tech
