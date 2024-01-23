@@ -34,7 +34,7 @@ Please do keep the footer though.
 | :---:   | :---: | :---: | :--: | :--: | :--: |
 | Essentials Options |✅|✅|✅|✅|✅|
 | API (Client/Admin) |✅|✅|✅|✅|✅|
-| Payment Options |✅|❌|✅|✅|❌|
+| Payment Options |✅|❌|✅|✅|✅|
 | J4R |✅|✅|✅|✅|✅|
 | Referrals |🔄|❌|❌|❌|✅|
 | 3+ Earning options |✅|❌|❌|❌|✅|
