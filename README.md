@@ -45,9 +45,4 @@ Please do keep the footer though.
 | Easy Customizations |✅|❌|❌|❌|✅|
 
 
-# Documention is moved to https://docs.klovit.tech
-
-# Legacy Deprecation Notice
-
-KlovitClient V0.1, V0.2 and V0.3 are now deprecated as listed in our Discord and should not be used.
-Please update to KlovitClient V0.4.
+# [Documention](https://docs.klovit.tech)
