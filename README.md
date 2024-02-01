@@ -1,4 +1,4 @@
-![KlovitClient](https://zexade.com/KlovitClient%20Logo.png)
+![KlovitClient](https://media.discordapp.net/attachments/1160177046559920179/1202583934131638355/Picsart_24-02-01_19-59-07-580.jpg)
 
 <hr>
 
