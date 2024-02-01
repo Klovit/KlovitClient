@@ -36,7 +36,7 @@ Please do keep the footer though.
 | API (Client/Admin) |✅|✅|✅|✅|✅|
 | Payment Options |✅|✅|✅|✅|✅|
 | J4R |✅|✅|✅|✅|✅|
-| Referrals |🔄|❌|❌|❌|✅|
+| Referrals |❌|❌|❌|❌|✅|
 | 3+ Earning options |✅|❌|❌|❌|✅|
 | Custom Ads |✅|❌|❌|❌|✅|
 | Purge System |✅|❌|❌|❌|✅|
