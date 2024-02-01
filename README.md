@@ -1,4 +1,4 @@
-![KlovitClient](https://media.discordapp.net/attachments/1160177046559920179/1202583934131638355/Picsart_24-02-01_19-59-07-580.jpg)
+![KlovitClient](https://media.discordapp.net/attachments/1160177046559920179/1202584491319889950/Picsart_24-02-01_19-59-07-580-modified_1.png)
 
 <hr>
 
@@ -36,13 +36,12 @@ Please do keep the footer though.
 | API (Client/Admin) |✅|✅|✅|✅|✅|
 | Payment Options |✅|✅|✅|✅|✅|
 | J4R |✅|✅|✅|✅|✅|
-| Referrals |❌|❌|❌|❌|✅|
 | 3+ Earning options |✅|❌|❌|❌|✅|
 | Custom Ads |✅|❌|❌|❌|✅|
-| Purge System |✅|❌|❌|❌|✅|
+| Enchanced and Customizable Purge System |✅|❌|❌|❌|❌|
 | Leaderboard |✅|❌|❌|❌|❌|
 | Session Preservation |✅|❌|❌|❌|✅|
-| Miscellenus Admin Options (E.g. GetIP, Remove Account, etc.) |✅|❌|❌|❌|✅|
+| Miscellenus Admin Options (E.g. GetIP etc.) |✅|❌|❌|❌|✅|
 | Easy Customizations |✅|❌|❌|❌|✅|
 
 
