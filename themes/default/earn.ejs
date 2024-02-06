@@ -175,7 +175,7 @@
                             <button id="generateexeBtn"  class="rounded-xl bg-zinc-900 px-2.5 py-2 btn btn-primary btn-lg">Generate Link</button></p></center>
                             <script type="text/javascript">
                                     const generateexeBtn = document.getElementById('generateexeBtn');
-                                 generatelpBtn.addEventListener('click', async () => {
+                                 generateexeBtn.addEventListener('click', async () => {
                                 try {
                                    const response = await fetch('/earn/exeio/gen');
                                    const data = await response.json();
