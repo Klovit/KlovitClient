@@ -271,11 +271,11 @@ app.post("/api/createcoupon", async (req, res) => {
     if (!req.session.pterodactyl) return res.redirect(`/`);
 
     const coins = parseInt(req.query.coins)
-    if (!coins || !req.query.id) return res.redirect(`/gift-coins?err=MISSINGFIELDS`);
-    if (req.query.id.includes(`${req.session.userinfo.id}`)) return res.redirect(`/gift-coins?err=CANNOTGIFTYOURSELF`)
+    if (!coins || !req.query.id) return res.redirect(`/gift?err=MISSINGFIELDS`);
+    if (req.query.id.includes(`${req.session.userinfo.id}`)) return res.redirect(`/gift?err=CANNOTGIFTYOURSELF`)
 
 
-    if (coins < 1) return res.redirect(`/gift-coins?err=TOOLOWCOINS`)
+    if (coins < 1) return res.redirect(`/gift?err=TOOLOWCOINS`)
 
     queue.addJob(async (cb) => {
 
@@ -283,11 +283,11 @@ app.post("/api/createcoupon", async (req, res) => {
       const othercoins = await db.get(`coins-${req.query.id}`)
       if (!othercoins) {
         cb()
-        return res.redirect(`/gift-coins?err=USERDOESNTEXIST`)
+        return res.redirect(`/gift?err=USERDOESNTEXIST`)
       }
       if (usercoins < coins) {
         cb()
-        return res.redirect(`/gift-coins?err=CANTAFFORD`)
+        return res.redirect(`/gift?err=CANTAFFORD`)
       }
   
       await db.set(`coins-${req.query.id}`, othercoins + coins)
@@ -295,7 +295,7 @@ app.post("/api/createcoupon", async (req, res) => {
 
       log('Gifted Coins', `${req.session.userinfo.username}#${req.session.userinfo.discriminator} sent ${coins}\ coins to the user with the ID \`${req.query.id}\`.`)
       cb()
-      return res.redirect(`/gift-coins?success=true`);
+      return res.redirect(`/gift?success=true`);
 
     })
   });
@@ -312,8 +312,8 @@ app.post("/api/createcoupon", async (req, res) => {
     let usr1 = await db.get("extra-" + req.session.userinfo.id)
     let usr2 = await db.get("extra-" + req.query.id)
     let usr3 = await db.get("users-" + req.query.id)
-    if (!req.query.id) return res.redirect(`/gift-resources?err=MISSINGID`);
-    if (!usr3) return res.redirect(`/gift-resources?err=INVALIDID`);
+    if (!req.query.id) return res.redirect(`/gift?err=MISSINGID`);
+    if (!usr3) return res.redirect(`/gift?err=INVALIDID`);
     if (req.query.ram || req.query.disk || req.query.cpu || req.query.servers) {
       let ramstring = req.query.ram;
       let diskstring = req.query.disk;
@@ -346,10 +346,10 @@ app.post("/api/createcoupon", async (req, res) => {
       if (ramstring) {
         let ram = parseFloat(ramstring);
         if (ram < 100 || ram > 999999999999999) {
-          return res.redirect(`/gift-resources?err=RAMSIZE`);
+          return res.redirect(`/gift?err=RAMSIZE`);
         }
         if (ramstring > extra1.ram) {
-          return res.redirect(`/gift-resources?err=TOMUCHRAM`);
+          return res.redirect(`/gift?err=TOMUCHRAM`);
         }
         extra1.ram = extra1.ram - ram
         extra2.ram = extra2.ram + ram
@@ -358,10 +358,10 @@ app.post("/api/createcoupon", async (req, res) => {
       if (diskstring) {
         let disk = parseFloat(diskstring);
         if (disk < 100 || disk > 999999999999999) {
-          return res.redirect(`/gift-resources?err=DISKSIZE`);
+          return res.redirect(`/gift?err=DISKSIZE`);
         }
         if (diskstring > extra1.disk) {
-          return res.redirect(`/gift-resources?err=TOMUCHDISK`);
+          return res.redirect(`/gift?err=TOMUCHDISK`);
         }
         extra1.disk = extra1.disk - disk
         extra2.disk = extra2.disk + disk
@@ -370,10 +370,10 @@ app.post("/api/createcoupon", async (req, res) => {
       if (cpustring) {
         let cpu = parseFloat(cpustring);
         if (cpu < 10 || cpu > 999999999999999) {
-          return res.redirect(`/gift-resources?err=CPUSIZE`);
+          return res.redirect(`/gift?err=CPUSIZE`);
         }
         if (cpustring > extra1.cpu) {
-          return res.redirect(`/gift-resources?err=TOMUCHCPU`);
+          return res.redirect(`/gift?err=TOMUCHCPU`);
         }
         extra1.cpu = extra1.cpu - cpu
         extra2.cpu = extra2.cpu + cpu
@@ -382,10 +382,10 @@ app.post("/api/createcoupon", async (req, res) => {
       if (serversstring) {
         let servers = parseFloat(serversstring);
         if (servers < 1 || servers > 999999999999999) {
-          return res.redirect(`/gift-resources?err=SERVERSIZE`);
+          return res.redirect(`/gift?err=SERVERSIZE`);
         }
         if (serversstring > extra1.servers) {
-          return res.redirect(`/gift-resources?err=TOMUCHSERVERS`);
+          return res.redirect(`/gift?err=TOMUCHSERVERS`);
         }
         extra1.servers = extra1.servers - servers
         extra2.servers = extra2.servers + servers
@@ -394,7 +394,7 @@ app.post("/api/createcoupon", async (req, res) => {
       db.set("extra-" + req.session.userinfo.id, extra1)
       db.set("extra-" + req.query.id, extra2)
 
-      return res.redirect(`/gift-resources?err=none`);
+      return res.redirect(`/gift?err=none`);
     }
   });
 
