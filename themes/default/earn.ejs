@@ -80,7 +80,7 @@
                           <p>Every time you complete a ATGLinks link, you will earn <%= settings.atglinks.coins%> coins!<br>Generate a link below:<br><br>
                             <button id="generateatgBtn"  class="rounded-xl bg-zinc-900 px-2.5 py-2 btn btn-primary btn-lg">Generate Link</button></p></center>
                             <script type="text/javascript">
-                                    const generateatgBtn = document.getElementById('generatelpBtn');
+                                    const generateatgBtn = document.getElementById('generateatgBtn');
                                  generateatgBtn.addEventListener('click', async () => {
                                 try {
                                    const response = await fetch('/earn/atg/gen');
