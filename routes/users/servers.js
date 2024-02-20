@@ -331,7 +331,7 @@ module.exports.load = async function (app, db) {
         req.session.pterodactyl.relationships.servers.data = pterorelationshipsserverdata;
         let theme = indexjs.get(req);
         adminjs.suspend(req.session.userinfo.id);
-        res.redirect("/servers?err=MODIFYSERVER");
+        res.redirect("/dashboard?err=MODIFYSERVER");
       } else {
         res.redirect(`${redirectlink}?id=${req.query.id}&err=MISSINGVARIABLE`);
       }
