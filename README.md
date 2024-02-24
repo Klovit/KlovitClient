@@ -45,4 +45,4 @@ Please do keep the footer though.
 | Easy Customizations |✅|❌|❌|❌|✅|
 
 
-# [Documention](https://docs.klovit.tech)
+# [Documentation](https://docs.klovit.tech)
