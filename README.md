@@ -16,6 +16,6 @@ Join [KlovitClient's Official Discord Server](https://discord.gg/grrRKuyyyE) to 
 
 <hr>
 
-# [Documention](https://docs.klovit.tech)
+# [Documentation](https://docs.klovit.tech)
 # Notice
 All versions older than V0.5 are now depreciated, please update to KlovitClient V0.5.
