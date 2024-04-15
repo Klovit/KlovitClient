@@ -1,0 +1,322 @@
+---
+import chalk from 'chalk';
+import config from '../config';
+import { supabase } from "../lib/supabase";
+import db from '../database';
+import Adminnav from "../components/adminnav.astro";
+import Adminmobnav from "../components/adminmobnav.astro";
+import restype from "../restype"
+import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
+import Header from "../components/head.astro"
+
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+if (!accessToken || !refreshToken) {
+  return redirect("/signin");
+}
+const { data, error } = await supabase.auth.setSession({
+  refresh_token: refreshToken.value,
+  access_token: accessToken.value,
+});
+if (error) {
+  cookies.delete("sb-access-token", {
+    path: "/",
+  });
+  cookies.delete("sb-refresh-token", {
+    path: "/",
+  });
+
+  return redirect("/signin");
+}
+const resconf = restype.restype
+const errorstate = Astro.url.searchParams.get('error')! || '';
+const errormsg = Astro.url.searchParams.get('error')! || '';
+const success = Astro.url.searchParams.get('success')! || '';
+const newpass = Astro.url.searchParams.get('password')! || ''
+let newpassword;
+if (Astro.url.searchParams.get("password")){ newpassword = "Password is " + newpass };
+
+const {
+  data: { user },
+} = await supabase.auth.getUser()
+const metadata = user.user_metadata
+const username = metadata.full_name
+const email = data?.user?.email
+const avatar = metadata.avatar_url
+
+let accountlistjson = await fetch(
+    config.pterodactyl.url + "/api/application/users?include=servers&filter[email]=" + encodeURIComponent(email),
+    {
+        method: "get",
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${config.pterodactyl.api}`
+        }
+    });
+              let accountlist = await accountlistjson.json();
+              let userdata = accountlist.data.filter(acc => acc.attributes.email == email);
+
+let cacheaccount = await fetch(config.pterodactyl.url + "/api/application/users/" + userdata[0].attributes.id + "?include=servers",
+ {
+  method: "get",
+  headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${config.pterodactyl.api}` }
+ });
+if (await cacheaccount.statusText == "Not Found") {
+  if (error) {
+    console.log(chalk.red(`[KlovitClient] An error has occured on path ${Astro.url.pathname}:`));
+  };};
+let cacheaccountinfo = JSON.parse(await cacheaccount.text());
+    
+const pterodactyl = cacheaccountinfo.attributes;
+const adminstatus = pterodactyl.root_admin
+const servers = pterodactyl.relationships.servers.data[0]
+
+// RESOURCES
+const extraresources = await db.get("extraresources-" + username)
+const pkglist = config.packages.list.pkg
+const pkg = await db.get(`package-${username}`)
+// Package Limits
+const pkgram = config.packages.list[await db.get("package-" + username)].ram
+const pkgdisk = config.packages.list[await db.get("package-" + username)].disk
+const pkgserverslimit = config.packages.list[await db.get("package-" + username)].servers
+// Actual Limits
+let ccore;
+ccore = config.packages.list[await db.get("package-" + username)].cpu + extraresources.cpu
+ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
+const ramlimit = pkgram + extraresources.ram
+const disklimit = pkgdisk + extraresources.disk
+const serverslimit = pkgserverslimit + extraresources.servers
+// Used resources
+let serversused = pterodactyl.relationships.servers.data.length;
+let ramused = 0;
+let diskused = 0;
+let cpuused = 0;
+if (config.resource_type ==="GB") {
+for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0)/1024;
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0)/1024;
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0)/100;
+}
+} else {
+    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+}
+}
+if (adminstatus === false) {
+ Astro.redirect("/dashboard")
+}
+const vercdnraw = await fetch("https://klovit.com/kcv.json")
+const vercdn = await vercdnraw.json()
+const currentver = config.version
+const latestver = vercdn.version
+let outdated;
+if (currentver < latestver) {
+    outdated = true
+}
+if (currentver === latestver) {
+        outdated = false
+}
+const coins = await db.get("balance-" + email)
+---
+<!DOCTYPE html>
+<html>
+    <Header />
+<style> 
+ @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+ body { font-family: 'Fredoka', system-ui, sans-serif; }
+  body {
+     overflow-y: scroll;
+     overflow-x: hidden;
+  }
+</style> 
+
+<script>
+   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+   if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+   } else {
+      document.documentElement.classList.remove('dark')
+   }
+   var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+   var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+                   
+    // Change the icons inside the button based on previous settings
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      themeToggleLightIcon.classList.remove('hidden');
+    } else {
+      themeToggleDarkIcon.classList.remove('hidden');
+    }
+            
+    var themeToggleBtn = document.getElementById('theme-toggle');
+
+    themeToggleBtn.addEventListener('click', function() {
+
+      // toggle icons inside button
+      themeToggleDarkIcon.classList.toggle('hidden');
+      themeToggleLightIcon.classList.toggle('hidden');
+
+      // if set via local storage previously
+      if (localStorage.getItem('color-theme')) {
+          if (localStorage.getItem('color-theme') === 'light') {
+              document.documentElement.classList.add('dark');
+              localStorage.setItem('color-theme', 'dark');
+          } else {
+              document.documentElement.classList.remove('dark');
+              localStorage.setItem('color-theme', 'light');
+          }
+
+      // if NOT set via local storage previously
+      } else {
+          if (document.documentElement.classList.contains('dark')) {
+              document.documentElement.classList.remove('dark');
+              localStorage.setItem('color-theme', 'light');
+          } else {
+             document.documentElement.classList.add('dark');
+              localStorage.setItem('color-theme', 'dark');
+          }
+      }
+    
+    });
+    // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
+        if (
+      localStorage.getItem('color-theme') === 'dark' ||
+      (!('color-theme' in localStorage) &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+</script>
+<body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
+    <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+        <div class="antialiased">
+            <main>
+                <div class="h-12 w-full">
+                    <Adminnav />
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
+                  <br><br>
+<section>
+  <h1 class="dark:text-white text-[15px] lg:text-2xl">Admin | Home</h1>
+    <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+        <div class="row"><img class="h-32 w-full object-cover lg:h-48 rounded-xl" src="https://wallpaperaccess.com/full/4650672.jpg" alt=""></div>
+                      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+                        <div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
+                          <div class="flex">
+                            <img class="h-24 w-24 rounded-full ring-2 ring-zinc-700 sm:h-32 sm:w-32" src={avatar} alt="useravatar">
+                          </div>
+                          <div class="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
+                            <div class="mt-6 min-w-0 flex-1 sm:hidden md:block">
+                              <h1 class="truncate text-2xl font-bold dark:text-white">{username}</h1>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div><br>
+                    <div class="rounded-xl h-fit bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+                        <h1 class="dark:text-white text-xl">KlovitClient's Information</h1>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 col-span-4">
+                        <div class="w-fit h-fit rounded-xl">
+                            <h1 class="dark:text-white">Version</h1>
+                                      {outdated ?
+                                       <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
+                                        <h1>Latest version - V{latestver}</h1>
+                                      </div><br>
+                                      <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
+                                        <h1>Your KlovitClient instance is outdated. Please update to the latest version ( V{latestver} )</h1>
+                                      </div> : 
+                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                        <h1>Latest version - V{latestver}</h1>
+                                      </div><br>
+                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                        <h1>Your KlovitClient instance is up-to-date.</h1>
+                                      </div>}
+                                    </div>
+                                    <div class="w-fit h-fit rounded-xl">
+                            <h1 class="dark:text-white">Social</h1> 
+                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                        <a href="https://github.com/klovit/klovitclient"><i class="fa-brands fa-github"> GitHub</i></a>
+                                      </div><br>
+                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                        <a href="https://discord.gg/JJzHzQkFpr"><i class="fa-brands fa-discord"> Discord</i></a>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+</section>
+
+                </div>
+            </main>
+        </div>
+    </div>
+    <div class="md:hidden w-screen overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+
+        <div class="antialiased">
+            <main>
+              <main>
+                <div class="h-12 w-full">
+                    
+<Adminmobnav />
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
+<br><br>
+<section>
+  <h1 class="text-white text-[15px] lg:text-2xl">Admin | Home</h1>
+                    <div class="rounded-xl bg-zinc-950 px-2.5 py-2">
+                        <div class="row"><img class="h-32 w-full object-cover lg:h-48 rounded-xl" src="https://wallpaperaccess.com/full/4650672.jpg" alt=""></div>
+                                      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+                                        <div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
+                                          <div class="flex">
+                                            <img class="h-24 w-24 rounded-full ring-2 ring-zinc-700 sm:h-32 sm:w-32" src={avatar} alt="useravatar">
+                                          </div>
+                                          <div class="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
+                                            <div class="mt-6 min-w-0 flex-1 sm:hidden md:block">
+                                              <h1 class="truncate text-2xl font-bold text-white">{username}</h1>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div><br>
+                                    <div class="rounded-xl h-fit bg-zinc-950 px-2.5 py-2">
+                                        <h1 class="text-white text-xl">KlovitClient's Information</h1>
+                                        <div class="grid grid-cols-1 lg:grid-cols-2 col-span-4">
+                                        <div class="w-fit h-fit rounded-xl">
+                                            <h1 class="text-white">Version</h1>
+                                                      {outdated ?
+                                                       <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
+                                                        <h1>Latest version - V{latestver}</h1>
+                                                      </div><br>
+                                                      <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
+                                                        <h1>Your KlovitClient instance is outdated. Please update to the latest version ( V{latestver} )</h1>
+                                                      </div> : 
+                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                                        <h1>Latest version - V{latestver}</h1>
+                                                      </div><br>
+                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                                        <h1>Your KlovitClient instance is up-to-date.</h1>
+                                                      </div>}
+                                                    </div>
+                                                    <div class="w-fit h-fit rounded-xl">
+                                            <h1 class="text-white">Social</h1> 
+                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                                        <a href="https://github.com/klovit/klovitclient"><i class="fa-brands fa-github"> GitHub</i></a>
+                                                      </div><br>
+                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                                        <a href="https://discord.gg/JJzHzQkFpr"><i class="fa-brands fa-discord"> Discord</i></a>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+</section>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

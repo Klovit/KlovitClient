@@ -1,0 +1,58 @@
+---
+import chalk from 'chalk';
+import config from '../../../../../../config';
+import { getImage } from 'astro:assets';
+import { supabase } from "../../../../../../lib/supabase";
+import db from '../../../../../../database';
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+if (!accessToken || !refreshToken) {
+  return redirect("/signin");
+}
+const refresh_token = refreshToken.value
+const access_token = accessToken.value
+const { data, error } = await supabase.auth.setSession({
+  refresh_token: refresh_token,
+  access_token: access_token,
+});
+
+if (error) {
+  cookies.delete("sb-access-token", {
+    path: "/",
+  });
+  cookies.delete("sb-refresh-token", {
+    path: "/",
+  });
+
+  return redirect("/signin");
+}
+const {
+  data: { user },
+} = await supabase.auth.getUser()
+const email = data?.user?.email
+// Getting ATGCodes and code from params
+const atgcodes = await db.get("atgcodes-" + email)
+const rawcode = Astro.params;
+const code = rawcode.code
+console.log(atgcodes, code)
+try {
+if (!atgcodes[email]) return Astro.redirect(`/economy?error=The code does not exist.`)
+if (atgcodes[email].code !== code) return Astro.redirect(`/economy?error=Invalid code.`)
+await db.delete("atgcodes-" + email)
+
+if (((Date.now() - atgcodes.generated) / 1000) < config.coins.earn.links.atglinks.minimumtime) {
+        return Response('<p>Hm... our systems detected something going on! Please make sure you are not using an ad blocker (or ATGLinks bypasser). <a href="/earn">Generate another link</a></p> <img src="https://i.imgur.com/lwbn3E9.png" alt="robot" height="300">')
+    }
+
+    // Adding coins
+    const coins = await db.get(`balance-${email}`)
+    await db.set(`balance-${email}`, +coins + +config.coins.earn.links.atglinks.amount)
+
+    return Astro.redirect(`/economy?success=You have successfully completed a ATGLinks link and you have earned ${config.coins.earn.links.atglinks.amount} Coins.`)
+} catch {
+    console.log(error)
+    return new Response(`<p>${error}</p>`)
+}
+---

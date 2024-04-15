@@ -1,0 +1,254 @@
+---
+import chalk from 'chalk';
+import config from '../config';
+import { Image,getImage } from 'astro:assets';
+import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
+import { supabase } from "../lib/supabase";
+import db from '../database';
+import Nav from "../components/nav.astro";
+import restype from "../restype"
+import Header from "../components/head.astro"
+import Resources from '../components/resources.astro';
+import Footer from "../components/footer.astro"
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+if (!accessToken || !refreshToken) {
+  return redirect("/signin");
+}
+const refresh_token = refreshToken.value
+const access_token = accessToken.value
+const { data, error } = await supabase.auth.setSession({
+  refresh_token: refresh_token,
+  access_token: access_token,
+});
+
+if (error) {
+  cookies.delete("sb-access-token", {
+    path: "/",
+  });
+  cookies.delete("sb-refresh-token", {
+    path: "/",
+  });
+
+  return redirect("/signin");
+}
+
+
+const icon = await getImage({src: `${LOGO}`,height: '50', width: '50', format: 'png'})
+const errorstate = Astro.url.searchParams.get('error')! || '';
+const errormsg = Astro.url.searchParams.get('error')! || '';
+const success = Astro.url.searchParams.get('success')! || '';
+const successmsg = Astro.url.searchParams.get('success')! || '';
+
+const {
+  data: { user },
+} = await supabase.auth.getUser()
+
+const metadata = user.user_metadata
+const username = metadata.full_name
+const email = data?.user?.email
+const avatar = metadata.avatar_url
+
+let accountlistjson = await fetch(
+    config.pterodactyl.url + "/api/application/users?include=servers&filter[email]=" + encodeURIComponent(email),
+    {
+        method: "get",
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${config.pterodactyl.api}`
+        }
+    }
+);
+              let accountlist = await accountlistjson.json();
+              let userdata = accountlist.data.filter(acc => acc.attributes.email == email);
+let cacheaccount = await fetch(
+config.pterodactyl.url + "/api/application/users/" + userdata[0].attributes.id + "?include=servers",
+ {
+    method: "get",
+    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${config.pterodactyl.api}` }
+  }
+);
+if (await cacheaccount.statusText == "Not Found") {
+  if (error) {
+    console.log(chalk.red(`[KlovitClient] An error has occured on path ${Astro.url.pathname}:`));
+  };
+};
+let cacheaccountinfo = JSON.parse(await cacheaccount.text());
+    
+const pterodactyl = cacheaccountinfo.attributes;
+const adminstatus = pterodactyl.root_admin
+const servers = pterodactyl.relationships.servers.data[0]
+
+const year = new Date().getFullYear().toString()
+const yearWithTitle = `${year} ${TITLE}`
+
+
+let srvs = pterodactyl.relationships.servers.data
+
+let serverram;
+let serverdisk;
+let servercpu;
+if (config.resource_type === "GB"){
+    serverram = "%serverram% GB(s)"
+    serverdisk = "%serverdisk% GB(s)"
+    servercpu = "%servercpu% Core(s)"
+} else {
+    serverram = "%serverram% MB(s)"
+    serverdisk = "%serverdisk% MB(s)"
+    servercpu = "%servercpu%%"
+    }
+    // Used resources
+let ramused = 0;
+let diskused = 0;
+let cpuused = 0;
+    if (config.resource_type ==="GB") {
+for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0)/1024;
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0)/1024;
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0)/100;
+}
+} else {
+    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+}
+}
+---
+<div class="hidden md:block grid grid-cols-4">
+{servers ?
+    srvs.map((serverData, i) => <div class="mt-1 mb-1 dark:text-white bg-zinc-300 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80 swiper-slide relative h-40 w-100 shrink-0 rounded-lg bg-cover swiper-slide-active" role="group" aria-label=`${i} + 1 / {pterodactyl.relationships.servers.data.length}` style="margin-right: 16px;">
+      <div class="absolute inset-0 flex flex-col justify-between rounded-lg border border-white/10 p-5">
+        <div class="flex items-center items-right justify-between">
+          Server Name: {serverData.attributes.name.length > 40 ? serverData.attributes.name.slice(0, 40) + "..." : serverData.attributes.name}<br>
+          RAM: {serverram.includes("GB") ? serverram.replace("%serverram%", serverData.attributes.limits.memory/1024) : serverram.replace("%serverram%", serverData.attributes.limits.memory)}<br>
+          Disk: {serverdisk.includes("GB") ? serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk/1024) : serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk)}<br>
+          CPU: {servercpu.includes("Core") ? servercpu.replace("%servercpu%", serverData.attributes.limits.cpu/100) : servercpu.replace("%servercpu%", serverData.attributes.limits.cpu)}<br>
+        </div>
+        <div class="dark:text-white">
+            Actions <button class="border border-black dark:border-white rounded-xl text-[10px]" id=`deleteserver${i}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-[10px]" id=`editserver${i}`><span class="p-1">Edit Server</span></button>
+        </div>
+
+      </div>
+    </div>
+    <script define:vars={{ serverData, i }}>
+            const delbutton = document.querySelectorAll('#deleteserver' + i);
+            const editbutton = document.querySelectorAll('#editserver' + i);
+
+delbutton.forEach((button) => {
+button.addEventListener('click', () => {
+deleteserver()
+});
+});
+editbutton.forEach((button) => {
+button.addEventListener('click', () => {
+  window.location.href = `/edit?id=${serverData.attributes.id}`
+});
+});
+
+async function deleteserver() {
+if (confirm("Do you want to really delete your server? This action is irreversible.") == true) {
+const options = {
+method: 'POST',
+url: '/server/delete',
+headers: {
+'Content-Type': 'application/json',
+},
+body: `{"id":${serverData.attributes.id}}`,
+};
+fetch('/server/delete', options)
+.then((response)=>{
+if(response.status==200){
+alert("Successfully deleted your server.");
+window.location.href("/dashboard")
+} 
+else {
+if (response.status==422) {
+alert(`ERROR: ${statustext}`)
+} else {
+alert("UNDEFINED ERROR") }
+}
+});
+}
+}
+            </script>)
+            
+     : <div class="grid grid-cols-1">
+      <div>
+        <p class="dark:text-white"> You don't have a server yet, create one here.</p><br>
+        </div>
+      <div>
+       <button onclick="location.href='/create'" class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center w-40 h-10">Create</button>
+</div>
+</div>    }
+</div>
+
+<div class="md:hidden w-fit h-fit">
+{servers ?
+    srvs.map((serverData, i) => <div class="mt-1 mb-1 text-xs dark:text-white bg-zinc-300 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80 h-max w-max rounded-lg bg-cover" role="group" aria-label=`i + 1 / {pterodactyl.relationships.servers.data.length}` style="margin-right: 16px;">
+      <div class="flex flex-col justify-between rounded-lg border border-white/10 p-5">
+        <div class="flex items-right">
+          Server Name: {serverData.attributes.name.length > 40 ? serverData.attributes.name.slice(0, 40) + "..." : serverData.attributes.name}<br>
+          RAM: {serverram.includes("GB") ? serverram.replace("%serverram%", serverData.attributes.limits.memory/1024) : serverram.replace("%serverram%", serverData.attributes.limits.memory)}<br>
+          Disk: {serverdisk.includes("GB") ? serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk/1024) : serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk)}<br>
+          CPU: {servercpu.includes("Core") ? servercpu.replace("%servercpu%", serverData.attributes.limits.cpu/100) : servercpu.replace("%servercpu%", serverData.attributes.limits.cpu)}<br>
+        </div>
+        <div class="dark:text-white">
+            Actions <button class="border border-black dark:border-white rounded-xl text-xs" id=`deleteservermob${i}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-xs" id=`editservermob${i}`><span class="p-1">Edit Server</span></button>
+        </div>
+
+      </div>
+    </div>
+    <script define:vars={{ serverData, i }}>
+            const delbuttonmob = document.querySelectorAll('#deleteservermob' + i);
+            const editbuttonmob = document.querySelectorAll('#editservermob' + i);
+
+delbuttonmob.forEach((button) => {
+button.addEventListener('click', () => {
+deleteserver()
+});
+});
+editbuttonmob.forEach((button) => {
+button.addEventListener('click', () => {
+window.location.href('/edit?id=' + serverData.attributes.id)
+});
+});
+
+async function deleteserver() {
+if (confirm("Do you want to really delete your server? This action is irreversible.") == true) {
+const options = {
+method: 'POST',
+url: '/server/delete',
+headers: {
+'Content-Type': 'application/json',
+},
+body: `{"id":${serverData.attributes.id}}`,
+};
+fetch('/server/delete', options)
+.then((response)=>{
+if(response.status==200){
+alert("Successfully deleted your server.");
+window.location.href("/dashboard")
+} 
+else {
+if (response.status==422) {
+alert(`ERROR: ${statustext}`)
+} else {
+alert("UNDEFINED ERROR") }
+}
+});
+}
+}
+            </script>)
+            
+     : <div class="grid grid-cols-1">
+      <div>
+        <p class="dark:text-white"> You don't have a server yet, create one here.</p><br>
+        </div>
+      <div>
+       <button onclick="location.href='/create'" class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center w-40 h-10">Create</button>
+</div>
+</div>    }
+</div>

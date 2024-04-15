@@ -1,0 +1,181 @@
+---
+import chalk from 'chalk';
+import config from '../config';
+import { Image,getImage } from 'astro:assets';
+import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
+import { supabase } from "../lib/supabase";
+import db from '../database';
+import Nav from "../components/nav.astro";
+import Sidebar from "../components/sidebar.astro";
+import restype from "../restype"
+import Header from "../components/head.astro"
+import Footer from "../components/footer.astro"
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+if (!accessToken || !refreshToken) {
+  return redirect("/signin");
+}
+const refresh_token = refreshToken.value
+const access_token = accessToken.value
+const { data, error } = await supabase.auth.setSession({
+  refresh_token: refresh_token,
+  access_token: access_token,
+});
+
+if (error) {
+  cookies.delete("sb-access-token", {
+    path: "/",
+  });
+  cookies.delete("sb-refresh-token", {
+    path: "/",
+  });
+
+  return redirect("/signin");
+}
+
+
+const icon = await getImage({src: `${LOGO}`,height: '50', width: '50', format: 'png'})
+const errorstate = Astro.url.searchParams.get('error')! || '';
+const errormsg = Astro.url.searchParams.get('error')! || '';
+const success = Astro.url.searchParams.get('success')! || '';
+const successmsg = Astro.url.searchParams.get('success')! || '';
+
+const {
+  data: { user },
+} = await supabase.auth.getUser()
+
+const metadata = user.user_metadata
+const username = metadata.full_name
+const email = data?.user?.email
+const avatar = metadata.avatar_url
+
+let accountlistjson = await fetch(
+    config.pterodactyl.url + "/api/application/users?include=servers&filter[email]=" + encodeURIComponent(email),
+    {
+        method: "get",
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${config.pterodactyl.api}`
+        }
+    }
+);
+              let accountlist = await accountlistjson.json();
+              let userdata = accountlist.data.filter(acc => acc.attributes.email == email);
+let cacheaccount = await fetch(
+config.pterodactyl.url + "/api/application/users/" + userdata[0].attributes.id + "?include=servers",
+ {
+    method: "get",
+    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${config.pterodactyl.api}` }
+  }
+);
+if (await cacheaccount.statusText == "Not Found") {
+  if (error) {
+    console.log(chalk.red(`[KlovitClient] An error has occured on path ${Astro.url.pathname}:`));
+  };
+};
+let cacheaccountinfo = JSON.parse(await cacheaccount.text());
+    
+const pterodactyl = cacheaccountinfo.attributes;
+const adminstatus = pterodactyl.root_admin
+const servers = pterodactyl.relationships.servers.data[0]
+
+const year = new Date().getFullYear().toString()
+const yearWithTitle = `${year} ${TITLE}`
+
+// RESOURCES
+const extraresources = await db.get("extraresources-" + username)
+const pkglist = config.packages.list.pkg
+const pkg = await db.get(`package-${username}`)
+const resconf = restype.restype
+// Package Limits
+const pkgram = config.packages.list[await db.get("package-" + username)].ram
+const pkgdisk = config.packages.list[await db.get("package-" + username)].disk
+const pkgserverslimit = config.packages.list[await db.get("package-" + username)].servers
+// Actual Limits
+let ccore;
+ccore = config.packages.list[await db.get("package-" + username)].cpu + extraresources.cpu
+ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
+const ramlimit = pkgram + extraresources.ram
+const disklimit = pkgdisk + extraresources.disk
+const serverslimit = pkgserverslimit + extraresources.servers
+// Used resources
+let ramused = 0;
+let diskused = 0;
+let cpuused = 0;
+if (config.resource_type ==="GB") {
+for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0)/1024;
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0)/1024;
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0)/100;
+}
+} else {
+    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
+}
+}
+
+
+const serversused = pterodactyl.relationships.servers.data.length
+let srvs = pterodactyl.relationships.servers.data
+
+let serverram;
+let serverdisk;
+let servercpu;
+if (config.resource_type === "GB"){
+    serverram = "%serverram% GB(s)"
+    serverdisk = "%serverdisk% GB(s)"
+    servercpu = "%servercpu% Core(s)"
+} else {
+    serverram = "%serverram% MB(s)"
+    serverdisk = "%serverdisk% MB(s)"
+    servercpu = "%servercpu%%"
+    }
+const coins = await db.get("balance-" + email)
+---
+<section class="hidden md:block shadow-lg shadow-gray-500/40 mt-10">
+    <span class="text-amber-500 ml-4">Resources</span>
+    <div class="justify-center w-screen rounded-xl h-fit bg-zinc-300 flex items-center p-4 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80">
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
+            <h1 class="dark:text-white text-lg text-center">RAM {resconf}</h1>
+            <h1 class="dark:text-white text-3xl text-center">{ramused} / {ramlimit}</h1>
+        </div>
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
+            <h1 class="dark:text-white text-lg text-center">Disk {resconf}</h1>
+            <h1 class="dark:text-white text-3xl text-center">{diskused} / {disklimit}</h1>
+        </div>
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
+            <h1 class="dark:text-white text-lg text-center">CPU</h1>
+            <h1 class="dark:text-white text-3xl text-center">{cpuused} / {ccore}</h1>
+        </div>
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
+          <h1 class="dark:text-white text-lg text-center">Servers</h1>
+          <h1 class="dark:text-white text-3xl text-center">{serversused} / {serverslimit} Slots</h1>
+        </div>
+    </div>
+  </section>
+  <section class="md:hidden shadow-lg shadow-gray-500/40 mt-10">
+    <span class="text-amber-500 ml-4">Resources</span>
+    <div class="justify-center w-fit rounded-xl h-fit bg-zinc-300 flex items-center p-4 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80">
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
+            <h1 class="dark:text-white text-lg text-center">RAM {resconf}</h1>
+            <h1 class="dark:text-white text-xl text-center">{ramused} / {ramlimit}</h1>
+        </div>
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
+            <h1 class="dark:text-white text-lg text-center">Disk {resconf}</h1>
+            <h1 class="dark:text-white text-xl text-center">{diskused} / {disklimit}</h1>
+        </div>
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
+            <h1 class="dark:text-white text-lg text-center">CPU</h1>
+            <h1 class="dark:text-white text-xl text-center">{cpuused} / {ccore}</h1>
+        </div>
+        <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
+          <h1 class="dark:text-white text-lg text-center">Servers</h1>
+          <h1 class="dark:text-white text-xl text-center">{serversused} / {serverslimit} Slots</h1>
+        </div>
+    </div>
+  </section>
+  
