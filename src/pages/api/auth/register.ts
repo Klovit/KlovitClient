@@ -137,7 +137,7 @@ const full_name = username
                 servers: 0
             }
         }
-        let currentplan = await db.get("package-" + username);
+        let currentplan = await db.get("package-" + email);
         let plan;
 
         if (typeof currentplan == "object") {

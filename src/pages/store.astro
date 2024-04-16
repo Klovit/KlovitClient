@@ -87,17 +87,17 @@ const year = new Date().getFullYear().toString()
 const yearWithTitle = `${year} ${TITLE}`
 
 // RESOURCES
-const extraresources = await db.get("extraresources-" + username)
+const extraresources = await db.get("extraresources-" + email)
 const pkglist = config.packages.list.pkg
 const pkg = await db.get(`package-${username}`)
 const resconf = restype.restype
 // Package Limits
-const pkgram = config.packages.list[await db.get("package-" + username)].ram
-const pkgdisk = config.packages.list[await db.get("package-" + username)].disk
-const pkgserverslimit = config.packages.list[await db.get("package-" + username)].servers
+const pkgram = config.packages.list[await db.get("package-" + email)].ram
+const pkgdisk = config.packages.list[await db.get("package-" + email)].disk
+const pkgserverslimit = config.packages.list[await db.get("package-" + email)].servers
 // Actual Limits
 let ccore;
-ccore = config.packages.list[await db.get("package-" + username)].cpu + extraresources.cpu
+ccore = config.packages.list[await db.get("package-" + email)].cpu + extraresources.cpu
 ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
 const ramlimit = pkgram + extraresources.ram
 const disklimit = pkgdisk + extraresources.disk
