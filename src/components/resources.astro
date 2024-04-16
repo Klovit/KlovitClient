@@ -87,7 +87,7 @@ const yearWithTitle = `${year} ${TITLE}`
 // RESOURCES
 const extraresources = await db.get("extraresources-" + email)
 const pkglist = config.packages.list.pkg
-const pkg = await db.get(`package-${username}`)
+const pkg = await db.get(`package-${email}`)
 const resconf = restype.restype
 // Package Limits
 const pkgram = config.packages.list[await db.get("package-" + email)].ram

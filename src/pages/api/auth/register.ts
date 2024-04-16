@@ -155,7 +155,7 @@ const full_name = username
             await db.get("package-" + username, config.packages.default)
           } 
 
-          await db.set(`package-${username}`, plan)
+          await db.set(`package-${email}`, plan)
           await db.set(`extraresources-${username}`, extra)
         } else {
           console.log(`An error has occured when attempting to create ${email}'s account account.`);
