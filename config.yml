@@ -1,5 +1,5 @@
 ---
-version: '0.5' # Version of the KlovitClient instance
+version: '0.5.1' # Version of the KlovitClient instance
 name: KlovitClient # Your Host's name
 resource_type: 'GB' # This can be either GB or MB, NOTE:- If you have chosen GB then 100% cpu will be 1 thread, if you have chosen MB then 1 thread will be 100% cpu
 website: 
