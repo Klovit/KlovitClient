@@ -139,9 +139,9 @@ if (config.resource_type === "GB") {
   cpu3 = cpu2
 }
 
-    if (ram3 + ram > usrpackage.ram + extraram) return redirect(`/edit?id=${srvid}&error=Exceeding your RAM limit.&limit=${usrpackage.ram + extraram - ram2}`);
-    if (disk3 + disk > usrpackage.disk + extradisk) return redirect(`/edit?id=${srvid}&error=Exceeding your Disk limit.&limit=${usrpackage.disk + extradisk - disk2}`);
-    if (cpu3 + cpu > usrpackage.cpu + extracpu) return redirect(`/edit?id=${srvid}&error=Exceeding your CPU limit.&limit=${usrpackage.cpu + extracpu - cpu2}`);
+    if (+ram3 + +ram > +usrpackage.ram + +extraram) return redirect(`/edit?id=${srvid}&error=Exceeding your RAM limit.&limit=${usrpackage.ram + extraram - ram2}`);
+    if (+disk3 + +disk > +usrpackage.disk + +extradisk) return redirect(`/edit?id=${srvid}&error=Exceeding your Disk limit.&limit=${usrpackage.disk + extradisk - disk2}`);
+    if (+cpu3 + +cpu > +usrpackage.cpu + +extracpu) return redirect(`/edit?id=${srvid}&error=Exceeding your CPU limit.&limit=${usrpackage.cpu + extracpu - cpu2}`);
     if (egginfo.minimum.ram) if (ram < egginfo.minimum.ram) return redirect(`/edit?id=${srvid}&error=RAM is lower than Egg's minimum limit.&limit=${egginfo.minimum.ram}`);
     if (egginfo.minimum.disk) if (disk < egginfo.minimum.disk) return redirect(`/edit?id=${srvid}&error=Disk is lower than Egg's minimum limit.&limit=${egginfo.minimum.disk}`);
     if (egginfo.minimum.cpu) if (cpu < egginfo.minimum.cpu) return redirect(`/edit?id=${srvid}&error=CPU is lower than Egg's minimum limit.&limit=${egginfo.minimum.cpu}`);

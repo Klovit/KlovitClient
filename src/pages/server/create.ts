@@ -158,13 +158,13 @@ if (config.resource_type === "GB") {
     cpu = parseFloat(srvcpu)
   }
   if (!isNaN(ram) && !isNaN(disk) && !isNaN(cpu)) {
-    if (ram3 + srvram > usrpackage.ram + extra.ram) {
+    if (+ram3 + +srvram > +usrpackage.ram + +extra.ram) {
       return redirect(`/create?error=The RAM given exceeds your Package's RAM limit.`);
     }
-    if (disk3 + srvdisk > usrpackage.disk + extradisk) {
+    if (+disk3 + +srvdisk > +usrpackage.disk + +extradisk) {
       return redirect(`/create?error=The Disk given exceeds your Package's Disk limit.`);
     }
-    if (cpu3 + srvcpu > usrpackage.cpu + extracpu) {
+    if (+cpu3 + +srvcpu > +usrpackage.cpu + +extracpu) {
       return redirect(`/create?error=The CPU given exceeds your Package's CPU limit.`);
     }
     if (egginfo.limits.minimum.ram) if (srvram < egginfo.limits.minimum.ram) {
