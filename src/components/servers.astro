@@ -134,8 +134,8 @@ for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i+
       </div>
     </div>
     <script define:vars={{ serverData, i }}>
-            const delbutton = document.querySelectorAll('#deleteserver' + i);
-            const editbutton = document.querySelectorAll('#editserver' + i);
+            const delbutton = document.querySelectorAll(`#deleteserver${i}`);
+            const editbutton = document.querySelectorAll(`#editserver${i}`);
 
 delbutton.forEach((button) => {
 button.addEventListener('click', () => {
