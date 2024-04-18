@@ -162,7 +162,7 @@ fetch('/server/delete', options)
 .then((response)=>{
 if(response.status==200){
 alert("Successfully deleted your server.");
-window.location.href("/dashboard")
+window.location.href = "/dashboard"
 } 
 else {
 if (response.status==422) {
@@ -202,8 +202,8 @@ alert("UNDEFINED ERROR") }
       </div>
     </div>
     <script define:vars={{ serverData, i }}>
-            const delbuttonmob = document.querySelectorAll('#deleteservermob' + i);
-            const editbuttonmob = document.querySelectorAll('#editservermob' + i);
+      const delbuttonmob = document.querySelectorAll(`#deleteservermob{i}`);
+            const editbuttonmob = document.querySelectorAll(`#editservermob${i}`);
 
 delbuttonmob.forEach((button) => {
 button.addEventListener('click', () => {
@@ -230,7 +230,7 @@ fetch('/server/delete', options)
 .then((response)=>{
 if(response.status==200){
 alert("Successfully deleted your server.");
-window.location.href("/dashboard")
+window.location.href = "/dashboard"
 } 
 else {
 if (response.status==422) {
