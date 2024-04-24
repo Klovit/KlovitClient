@@ -151,12 +151,12 @@ const full_name = username
           let usernames = await db.get("users") ? await db.get("users") : [];
           if (usernames.filter(id => id == username).length == 0) {
             usernames.push(username);
-            await db.set("user-" + username, email);
-            await db.get("package-" + username, config.packages.default)
+            await db.set("user-" + email, username);
+            await db.get("package-" + email, config.packages.default)
           } 
 
           await db.set(`package-${email}`, plan)
-          await db.set(`extraresources-${username}`, extra)
+          await db.set(`extraresources-${email}`, extra)
         } else {
           console.log(`An error has occured when attempting to create ${email}'s account account.`);
         };

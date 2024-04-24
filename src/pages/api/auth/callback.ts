@@ -31,7 +31,7 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
       });
       let accountlist2 = await accountlistjson2.json();
       let userdata = accountlist2.data.filter(acc => acc.attributes.email == email);
-    if(!userdata) {
+    if(userdata.length != 1) {
     let accountjson = await fetch(
       config.pterodactyl.url + "/api/application/users",
       {
@@ -96,11 +96,7 @@ console.log(err)
     let accountlist = await accountlistjson.json();
     let usere = accountlist.data.filter(acc => acc.attributes.email == email);
     if (usere.length == 1) {
-      let usernames = await db.get("users") ? await db.get("users") : [];
-      if (usernames.filter(id => id == username).length == 0) {
-        usernames.push(username);
         await db.set("user-" + email, username);
-      } 
         await db.set(`package-${email}`, plan)
         await db.set("balance-" + email, coins);
         await db.set(`extraresources-${email}`, extra)

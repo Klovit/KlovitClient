@@ -6,10 +6,8 @@ import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import Nav from "../components/nav.astro";
-import Sidebar from "../components/sidebar.astro";
 import restype from "../restype"
 import Header from "../components/head.astro"
-import Footer from "../components/footer.astro"
 const { cookies, redirect } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
@@ -140,20 +138,20 @@ const coins = await db.get("balance-" + email)
     <span class="text-amber-500 ml-4">Resources</span>
     <div class="justify-center w-screen rounded-xl h-fit bg-zinc-300 flex items-center p-4 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80">
         <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
-            <h1 class="dark:text-white text-lg text-center">RAM {resconf}</h1>
-            <h1 class="dark:text-white text-3xl text-center">{ramused} / {ramlimit}</h1>
+            <h1 class="dark:text-white text-black text-lg text-center">RAM {resconf}</h1>
+            <h1 class="dark:text-white text-black text-3xl text-center">{ramused} / {ramlimit}</h1>
         </div>
         <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
-            <h1 class="dark:text-white text-lg text-center">Disk {resconf}</h1>
-            <h1 class="dark:text-white text-3xl text-center">{diskused} / {disklimit}</h1>
+            <h1 class="dark:text-white text-black text-lg text-center">Disk {resconf}</h1>
+            <h1 class="dark:text-white text-black text-3xl text-center">{diskused} / {disklimit}</h1>
         </div>
         <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
-            <h1 class="dark:text-white text-lg text-center">CPU</h1>
-            <h1 class="dark:text-white text-3xl text-center">{cpuused} / {ccore}</h1>
+            <h1 class="dark:text-white text-black text-lg text-center">CPU</h1>
+            <h1 class="dark:text-white text-black text-3xl text-center">{cpuused} / {ccore}</h1>
         </div>
         <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
-          <h1 class="dark:text-white text-lg text-center">Servers</h1>
-          <h1 class="dark:text-white text-3xl text-center">{serversused} / {serverslimit} Slots</h1>
+          <h1 class="dark:text-white text-black text-lg text-center">Servers</h1>
+          <h1 class="dark:text-white text-black text-3xl text-center">{serversused} / {serverslimit} Slots</h1>
         </div>
     </div>
   </section>
@@ -161,21 +159,31 @@ const coins = await db.get("balance-" + email)
     <span class="text-amber-500 ml-4">Resources</span>
     <div class="justify-center w-fit rounded-xl h-fit bg-zinc-300 flex items-center p-4 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80">
         <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
-            <h1 class="dark:text-white text-lg text-center">RAM {resconf}</h1>
-            <h1 class="dark:text-white text-xl text-center">{ramused} / {ramlimit}</h1>
+            <h1 class="dark:text-white text-black text-lg text-center">RAM {resconf}</h1>
+            <h1 class="dark:text-white text-black text-xl text-center">{ramused} / {ramlimit}</h1>
         </div>
         <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
-            <h1 class="dark:text-white text-lg text-center">Disk {resconf}</h1>
-            <h1 class="dark:text-white text-xl text-center">{diskused} / {disklimit}</h1>
+            <h1 class="dark:text-white text-black text-lg text-center">Disk {resconf}</h1>
+            <h1 class="dark:text-white text-black text-xl text-center">{diskused} / {disklimit}</h1>
         </div>
         <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
-            <h1 class="dark:text-white text-lg text-center">CPU</h1>
-            <h1 class="dark:text-white text-xl text-center">{cpuused} / {ccore}</h1>
+            <h1 class="dark:text-white text-black text-lg text-center">CPU</h1>
+            <h1 class="dark:text-white text-black text-xl text-center">{cpuused} / {ccore}</h1>
         </div>
         <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
-          <h1 class="dark:text-white text-lg text-center">Servers</h1>
-          <h1 class="dark:text-white text-xl text-center">{serversused} / {serverslimit} Slots</h1>
+          <h1 class="dark:text-white text-black text-lg text-center">Servers</h1>
+          <h1 class="dark:text-white text-black text-xl text-center">{serversused} / {serverslimit} Slots</h1>
         </div>
     </div>
   </section>
-  
+  <style> 
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+    body { font-family: 'Fredoka', system-ui, sans-serif; }
+     body {
+        overflow-y: scroll;
+        overflow-x: hidden;
+     }
+     @tailwind base;
+@tailwind components;
+@tailwind utilities;
+   </style>

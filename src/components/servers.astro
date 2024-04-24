@@ -1,7 +1,5 @@
 ---
-import chalk from 'chalk';
 import config from '../config';
-import { Image,getImage } from 'astro:assets';
 import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
 import { supabase } from "../lib/supabase";
 import db from '../database';
@@ -9,7 +7,6 @@ import Nav from "../components/nav.astro";
 import restype from "../restype"
 import Header from "../components/head.astro"
 import Resources from '../components/resources.astro';
-import Footer from "../components/footer.astro"
 const { cookies, redirect } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
@@ -36,7 +33,6 @@ if (error) {
 }
 
 
-const icon = await getImage({src: `${LOGO}`,height: '50', width: '50', format: 'png'})
 const errorstate = Astro.url.searchParams.get('error')! || '';
 const errormsg = Astro.url.searchParams.get('error')! || '';
 const success = Astro.url.searchParams.get('success')! || '';
@@ -70,11 +66,6 @@ config.pterodactyl.url + "/api/application/users/" + userdata[0].attributes.id +
     headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${config.pterodactyl.api}` }
   }
 );
-if (await cacheaccount.statusText == "Not Found") {
-  if (error) {
-    console.log(chalk.red(`[KlovitClient] An error has occured on path ${Astro.url.pathname}:`));
-  };
-};
 let cacheaccountinfo = JSON.parse(await cacheaccount.text());
     
 const pterodactyl = cacheaccountinfo.attributes;
@@ -119,8 +110,8 @@ for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i+
 ---
 <div class="hidden md:block grid grid-cols-4">
 {servers ?
-    srvs.map((serverData, i) => <div class="mt-1 mb-1 dark:text-white bg-zinc-300 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80 swiper-slide relative h-40 w-100 shrink-0 rounded-lg bg-cover swiper-slide-active" role="group" aria-label=`${i} + 1 / {pterodactyl.relationships.servers.data.length}` style="margin-right: 16px;">
-      <div class="absolute inset-0 flex flex-col justify-between rounded-lg border border-white/10 p-5">
+    srvs.map((serverData, i) => <div class="mt-1 mb-1 text-black dark:text-white bg-zinc-300 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80 h-40 w-100 shrink-0 rounded-lg" role="group" aria-label=`${i} + 1 / {pterodactyl.relationships.servers.data.length}` style="margin-right: 16px;">
+      <div class="absolute flex justify-between rounded-lg border border-white/10 p-5">
         <div class="flex items-center items-right justify-between">
           Server Name: {serverData.attributes.name.length > 40 ? serverData.attributes.name.slice(0, 40) + "..." : serverData.attributes.name}<br>
           RAM: {serverram.includes("GB") ? serverram.replace("%serverram%", serverData.attributes.limits.memory/1024) : serverram.replace("%serverram%", serverData.attributes.limits.memory)}<br>
@@ -128,56 +119,15 @@ for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i+
           CPU: {servercpu.includes("Core") ? servercpu.replace("%servercpu%", serverData.attributes.limits.cpu/100) : servercpu.replace("%servercpu%", serverData.attributes.limits.cpu)}<br>
         </div>
         <div class="dark:text-white">
-            Actions <button class="border border-black dark:border-white rounded-xl text-[10px]" id=`deleteserver${i}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-[10px]" id=`editserver${i}`><span class="p-1">Edit Server</span></button>
+          Actions <button class="border border-black dark:border-white rounded-xl text-xs" onclick=`window.location.href = '/delete?id=' + ${serverData.attributes.id}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-xs" onclick=`window.location.href = '/edit?id=' + ${serverData.attributes.id}`><span class="p-1">Edit Server</span></button>
         </div>
 
       </div>
-    </div>
-    <script define:vars={{ serverData, i }}>
-            const delbutton = document.querySelectorAll(`#deleteserver${i}`);
-            const editbutton = document.querySelectorAll(`#editserver${i}`);
-
-delbutton.forEach((button) => {
-button.addEventListener('click', () => {
-deleteserver()
-});
-});
-editbutton.forEach((button) => {
-button.addEventListener('click', () => {
-  window.location.href = `/edit?id=${serverData.attributes.id}`
-});
-});
-
-async function deleteserver() {
-if (confirm("Do you want to really delete your server? This action is irreversible.") == true) {
-const options = {
-method: 'POST',
-url: '/server/delete',
-headers: {
-'Content-Type': 'application/json',
-},
-body: `{"id":${serverData.attributes.id}}`,
-};
-fetch('/server/delete', options)
-.then((response)=>{
-if(response.status==200){
-alert("Successfully deleted your server.");
-window.location.href = "/dashboard"
-} 
-else {
-if (response.status==422) {
-alert(`ERROR: ${statustext}`)
-} else {
-alert("UNDEFINED ERROR") }
-}
-});
-}
-}
-            </script>)
+    </div>)
             
      : <div class="grid grid-cols-1">
       <div>
-        <p class="dark:text-white"> You don't have a server yet, create one here.</p><br>
+        <p class="text-black dark:text-white"> You don't have a server yet, create one here.</p><br>
         </div>
       <div>
        <button onclick="location.href='/create'" class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center w-40 h-10">Create</button>
@@ -196,59 +146,28 @@ alert("UNDEFINED ERROR") }
           CPU: {servercpu.includes("Core") ? servercpu.replace("%servercpu%", serverData.attributes.limits.cpu/100) : servercpu.replace("%servercpu%", serverData.attributes.limits.cpu)}<br>
         </div>
         <div class="dark:text-white">
-            Actions <button class="border border-black dark:border-white rounded-xl text-xs" id=`deleteservermob${i}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-xs" id=`editservermob${i}`><span class="p-1">Edit Server</span></button>
+            Actions <button class="border border-black dark:border-white rounded-xl text-xs" onclick=`window.location.href = /delete?id={serverData.attributes.id}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-xs" onclick=`/edit?id={i}`><span class="p-1">Edit Server</span></button>
         </div>
 
       </div>
-    </div>
-    <script define:vars={{ serverData, i }}>
-      const delbuttonmob = document.querySelectorAll(`#deleteservermob{i}`);
-            const editbuttonmob = document.querySelectorAll(`#editservermob${i}`);
-
-delbuttonmob.forEach((button) => {
-button.addEventListener('click', () => {
-deleteserver()
-});
-});
-editbuttonmob.forEach((button) => {
-button.addEventListener('click', () => {
-window.location.href('/edit?id=' + serverData.attributes.id)
-});
-});
-
-async function deleteserver() {
-if (confirm("Do you want to really delete your server? This action is irreversible.") == true) {
-const options = {
-method: 'POST',
-url: '/server/delete',
-headers: {
-'Content-Type': 'application/json',
-},
-body: `{"id":${serverData.attributes.id}}`,
-};
-fetch('/server/delete', options)
-.then((response)=>{
-if(response.status==200){
-alert("Successfully deleted your server.");
-window.location.href = "/dashboard"
-} 
-else {
-if (response.status==422) {
-alert(`ERROR: ${statustext}`)
-} else {
-alert("UNDEFINED ERROR") }
-}
-});
-}
-}
-            </script>)
-            
+    </div>)
      : <div class="grid grid-cols-1">
       <div>
-        <p class="dark:text-white"> You don't have a server yet, create one here.</p><br>
+        <p class="text-black dark:text-white"> You don't have a server yet, create one here.</p><br>
         </div>
       <div>
        <button onclick="location.href='/create'" class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center w-40 h-10">Create</button>
 </div>
 </div>    }
 </div>
+<style> 
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+    body { font-family: 'Fredoka', system-ui, sans-serif; }
+     body {
+        overflow-y: scroll;
+        overflow-x: hidden;
+     }
+     @tailwind base;
+@tailwind components;
+@tailwind utilities;
+   </style>

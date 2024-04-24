@@ -143,73 +143,18 @@ if (config.payments.enabled) {
 <!DOCTYPE html>
 <html>
     <Header />
-<style> 
- @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
- body { font-family: 'Fredoka', system-ui, sans-serif; }
-  body {
-     overflow-y: scroll;
-     overflow-x: hidden;
-  }
-</style> 
+    <style> 
+      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+      body { font-family: 'Fredoka', system-ui, sans-serif; }
+       body {
+          overflow-y: scroll;
+          overflow-x: hidden;
+       }
+       @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+     </style>
 
-<script>
-   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-   if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-   } else {
-      document.documentElement.classList.remove('dark')
-   }
-   var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-   var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-                   
-    // Change the icons inside the button based on previous settings
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      themeToggleLightIcon.classList.remove('hidden');
-    } else {
-      themeToggleDarkIcon.classList.remove('hidden');
-    }
-            
-    var themeToggleBtn = document.getElementById('theme-toggle');
-
-    themeToggleBtn.addEventListener('click', function() {
-
-      // toggle icons inside button
-      themeToggleDarkIcon.classList.toggle('hidden');
-      themeToggleLightIcon.classList.toggle('hidden');
-
-      // if set via local storage previously
-      if (localStorage.getItem('color-theme')) {
-          if (localStorage.getItem('color-theme') === 'light') {
-              document.documentElement.classList.add('dark');
-              localStorage.setItem('color-theme', 'dark');
-          } else {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('color-theme', 'light');
-          }
-
-      // if NOT set via local storage previously
-      } else {
-          if (document.documentElement.classList.contains('dark')) {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('color-theme', 'light');
-          } else {
-             document.documentElement.classList.add('dark');
-              localStorage.setItem('color-theme', 'dark');
-          }
-      }
-    
-    });
-    // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
-        if (
-      localStorage.getItem('color-theme') === 'dark' ||
-      (!('color-theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-</script>
 <body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
     <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
         <div class="antialiased">
@@ -227,24 +172,24 @@ if (config.payments.enabled) {
             <div class="grid grid-cols-1 w-full col-span-2 rounded-xl">
                 <div class="h-fit bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl rounded-l-xl">
                     <div class="w-full space-y-1">
-                        <h1 class="dark:text-gray-200 ml-1">Server Name: </h1>
+                        <h1 class="dark:text-gray-200 text-black ml-1">Server Name: </h1>
                         <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="text" name="srvname" maxlength={30}></input>
                     </div>
                     <div class="grid grid-cols-2 w-full col-span-2">
                       <div class="w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 ml-1">RAM: </h1>
+                        <h1 class="dark:text-gray-200 text-black ml-1">RAM: </h1>
                         <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="ram" maxlength={30}/></input>
                     </div>
                       <div class="ml-1 w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 ml-1">Disk: </h1>
+                        <h1 class="dark:text-gray-200 text-black ml-1">Disk: </h1>
                         <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="disk" maxlength={30}/></input>
                     </div>
                       <div class="w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 ml-1">CPU: </h1>
+                        <h1 class="dark:text-gray-200 text-black ml-1">CPU: </h1>
                         <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="cpu" maxlength={30}/></input>
                     </div>
                       <div class="ml-1 w-full space-y-1">
-                        <h1 class="dark:text-gray-200 ml-1">Server Software: </h1>
+                        <h1 class="dark:text-gray-200 text-black ml-1">Server Software: </h1>
                         <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="egg" required={true}>
                             {Object.keys(config.eggs).map(egg => (<option value={egg}>{config.eggs[egg].display}</option>))}
                         </select>
@@ -254,7 +199,7 @@ if (config.payments.enabled) {
             </div>
             <div class="h-full rounded-r-xl bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl">
                 <div class="w-full space-y-1">
-                    <h1 class="dark:text-gray-200 ml-1">Server Location: </h1>
+                    <h1 class="dark:text-gray-200 text-black ml-1">Server Location: </h1>
                     <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="location" >
                         {Object.keys(config.locations).map(location => (<option value={location}>{config.locations[location].name}</option>))}
                     </select>
@@ -292,24 +237,24 @@ if (config.payments.enabled) {
           <div class="grid grid-cols-1 w-full col-span-2 rounded-xl">
               <div class="h-fit bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl rounded-l-xl">
                   <div class="w-full space-y-1">
-                      <h1 class="dark:text-gray-200 ml-1">Server Name: </h1>
+                      <h1 class="dark:text-gray-200 text-black ml-1">Server Name: </h1>
                       <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="text" name="srvname" maxlength={30} required></input>
                   </div>
                   <div class="grid grid-cols-2 w-full col-span-2">
                     <div class="w-30 space-y-1">
-                      <h1 class="dark:text-gray-200 ml-1">RAM: </h1>
+                      <h1 class="dark:text-gray-200 text-black ml-1">RAM: </h1>
                       <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="ram" maxlength={30} required></input>
                   </div>
                     <div class="ml-1 w-30 space-y-1">
-                      <h1 class="dark:text-gray-200 ml-1">Disk: </h1>
+                      <h1 class="dark:text-gray-200 text-black ml-1">Disk: </h1>
                       <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="disk" maxlength={30} required/></input>
                   </div>
                     <div class="w-30 space-y-1">
-                      <h1 class="dark:text-gray-200 ml-1">CPU: </h1>
+                      <h1 class="dark:text-gray-200 text-black ml-1">CPU: </h1>
                       <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="cpu" maxlength={30} required/></input>
                   </div>
                     <div class="ml-1 w-full space-y-1">
-                      <h1 class="dark:text-gray-200 ml-1">Server Software: </h1>
+                      <h1 class="dark:text-gray-200 text-black ml-1">Server Software: </h1>
                       <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="egg" required={true}>
                           {Object.keys(config.eggs).map(egg => (<option value={egg}>{config.eggs[egg].display}</option>))}
                       </select>
@@ -319,7 +264,7 @@ if (config.payments.enabled) {
           </div>
           <div class="h-full rounded-r-xl bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl">
               <div class="w-full space-y-1">
-                  <h1 class="dark:text-gray-200 ml-1">Server Location: </h1>
+                  <h1 class="dark:text-gray-200 text-black ml-1">Server Location: </h1>
                   <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="location" required>
                       {Object.keys(config.locations).map(location => (<option value={location}>{config.locations[location].name}</option>))}
                   </select>

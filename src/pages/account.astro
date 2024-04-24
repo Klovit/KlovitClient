@@ -145,73 +145,18 @@ const emailv = ` ${email}`
 <!DOCTYPE html>
 <html>
     <Header />
-<style> 
- @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
- body { font-family: 'Fredoka', system-ui, sans-serif; }
-  body {
-     overflow-y: scroll;
-     overflow-x: hidden;
-  }
-</style> 
+    <style> 
+      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+      body { font-family: 'Fredoka', system-ui, sans-serif; }
+       body {
+          overflow-y: scroll;
+          overflow-x: hidden;
+       }
+       @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+     </style>
 
-<script>
-   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-   if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-   } else {
-      document.documentElement.classList.remove('dark')
-   }
-   var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-   var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-                   
-    // Change the icons inside the button based on previous settings
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      themeToggleLightIcon.classList.remove('hidden');
-    } else {
-      themeToggleDarkIcon.classList.remove('hidden');
-    }
-            
-    var themeToggleBtn = document.getElementById('theme-toggle');
-
-    themeToggleBtn.addEventListener('click', function() {
-
-      // toggle icons inside button
-      themeToggleDarkIcon.classList.toggle('hidden');
-      themeToggleLightIcon.classList.toggle('hidden');
-
-      // if set via local storage previously
-      if (localStorage.getItem('color-theme')) {
-          if (localStorage.getItem('color-theme') === 'light') {
-              document.documentElement.classList.add('dark');
-              localStorage.setItem('color-theme', 'dark');
-          } else {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('color-theme', 'light');
-          }
-
-      // if NOT set via local storage previously
-      } else {
-          if (document.documentElement.classList.contains('dark')) {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('color-theme', 'light');
-          } else {
-             document.documentElement.classList.add('dark');
-              localStorage.setItem('color-theme', 'dark');
-          }
-      }
-    
-    });
-    // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
-        if (
-      localStorage.getItem('color-theme') === 'dark' ||
-      (!('color-theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-</script>
 <body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
     <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
         <div class="antialiased">
@@ -231,7 +176,7 @@ const emailv = ` ${email}`
                       </div>
                       <div class="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                         <div class="mt-6 min-w-0 flex-1 sm:hidden md:block">
-                          <h1 class="truncate text-2xl font-bold text-white">{username}</h1>
+                          <h1 class="truncate text-2xl text-black font-bold dark:text-white">{username}</h1>
                         </div>
                         <div class="justify-stretch mt-6 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
                         {adminstatus ? 
@@ -250,7 +195,7 @@ const emailv = ` ${email}`
                 </div><br>
           <div class="flex items-center justify-between">
             <form action="/api/user/passwordreset" method="POST" class="bg-zinc-300 dark:bg-zinc-900/50 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl">
-                <div class="text-white justify-between">
+                <div class="text-black dark:text-white justify-between">
                     <span>Username </span>
                     <span class="mr-8">
                       <input class="form-input peer w-fit rounded-xl border border-zinc-700 bg-transparent" value={usernamev} disabled>
@@ -261,11 +206,11 @@ const emailv = ` ${email}`
                     </span>
                 </div><br>
                 <p>Hover to see your password</p>
-                <div class="bg-zinc-900 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl">
-                <input class="opacity-0 hover:opacity-100 bg-zinc-900 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl" value={password} disabled>
+                <div class="bg-zinc-500 dark:bg-zinc-900 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl">
+                <input class="opacity-0 hover:opacity-100 bg-zinc-400 dark:bg-zinc-900 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl" value={password} disabled>
                 </input>
                 </div>
-                  <button class="mt-2 bg-zinc-900 border text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl" >Click me if the password is wrong.</button>
+                  <button class="mt-2 bg-zinc-400 dark:bg-zinc-900 border text-black dark:text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl" >Click me if the password is wrong.</button>
                 </form>
           </div>
 </section>

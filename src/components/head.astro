@@ -1,5 +1,4 @@
 ---
-import chalk from 'chalk';
 import config from '../config';
 import { Image,getImage } from 'astro:assets';
 import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
@@ -61,6 +60,9 @@ if (pagepath === "/signin") {
 if (pagepath === "/register") {
     PAGE = "Register"
 }
+if (pagepath === "/delete") {
+    PAGE = "Delete Server"
+}
 ---
 <!DOCTYPE html>
 <head>
@@ -80,11 +82,21 @@ if (pagepath === "/register") {
   <meta name="twitter:image" content=`${LOGO}`>
   <meta name="twitter:image:src" content=`${LOGO}`>
   <title>{TITLE} | {PAGE}</title>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href={LOGO} rel="icon">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-  <script src="https://kit.fontawesome.com/cf4342c927.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+  <link href={LOGO} rel="icon">
+  <script is:inline src="https://cdn.tailwindcss.com"></script>
+  <script is:inline src="https://kit.fontawesome.com/cf4342c927.js" crossorigin="anonymous"></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
 </head>
+<style> 
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+    body { font-family: 'Fredoka', system-ui, sans-serif; }
+     body {
+        overflow-y: scroll;
+        overflow-x: hidden;
+     }
+     @tailwind base;
+@tailwind components;
+@tailwind utilities;
+   </style>

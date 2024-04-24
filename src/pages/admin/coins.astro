@@ -98,14 +98,17 @@ const coins = await db.get("balance-" + email)
 <!DOCTYPE html>
 <html>
     <Header />
-<style> 
- @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
- body { font-family: 'Fredoka', system-ui, sans-serif; }
-  body {
-     overflow-y: scroll;
-     overflow-x: hidden;
-  }
-</style> 
+    <style> 
+      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+      body { font-family: 'Fredoka', system-ui, sans-serif; }
+       body {
+          overflow-y: scroll;
+          overflow-x: hidden;
+       }
+       @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+     </style>
 
 <script>
    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -175,50 +178,50 @@ const coins = await db.get("balance-" + email)
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
                   <br><br>
 <section>
-    <h1 class="dark:text-white text-[25px] lg:text-2xl">Admin | Coins</h1>
-    <h1 class="dark:text-white text-xl">&nbsp;Set coins</h1>
+    <h1 class="text-black dark:text-white text-[25px] lg:text-2xl">Admin | Coins</h1>
+    <h1 class="text-black dark:text-white text-xl">&nbsp;Set coins</h1>
         <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
             <form method="POST" action="/api/admin/setcoins">
-                        <div class="h-max p-4 rounded-l-xl">
+                        <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
                             <div class="w-full">
-                                <h1 class="dark:text-white ml-1">Email: </h1>
-                                <input class="dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                                <h1 class="text-black dark:text-white ml-1">Email: </h1>
+                                <input class="bg-white dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                             </div>
                             <div class="w-fit ">
-                                <h1 class="dark:text-white ml-1">Amount: </h1>
-                                <input class="dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
+                                <h1 class="text-black dark:text-white ml-1">Amount: </h1>
+                                <input class="bg-white dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
                             </div>
                            </div>
                            <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Set Coins</button>
             </form>
         </div><br>
-        <h1 class="dark:text-white text-xl">&nbsp;Add coins</h1>
+        <h1 class="text-black dark:text-white text-xl">&nbsp;Add coins</h1>
         <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
             <form method="POST" action="/api/admin/addcoins">
-                        <div class="h-max p-4 rounded-l-xl">
+                        <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
                             <div class="w-full">
-                                <h1 class="dark:text-white ml-1">Email: </h1>
-                                <input class="dark:bg-zinc-800 border w-80 h-6 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                                <h1 class="text-black dark:text-white ml-1">Email: </h1>
+                                <input class="bg-white dark:bg-zinc-800 border w-80 h-6 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                             </div>
                             <div class="w-fit ">
-                                <h1 class="dark:text-white ml-1">Amount: </h1>
-                                <input class="dark:bg-zinc-800 border w-40 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
+                                <h1 class="text-black dark:text-white ml-1">Amount: </h1>
+                                <input class="bg-white dark:bg-zinc-800 border w-40 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
                             </div>
                            </div>
                            <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Add Coins</button>
             </form>
         </div><br>
-        <h1 class="dark:text-white text-xl">&nbsp;Remove coins</h1>
+        <h1 class="text-black dark:text-white text-xl">&nbsp;Remove coins</h1>
         <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
             <form method="POST" action="/api/admin/removecoins">
-                        <div class="h-max p-4 rounded-l-xl">
+                        <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
                             <div class="w-full">
-                                <h1 class="dark:text-white ml-1">Email: </h1>
-                                <input class="dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                                <h1 class="text-black dark:text-white ml-1">Email: </h1>
+                                <input class="bg-white dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                             </div>
                             <div class="w-fit ">
-                                <h1 class="dark:text-white ml-1">Amount: </h1>
-                                <input class="dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
+                                <h1 class="text-black dark:text-white ml-1">Amount: </h1>
+                                <input class="bg-white dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
                             </div>
                            </div>
                            <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Remove Coins</button>
@@ -243,50 +246,50 @@ const coins = await db.get("balance-" + email)
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <br><br>
 <section>
-                   <h1 class="dark:text-white text-[25px] lg:text-2xl">Admin | Coins</h1>
-<h1 class="dark:text-white text-xl">&nbsp;Set coins</h1>
+                   <h1 class="text-black dark:text-white text-[25px] lg:text-2xl">Admin | Coins</h1>
+<h1 class="text-black dark:text-white text-xl">&nbsp;Set coins</h1>
     <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
         <form method="POST" action="/api/admin/setcoins">
-                    <div class="h-max p-4 rounded-l-xl">
+                    <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
                         <div class="w-full">
-                            <h1 class="dark:text-white ml-1">Email: </h1>
-                            <input class="dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                            <h1 class="text-black dark:text-white ml-1">Email: </h1>
+                            <input class="bg-white dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                         </div>
                         <div class="w-fit ">
-                            <h1 class="dark:text-white ml-1">Amount: </h1>
-                            <input class="dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
+                            <h1 class="text-black dark:text-white ml-1">Amount: </h1>
+                            <input class="bg-white dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
                         </div>
                        </div>
                        <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Set Coins</button>
         </form>
     </div><br>
-    <h1 class="dark:text-white text-xl">&nbsp;Add coins</h1>
+    <h1 class="text-black dark:text-white text-xl">&nbsp;Add coins</h1>
     <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
         <form method="POST" action="/api/admin/addcoins">
-                    <div class="h-max p-4 rounded-l-xl">
+                    <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
                         <div class="w-full">
-                            <h1 class="dark:text-white ml-1">Email: </h1>
-                            <input class="dark:bg-zinc-800 border w-80 h-6 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                            <h1 class="text-black dark:text-white ml-1">Email: </h1>
+                            <input class="bg-white dark:bg-zinc-800 border w-80 h-6 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                         </div>
                         <div class="w-fit ">
-                            <h1 class="dark:text-white ml-1">Amount: </h1>
-                            <input class="dark:bg-zinc-800 border w-40 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
+                            <h1 class="text-black dark:text-white ml-1">Amount: </h1>
+                            <input class="bg-white dark:bg-zinc-800 border w-40 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
                         </div>
                        </div>
                        <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Add Coins</button>
         </form>
     </div><br>
-    <h1 class="dark:text-white text-xl">&nbsp;Remove coins</h1>
+    <h1 class="text-black dark:text-white text-xl">&nbsp;Remove coins</h1>
     <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
         <form method="POST" action="/api/admin/removecoins">
-                    <div class="h-max p-4 rounded-l-xl">
+                    <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
                         <div class="w-full">
-                            <h1 class="dark:text-white ml-1">Email: </h1>
-                            <input class="dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                            <h1 class="text-black dark:text-white ml-1">Email: </h1>
+                            <input class="bg-white dark:bg-zinc-800 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                         </div>
                         <div class="w-fit ">
-                            <h1 class="dark:text-white ml-1">Amount: </h1>
-                            <input class="dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
+                            <h1 class="text-black dark:text-white ml-1">Amount: </h1>
+                            <input class="bg-white dark:bg-zinc-800 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of coins" maxlength={30}></input>
                         </div>
                        </div>
                        <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Remove Coins</button>
