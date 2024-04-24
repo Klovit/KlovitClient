@@ -1,0 +1,191 @@
+---
+import chalk from 'chalk';
+import config from '../config';
+import { getImage } from 'astro:assets';
+import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
+import { supabase } from "../lib/supabase";
+import db from '../database';
+import Nav from "../components/nav.astro";
+import restype from "../restype"
+import Header from "../components/head.astro"
+import Resources from '../components/resources.astro';
+import Servers from '../components/servers.astro'
+import Mobnav from "../components/mobnav.astro";
+import { mdiWrapDisabled } from '@mdi/js';
+const { cookies, redirect } = Astro;
+
+const accessToken = cookies.get("sb-access-token");
+const refreshToken = cookies.get("sb-refresh-token");
+if (!accessToken || !refreshToken) {
+  return redirect("/signin");
+}
+const refresh_token = refreshToken.value
+const access_token = accessToken.value
+const { data, error } = await supabase.auth.setSession({
+  refresh_token: refresh_token,
+  access_token: access_token,
+});
+
+if (error) {
+  cookies.delete("sb-access-token", {
+    path: "/",
+  });
+  cookies.delete("sb-refresh-token", {
+    path: "/",
+  });
+
+  return redirect("/signin");
+}
+
+
+const icon = await getImage({src: `${LOGO}`,height: '50', width: '50', format: 'png'})
+const errorstate = Astro.url.searchParams.get('error')! || '';
+const errormsg = Astro.url.searchParams.get('error')! || '';
+const success = Astro.url.searchParams.get('success')! || '';
+const successmsg = Astro.url.searchParams.get('success')! || '';
+
+const {
+  data: { user },
+} = await supabase.auth.getUser()
+
+const metadata = user.user_metadata
+const username = metadata.full_name
+const email = data?.user?.email
+const avatar = metadata.avatar_url
+try {
+let accountlistjson = await fetch(
+    config.pterodactyl.url + "/api/application/users?include=servers&filter[email]=" + encodeURIComponent(email),
+    {
+        method: "get",
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${config.pterodactyl.api}`
+        }
+    }
+);
+              let accountlist = await accountlistjson.json();
+              let userdata = accountlist.data.filter(acc => acc.attributes.email == email);
+let cacheaccount = await fetch(
+config.pterodactyl.url + "/api/application/users/" + userdata[0].attributes.id + "?include=servers",
+ {
+    method: "get",
+    headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${config.pterodactyl.api}` }
+  }
+);
+if (await cacheaccount.statusText == "Not Found") {
+  if (error) {
+    console.log(chalk.red(`[KlovitClient] An error has occured on path ${Astro.url.pathname}:`));
+  };
+};
+let cacheaccountinfo = JSON.parse(await cacheaccount.text());
+const pterodactyl = await cacheaccountinfo.attributes;
+const adminstatus = pterodactyl.root_admin
+const servers = pterodactyl.relationships.servers.data[0]
+} catch (error) {
+    console.log(error)
+}
+
+
+const year = new Date().getFullYear().toString()
+const yearWithTitle = `${year} ${TITLE}`
+
+const coins = await db.get("balance-" + email)
+let ecostatus;
+if (config.coins.enabled) {
+    ecostatus = true;
+     }
+     else {
+        ecostatus = false;
+     }
+
+
+
+if (ecostatus === false) {
+   return Astro.redirect(`/dashboard?error="Economy is Disabled."`)
+}
+const atgcoin = config.coins.earn.links.atglinks.amount
+---
+<!DOCTYPE html>
+<html>
+    <Header />
+    <style> 
+      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+      body { font-family: 'Fredoka', system-ui, sans-serif; }
+       body {
+          overflow-y: scroll;
+          overflow-x: hidden;
+       }
+       @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+     </style>
+
+<body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
+    <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+        <div class="antialiased">
+            <main>
+                <div class="h-12 w-full">
+                    <Nav />
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
+<Resources /><br><br>
+<section class="p-8 rounded-xl">
+<div class="rounded-xl bg-white dark:bg-zinc-900/50 dark:bg-zinc-900/50">
+  <div class="p-2">
+    <form method="POST" action="/api/economy/links/generate/atglinks" class="grid grid-cols-1 flex justfiy-between">
+      <h1 class="dark:text-white text-black text-center">ATGLinks: {atgcoin} Coins per link</h1>
+      <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Generate</button>
+    </form>
+</div>
+</div>
+
+</section>
+                  <div class="text-center">
+                    <p class="text-gray-400">
+                        &copy;
+                        {year} {TITLE} | Powered by <a
+                        class="text-amber-500"
+                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
+                </p>
+                 </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div class="md:hidden w-screen overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+
+        <div class="antialiased">
+            <main>
+              <main>
+                <div class="h-12 w-full">
+                    
+<Mobnav />
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
+<Resources /><br><br>
+<section>
+  <div class="rounded-xl bg-white dark:bg-zinc-900/50 dark:bg-zinc-900/50">
+    <div class="p-2">
+      <form method="POST" action="/api/economy/links/generate/atglinks" class="grid grid-cols-1 flex justfiy-between">
+        <h1 class="dark:text-white text-black text-center">ATGLinks: {atgcoin} Coins per link</h1>
+        <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Generate</button>
+      </form>
+  </div>
+  </div>
+</section>
+                  <div class="text-center">
+                    <p class="text-gray-400">
+                        &copy;
+                        {year} {TITLE} | Powered by <a
+                        class="text-amber-500"
+                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
+                </p>
+
+                 </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
