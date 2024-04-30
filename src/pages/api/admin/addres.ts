@@ -62,6 +62,9 @@ const pterodactyl = cacheaccountinfo.attributes;
 if (!pterodactyl.root_admin) {
     return redirect(`/dashboard?error="Forbidden"`)
 }
+if (!config.coins.enabled) {
+ return redirect(`/admin?error="Coins are disabled."`)
+}
 
 // Getting data from Request
 const formData = await request.formData();
@@ -90,7 +93,7 @@ catch (err) {
     console.log(err)
     return redirect("/admin/resources?error=" + err)
 }
-return redirect(`/admin/resources?success="Successfully Removed the resources from the user with the email: ${email}`)
+return redirect(`/admin/resources?success="Successfully added the resources from the user with the email: ${usremail}`)
 } else {
   return redirect(`/admin/resources?error="Missing fields."`);
 }

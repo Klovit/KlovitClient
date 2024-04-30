@@ -90,7 +90,7 @@ catch (err) {
     console.log(err)
     return redirect("/admin/resources?error=" + err)
 }
-return redirect(`/admin/resources?success="Successfully added the resources to the user with the email: ${email}`)
+return redirect(`/admin/resources?success="Successfully removed the resources from the user with the email: ${usremail}`)
 } else {
   return redirect(`/admin/resources?error="Missing fields."`);
 }
