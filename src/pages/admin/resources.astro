@@ -223,20 +223,20 @@ const coins = await db.get("balance-" + email)
                         </div>
                         <div class="w-fit ">
                             <h1 class="dark:text-white text-black ml-1">RAM: </h1>
-                            <input class="bg-white  dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of RAM in " maxlength={30}><span class="text-black dark:text-white">{resconf}</span>
+                            <input class="bg-white  dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="text-black dark:text-white">{resconf}</span>
                         </input>
                         </div>
                         <div class="w-fit ">
                             <h1 class="dark:text-white text-black ml-1">Disk: </h1>
-                            <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black dark:text-white">{resconf}</span>
+                            <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black dark:text-white">{resconf}</span>
                         </div>
                         <div class="w-fit ">
                             <h1 class="dark:text-white text-black ml-1">CPU: </h1>
-                            <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black dark:text-white">{cputype}</span>
+                            <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black dark:text-white">{cputype}</span>
                         </div>
                         <div class="w-fit ">
                             <h1 class="dark:text-white text-black ml-1">Slots: </h1>
-                            <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of slots" maxlength={30}></input>
+                            <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input>
                         </div>
                        </div>
                        <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Add Resources</button>
@@ -252,20 +252,20 @@ const coins = await db.get("balance-" + email)
             </div>
             <div class="w-fit ">
                 <h1 class="dark:text-white text-black ml-1">RAM: </h1>
-                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of RAM in " maxlength={30}><span class="text-black dark:text-white">{resconf}</span>
+                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="text-black dark:text-white">{resconf}</span>
             </input>
             </div>
             <div class="w-fit ">
                 <h1 class="dark:text-white text-black ml-1">Disk: </h1>
-                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black dark:text-white">{resconf}</span>
+                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black dark:text-white">{resconf}</span>
             </div>
             <div class="w-fit ">
                 <h1 class="dark:text-white text-black ml-1">CPU: </h1>
-                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black dark:text-white">{cputype}</span>
+                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black dark:text-white">{cputype}</span>
             </div>
             <div class="w-fit ">
                 <h1 class="dark:text-white text-black ml-1">Slots: </h1>
-                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of slots" maxlength={30}></input>
+                <input class="bg-white dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input>
             </div>
            </div>
            <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Remove Resources</button>
