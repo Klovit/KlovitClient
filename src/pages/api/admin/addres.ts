@@ -62,9 +62,6 @@ const pterodactyl = cacheaccountinfo.attributes;
 if (!pterodactyl.root_admin) {
     return redirect(`/dashboard?error="Forbidden"`)
 }
-if (!config.coins.enabled) {
- return redirect(`/admin?error="Coins are disabled."`)
-}
 
 // Getting data from Request
 const formData = await request.formData();
