@@ -6,7 +6,6 @@ import db from '../../database';
 import Adminnav from "../../components/adminnav.astro";
 import Adminmobnav from "../../components/adminmobnav.astro";
 import restype from "../../restype"
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../../consts';
 import Header from "../../components/head.astro"
 
 const { cookies, redirect } = Astro;
@@ -126,7 +125,6 @@ if (currentver < latestver) {
 if (currentver === latestver) {
         outdated = false
 }
-const coins = await db.get("balance-" + email)
 ---
 <!DOCTYPE html>
 <html>
@@ -139,9 +137,19 @@ const coins = await db.get("balance-" + email)
           overflow-x: hidden;
        }
        @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-     </style>
+     @tailwind components;
+     @tailwind utilities;
+     :is(.dark main) {
+         background-color: #18181b;
+     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%2309090b' fill-opacity='0.44'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+     background-size: 100%;
+     }
+     main {
+         background-color: #ffffff;
+     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%239ca3af' fill-opacity='0.4'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+     background-size: 100%;
+     }
+     </style> 
 
 <script>
    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -201,11 +209,10 @@ const coins = await db.get("balance-" + email)
       document.documentElement.classList.remove('dark');
     }
 </script>
-<body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
-    <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+<body class="flex items-center justify-center h-screen">
+    <div class="hidden md:block animation-blob h-screen w-screen">
         <div class="antialiased">
-            <main>
-                <div class="h-12 w-full">
+            <main class="h-screen">
                     <Adminnav />
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
@@ -213,21 +220,21 @@ const coins = await db.get("balance-" + email)
 <section>
     <h1 class="dark:text-white text-black text-[25px] lg:text-2xl">Admin | Packages</h1>
     <h1 class="text-black dark:text-white text-xl">&nbsp;Set Package</h1>
-    <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+    <div class="rounded-xl bg-zinc-100 dark:bg-zinc-900/50 px-2.5 py-2">
         <form class="p-4" method="POST" action="/api/admin/setpackage">
-                    <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
+                    <div class="bg-zinc-100 dark:bg-zinc-900/50 h-max p-4 rounded-l-xl">
                         <div class="w-full">
                             <h1 class="text-black dark:text-white ml-1">Email: </h1>
                             <input class="bg-white dark:bg-zinc-950 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                         </div>
                         <div class="w-fit ">
                             <h1 class="text-black dark:text-white ml-1">Package: </h1>
-                            <select class="bg-white dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="packagee" required>
+                            <select class="bg-white dark:bg-zinc-950 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="packagee" required>
                                 {Object.keys(config.packages.list).map(packagee => (<option value={packagee}>{packagee}</option>))}
                             </select>
                         </div>
                        </div>
-                       <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Set Package</button>
+                       <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Set Package</button>
         </form>
     </div><br>
 </section>
@@ -241,18 +248,16 @@ const coins = await db.get("balance-" + email)
         <div class="antialiased">
             <main>
               <main>
-                <div class="h-12 w-full">
-                    
-<Adminmobnav />
+                  <Adminmobnav />
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <br><br>
 <section>
   <h1 class="text-black dark:text-white text-[15px] lg:text-2xl">Admin | Packages</h1>
   <h1 class="text-black dark:text-white text-xl">&nbsp;Set Package</h1>
-  <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+  <div class="rounded-xl bg-zinc-100 dark:bg-zinc-900/50 px-2.5 py-2">
       <form class="p-4" method="POST" action="/api/admin/setpackage">
-                  <div class="bg-white dark:bg-zinc-950 h-max p-4 rounded-l-xl">
+                  <div class="bg-zinc-100 dark:bg-zinc-900/50 h-max p-4 rounded-l-xl">
                       <div class="w-full">
                           <h1 class="text-black dark:text-white ml-1">Email: </h1>
                           <input class="bg-white dark:bg-zinc-950 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
@@ -264,8 +269,8 @@ const coins = await db.get("balance-" + email)
                         </select>
                       </div>
                      </div>
-                     <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Set Package</button>
-      </form>
+                     <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Set Package</button>
+                    </form>
   </div><br>
 </section>
                 </div>

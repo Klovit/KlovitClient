@@ -1,0 +1,43 @@
+---
+import config from '../config';
+
+const year = new Date().getFullYear().toString()
+const yearWithTitle = `${year} ${config.name}`
+---
+<style> 
+ @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+ body { font-family: 'Fredoka', system-ui, sans-serif; }
+  body {
+     overflow-y: scroll;
+     overflow-x: hidden;
+  }
+  @tailwind base;
+@tailwind components;
+@tailwind utilities;
+</style> 
+                    <footer class="w-full text-black dark:text-white hidden md:block">
+                        <div class="w-full container grid grid-cols-2">
+                          <div class="copyright text-start">
+                            &copy; Copyright {yearWithTitle} | Powered by <a class="text-amber-500" href="https://github.com/klovit/klovitlclient">KlovitClient</a>
+                          </div>
+                          <div class="text-end">
+                            <span id="loadtime"></span>
+                          </div>
+                        </div>
+                    </footer>
+                    <script is:inline type="text/javascript">  
+                        var before_loadtime = new Date().getTime();  
+                        window.onload = Pageloadtime;  
+                        function Pageloadtime() {  
+                            var aftr_loadtime = new Date().getTime();  
+                            // Time calculating in seconds  
+                            pgloadtime = (aftr_loadtime - before_loadtime) / 1000  
+                            document.getElementById("loadtime").innerHTML = pgloadtime + "s";
+                        }  
+                   </script> 
+                                       <footer class="text-black dark:text-white md:hidden">
+                                         <div class="copyright text-start text-xs">
+                                          &copy; Copyright {yearWithTitle} | Powered by <a class="text-amber-500" href="https://github.com/klovit/klovitlclient">KlovitClient</a>
+                                        </div>
+ 
+                                    </footer>

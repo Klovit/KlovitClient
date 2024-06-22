@@ -84,81 +84,17 @@ const servers = pterodactyl.relationships.servers.data[0]
 const year = new Date().getFullYear().toString()
 const yearWithTitle = `${year} ${config.name}`
 
-// RESOURCES
-const info = await db.get("user-" + email)
-const pkglist = config.packages.list.pkg
-const pkg = info.package
-const resconf = restype.restype
-// Package Limits
-const pkgram = config.packages.list[info.package].ram
-const pkgdisk = config.packages.list[info.package].disk
-const pkgserverslimit = config.packages.list[info.package].servers
-// Actual Limits
-let ccore;
-ccore = config.packages.list[info.package].cpu + info.extraresources.cpu
-ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
-const ramlimit = pkgram + info.extraresources.ram
-const disklimit = pkgdisk + info.extraresources.disk
-const serverslimit = pkgserverslimit + info.extraresources.servers
-// Used resources
-let ramused = 0;
-let diskused = 0;
-let cpuused = 0;
-if (config.resource_type ==="GB") {
-for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
-    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0)/1024;
-    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0)/1024;
-    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0)/100;
-}
-} else {
-    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
-    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
-    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
-    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
-}
-}
-
-
 const serversused = pterodactyl.relationships.servers.data.length
 let srvs = pterodactyl.relationships.servers.data
-
-let serverram;
-let serverdisk;
-let servercpu;
-if (config.resource_type === "GB"){
-    serverram = "%serverram% GB(s)"
-    serverdisk = "%serverdisk% GB(s)"
-    servercpu = "%servercpu% Core(s)"
+const resconf = restype.restype
+let cputype;
+if (config.resource_type === "GB") {
+ cputype = " Core(s)"
 } else {
-    serverram = "%serverram% MB(s)"
-    serverdisk = "%serverdisk% MB(s)"
-    servercpu = "%servercpu%%"
-    }
-let storestatus;
-if (config.coins.store.enabled || config.coins.enabled) {
-        storestatus = true;
-     }
-     else {
-        storestatus = false;
-     }
-let ecostatus;
-if (config.coins.enabled) {
-    ecostatus = true;
-} else {
-    ecostatus = false;
+ cputype = "%"
 }
-
-let giftstatus;
-if (config.gifting.enabled) {
-    giftstatus = true;
-} else {
-    giftstatus = false;
-}
-let buystatus;
-if (config.payments.enabled) {
-    buystatus = true;
-} else {
-    buystatus = false;
+if (config.gifting.enabled === false) {
+   return Astro.redirect(`/dashboard?error=Gifting is Disabled.`)
 }
 ---
 <!DOCTYPE html>
@@ -185,19 +121,36 @@ if (config.payments.enabled) {
        background-size: 100%;
        }
        </style> 
-<body class="flex items-center justify-center h-screen">
+<body class="flex items-center justify-center h-full">
     <div class="hidden md:block animation-blob w-screen">
         <div class="antialiased">
-            <main class="h-screen">
+            <main class="h-full">
                     <Nav />
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
-<Resources /><br><br>
-<section>
-    <span class="text-amber-500 ml-4">Your Servers</span>
-    <div class="grid grid-cols-4 ml-6"><Servers /></div>
-
-</section>
+<Resources />
+<section class="p-8 rounded-xl">
+  <div class="rounded-xl grid grid-cols-2 bg-zinc-300 dark:bg-zinc-900/50 dark:bg-zinc-900/50">
+    <div class="p-2">
+        <form method="POST" action="/api/user/gift">
+          <h1 class="dark:text-white text-black">Email of the receiver:</h1>
+          <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="receiver" placeholder="Eg. example@example.com"></input>
+          <h1 class="dark:text-white text-black">RAM:</h1>
+          <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftram" placeholder="RAM"></input><span class="text-black ml-1 dark:text-white">{resconf}</span>
+          <h1 class="dark:text-white text-black">Disk:</h1>
+          <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftdisk" placeholder="Disk"></input><span class="text-black ml-1 dark:text-white">{resconf}</span>
+          <h1 class="dark:text-white text-black">CPU:</h1>
+          <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftcpu" placeholder="CPU"></input><span class="text-black ml-1 dark:text-white">{cputype}</span>
+          <h1 class="dark:text-white text-black">Slots:</h1>
+          <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftslots" placeholder="Slots"></input><span class="text-black ml-1 dark:text-white">Slots</span>
+          <h1 class="dark:text-white text-black">Coins:</h1>
+          <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftcoins" placeholder="Coins"></input>
+          <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Gift</button>
+        </form>
+    </div>
+  </div>
+  
+  </section>
                   <div class="text-center">
                     <p class="text-gray-400">
                         &copy;
@@ -206,7 +159,6 @@ if (config.payments.enabled) {
                         href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
                 </p>
                  </div>
-                </div>
             </main>
         </div>
     </div>
@@ -218,9 +170,25 @@ if (config.payments.enabled) {
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <Resources /><br><br>
 <section>
-    <span class="text-amber-500 ml-4">Your Servers</span>
-    <div class="grid grid-cols-4 ml-6"><Servers /></div>
-
+  <div class="rounded-xl grid grid-cols-2 bg-zinc-300 dark:bg-zinc-900/50">
+    <div class="p-2">
+        <form method="POST" action="/api/user/gift">
+            <h1 class="dark:text-white text-black">Email of the receiver:</h1>
+            <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="receiver" placeholder="Eg. example@example.com"></input>
+            <h1 class="dark:text-white text-black">RAM:</h1>
+            <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftram" placeholder="RAM"></input><span class="text-black ml-1 dark:text-white">{resconf}</span>
+            <h1 class="dark:text-white text-black">Disk:</h1>
+            <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftdisk" placeholder="Disk"></input><span class="text-black ml-1 dark:text-white">{resconf}</span>
+            <h1 class="dark:text-white text-black">CPU:</h1>
+            <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftcpu" placeholder="CPU"></input><span class="text-black ml-1 dark:text-white">{cputype}</span>
+            <h1 class="dark:text-white text-black">Slots:</h1>
+            <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftslots" placeholder="Slots"></input><span class="text-black ml-1 dark:text-white">Slots</span>
+            <h1 class="dark:text-white text-black">Coins:</h1>
+            <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="giftcoins" placeholder="Coins"></input>
+            <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Gift</button>
+          </form>
+  </div>
+  </div>
 </section>
                   <div class="text-center">
                     <p class="text-gray-400">

@@ -45,24 +45,27 @@ if (config.resource_type === "GB") {
 }
 if (amount) {
 try {
+    const currentinfo = await db.get("user-" + email)
     const number = Number(amount) / config.coins.store.cpu.per
     const cost = config.coins.store.cpu.cost * number
-    const oldbalance = await db.get("balance-" + email)
+    const oldbalance = currentinfo.balance
     if (oldbalance < cost) {
         return redirect(`/store?error=You have insufficient Coins`)
     } else {
     const newbalance = oldbalance - cost
-    const oldextra = await db.get("extraresources-" + email)
-    const oldextracpu = oldextra.cpu
-    const newextracpu = oldextracpu + amount
-    const newextra = {
-        ram: oldextra.ram,
-        disk: oldextra.disk,
+    const newextracpu = currentinfo.extraresources.cpu + amount
+    const newinfo = {
+      package: currentinfo.package,
+      balance: newbalance,
+      password: currentinfo.password,
+      extraresources: {
+        ram: currentinfo.ram,
+        disk: currentinfo.disk,
         cpu: newextracpu,
-        servers: oldextra.servers
-      };
-    await db.set("extraresources-" + email, newextra)
-    await db.set("balance-" + email, newbalance)
+        servers: currentinfo.servers
+      }
+    } 
+    await db.set("user-" + email, newinfo)
     return redirect(`/store?success=You have successfully bought ${amount} ${cputype} for ${cost} Coins`)
     }
 }

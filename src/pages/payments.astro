@@ -134,32 +134,20 @@ if (config.resource_type === "GB"){
     serverdisk = "%serverdisk% MB(s)"
     servercpu = "%servercpu%%"
     }
-let storestatus;
-if (config.coins.store.enabled || config.coins.enabled) {
-        storestatus = true;
-     }
-     else {
-        storestatus = false;
-     }
-let ecostatus;
-if (config.coins.enabled) {
-    ecostatus = true;
+const ram = config.coins.store.ram.per
+const disk = config.coins.store.disk.per
+const cpu = config.coins.store.cpu.per
+const slots = config.coins.store.servers.per
+let cputype;
+if (config.resource_type === "GB") {
+ cputype = " Core(s)"
 } else {
-    ecostatus = false;
+ cputype = "%"
 }
-
-let giftstatus;
-if (config.gifting.enabled) {
-    giftstatus = true;
-} else {
-    giftstatus = false;
+if (config.payments.enabled === false) {
+   return Astro.redirect(`/dashboard?error=Payments are Disabled.`)
 }
-let buystatus;
-if (config.payments.enabled) {
-    buystatus = true;
-} else {
-    buystatus = false;
-}
+const stripeph = `Amount of coins, 1 coin is ${config.payments.stripe.price/100}`
 ---
 <!DOCTYPE html>
 <html>
@@ -185,58 +173,26 @@ if (config.payments.enabled) {
        background-size: 100%;
        }
        </style> 
-<body class="flex items-center justify-center h-screen">
+<body class="flex items-center justify-center h-full">
     <div class="hidden md:block animation-blob w-screen">
         <div class="antialiased">
-            <main class="h-screen">
+            <main class="h-full">
                     <Nav />
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <Resources />
-<section class="flex justify-center">
-    <div class="w-fit flex justify-center">
-    <form method="POST" action="/server/edit">
-        <div class="grid grid-cols-3 mt-8 w-full dark:shadow border border-zinc-800/80 rounded-xl">
-            <div class="grid grid-cols-1 w-full col-span-2 rounded-xl">
-                <div class="h-fit bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl rounded-l-xl">
-                    <div class="w-full space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">Server Name: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="text" name="srvname" maxlength={30}></input>
-                    </div>
-                    <div class="grid grid-cols-2 w-full col-span-2">
-                      <div class="w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">RAM: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="ram" maxlength={30}/></input>
-                    </div>
-                      <div class="ml-1 w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">Disk: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="disk" maxlength={30}/></input>
-                    </div>
-                      <div class="w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">CPU: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="cpu" maxlength={30}/></input>
-                    </div>
-                      <div class="ml-1 w-full space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">Server Software: </h1>
-                        <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="egg" required={true}>
-                            {Object.keys(config.eggs).map(egg => (<option value={egg}>{config.eggs[egg].display}</option>))}
-                        </select>
-                    </div>
-                   </div>
-                </div>
-            </div>
-            <div class="h-full rounded-r-xl bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl">
-                <div class="h-full w-full">
-                    <h1 class="dark:text-gray-200 text-black ml-8">Server Location: </h1>
-                    <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="location" >
-                        {Object.keys(config.locations).map(location => (<option value={location}>{config.locations[location].name}</option>))}
-                    </select><br>
-                    <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Edit</button>
-                </div>
-            </div>
-        </div>
-    </form></div>
-</section>
+<section class="p-8 rounded-xl">
+  <div class="rounded-xl grid grid-cols-2 bg-zinc-300 dark:bg-zinc-900/50 dark:bg-zinc-900/50">
+    {config.payments.stripe.enabled && <div class="p-2">
+        <form method="POST" action="/api/payments/stripe">
+          <h1 class="dark:text-white text-black">Stripe (Card):</h1>
+          <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount" placeholder={stripeph}></input>
+          <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
+        </form>
+    </div>}
+  </div>
+  
+  </section>
                   <div class="text-center">
                     <p class="text-gray-400">
                         &copy;
@@ -255,51 +211,17 @@ if (config.payments.enabled) {
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <Resources /><br><br>
-<section class="flex justify-center">
-
-    <div class="w-fit flex justify-center">
-    <form class="p-4" method="POST" action="/server/edit">
-        <div class="grid grid-cols-3 mt-8 w-full dark:shadow border border-zinc-800/80 rounded-xl">
-            <div class="grid grid-cols-1 w-full col-span-2 rounded-xl">
-                <div class="h-fit bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl rounded-l-xl">
-                    <div class="w-full space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">Server Name: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="text" name="srvname" maxlength={30} required></input>
-                    </div>
-                    <div class="grid grid-cols-2 w-full col-span-2">
-                      <div class="w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">RAM: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="ram" maxlength={30} required></input>
-                    </div>
-                      <div class="ml-1 w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">Disk: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="disk" maxlength={30} required/></input>
-                    </div>
-                      <div class="w-30 space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">CPU: </h1>
-                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="cpu" maxlength={30} required/></input>
-                    </div>
-                      <div class="ml-1 w-full space-y-1">
-                        <h1 class="dark:text-gray-200 text-black ml-1">Server Software: </h1>
-                        <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="egg" required={true}>
-                            {Object.keys(config.eggs).map(egg => (<option value={egg}>{config.eggs[egg].display}</option>))}
-                        </select>
-                    </div>
-                   </div>
-                </div>
-            </div>
-            <div class="h-full rounded-r-xl bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl">
-                <div class="w-full space-y-1">
-                    <h1 class="dark:text-gray-200 text-black ml-1">Server Location: </h1>
-                    <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="location" required>
-                        {Object.keys(config.locations).map(location => (<option value={location}>{config.locations[location].name}</option>))}
-                    </select>
-                    <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Edit</button>
-                </div>
-            </div>
-        </div>
-    </form></div>
-  </section>
+<section>
+  <div class="rounded-xl grid grid-cols-2 bg-zinc-300 dark:bg-zinc-900/50">
+    {config.payments.stripe.enabled && <div class="p-2">
+      <form method="POST" action="/api/payments/stripe">
+        <h1 class="dark:text-white text-black">Stripe (Card):</h1>
+        <input class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount" placeholder={stripeph}></input>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
+      </form>
+  </div>}
+  </div>
+</section>
                   <div class="text-center">
                     <p class="text-gray-400">
                         &copy;

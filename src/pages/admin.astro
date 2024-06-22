@@ -6,7 +6,6 @@ import db from '../database';
 import Adminnav from "../components/adminnav.astro";
 import Adminmobnav from "../components/adminmobnav.astro";
 import restype from "../restype"
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
 import Header from "../components/head.astro"
 
 const { cookies, redirect } = Astro;
@@ -120,7 +119,6 @@ if (currentver < latestver) {
 if (currentver === latestver) {
         outdated = false
 }
-const coins = await db.get("balance-" + email)
 ---
 <!DOCTYPE html>
 <html>
@@ -133,21 +131,30 @@ const coins = await db.get("balance-" + email)
           overflow-x: hidden;
        }
        @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-     </style>
-<body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
-    <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+     @tailwind components;
+     @tailwind utilities;
+     :is(.dark main) {
+         background-color: #18181b;
+     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%2309090b' fill-opacity='0.44'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+     background-size: 100%;
+     }
+     main {
+         background-color: #ffffff;
+     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%239ca3af' fill-opacity='0.4'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+     background-size: 100%;
+     }
+     </style> 
+<body class="flex items-center justify-center h-screen">
+    <div class="hidden md:block animation-blob h-screen w-screen">
         <div class="antialiased">
-            <main>
-                <div class="h-12 w-full">
+            <main class="h-screen">
                     <Adminnav />
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
                   <br><br>
 <section>
   <h1 class="dark:text-white text-black text-[15px] lg:text-2xl">Admin | Home</h1>
-    <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+    <div class="rounded-xl bg-zinc-100 dark:bg-zinc-950 px-2.5 py-2">
         <div class="row"><img class="h-32 w-full object-cover lg:h-48 rounded-xl" src="https://wallpaperaccess.com/full/4650672.jpg" alt=""></div>
                       <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
                         <div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
@@ -167,43 +174,38 @@ const coins = await db.get("balance-" + email)
                         <div class="grid grid-cols-1 lg:grid-cols-2 col-span-4">
                         <div class="w-fit h-fit rounded-xl">
                             <h1 class="text-black dark:text-white">Version</h1>
-                                      {outdated ?
-                                       <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
+                            {outdated ?
+                                       <div class="m-2 w-full rounded-lg bg-gradient-to-b from-gray-400 text-red-400 to-white dark:from-zinc-950 dark:to-zinc-900">
                                         <h1>Latest version - V{latestver}</h1>
                                       </div><br>
-                                      <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
+                                      <div class="m-2 w-full rounded-lg bg-gradient-to-b from-gray-400 text-red-400 to-white dark:from-zinc-950 dark:to-zinc-900">
                                         <h1>Your KlovitClient instance is outdated. Please update to the latest version ( V{latestver} )</h1>
-                                      </div> : 
-                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                      </div> :
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
                                         <h1>Latest version - V{latestver}</h1>
                                       </div><br>
-                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
                                         <h1>Your KlovitClient instance is up-to-date.</h1>
-                                      </div>}
+                                      </div> }
                                     </div>
                                     <div class="w-fit h-fit rounded-xl">
-                            <h1 class="dark:text-white">Social</h1> 
-                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                            <h1 class="dark:text-white text-black">Social</h1> 
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
                                         <a href="https://github.com/klovit/klovitclient"><i class="fa-brands fa-github"> GitHub</i></a>
                                       </div><br>
-                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
                                         <a href="https://discord.gg/JJzHzQkFpr"><i class="fa-brands fa-discord"> Discord</i></a>
                                         </div>
                                         </div>
                                     </div>
                                 </div>
 </section>
-
-                </div>
             </main>
         </div>
     </div>
-    <div class="md:hidden w-screen overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
-
+    <div class="md:hidden w-screen overflow-x-hidden animation-blob h-screen w-screen">
         <div class="antialiased">
-            <main>
               <main>
-                <div class="h-12 w-full">
                     
 <Adminmobnav />
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
@@ -211,7 +213,7 @@ const coins = await db.get("balance-" + email)
 <br><br>
 <section>
   <h1 class="text-black dark:text-white text-[15px] lg:text-2xl">Admin | Home</h1>
-                    <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+                    <div class="rounded-xl px-2.5 py-2">
                         <div class="row"><img class="h-32 w-full object-cover lg:h-48 rounded-xl" src="https://wallpaperaccess.com/full/4650672.jpg" alt=""></div>
                                       <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
                                         <div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
@@ -231,29 +233,29 @@ const coins = await db.get("balance-" + email)
                                         <div class="grid grid-cols-1 lg:grid-cols-2 col-span-4">
                                         <div class="w-fit h-fit rounded-xl">
                                             <h1 class="text-black dark:text-white">Version</h1>
-                                                      {outdated ?
-                                                       <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
-                                                        <h1>Latest version - V{latestver}</h1>
-                                                      </div><br>
-                                                      <div class="rounded-xl w-fit h-fit bg-red-600 px-2.5 py-2">
-                                                        <h1>Your KlovitClient instance is outdated. Please update to the latest version ( V{latestver} )</h1>
-                                                      </div> : 
-                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
-                                                        <h1>Latest version - V{latestver}</h1>
-                                                      </div><br>
-                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
-                                                        <h1>Your KlovitClient instance is up-to-date.</h1>
-                                                      </div>}
+                                            {outdated ?
+                                       <div class="m-2 w-full rounded-lg bg-gradient-to-b from-gray-400 text-red-400 to-white dark:from-zinc-950 dark:to-zinc-900">
+                                        <h1>Latest version - V{latestver}</h1>
+                                      </div><br>
+                                      <div class="m-2 w-full rounded-lg bg-gradient-to-b from-gray-400 text-red-400 to-white dark:from-zinc-950 dark:to-zinc-900">
+                                        <h1>Your KlovitClient instance is outdated. Please update to the latest version ( V{latestver} )</h1>
+                                      </div> :
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
+                                        <h1>Latest version - V{latestver}</h1>
+                                      </div><br>
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
+                                        <h1>Your KlovitClient instance is up-to-date.</h1>
+                                      </div> }
                                                     </div>
                                                     <div class="w-fit h-fit rounded-xl">
-                                            <h1 class="text-black dark:text-white">Social</h1> 
-                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
-                                                        <a href="https://github.com/klovit/klovitclient"><i class="fa-brands fa-github"> GitHub</i></a>
-                                                      </div><br>
-                                                      <div class="rounded-xl w-fit h-fit bg-blue-500 px-2.5 py-2">
-                                                        <a href="https://discord.gg/JJzHzQkFpr"><i class="fa-brands fa-discord"> Discord</i></a>
-                                                        </div>
-                                                        </div>
+                            <h1 class="dark:text-white text-black">Social</h1> 
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
+                                        <a href="https://github.com/klovit/klovitclient"><i class="fa-brands fa-github"> GitHub</i></a>
+                                      </div><br>
+                                      <div class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900">
+                                        <a href="https://discord.gg/JJzHzQkFpr"><i class="fa-brands fa-discord"> Discord</i></a>
+                                        </div>
+                                        </div>
                                                     </div>
                                                 </div>
 </section>

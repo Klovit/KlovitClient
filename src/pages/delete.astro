@@ -2,7 +2,6 @@
 import chalk from 'chalk';
 import config from '../config';
 import { getImage } from 'astro:assets';
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import Nav from "../components/nav.astro";
@@ -40,7 +39,7 @@ const success = Astro.url.searchParams.get('success')! || '';
 const srvid = Astro.url.searchParams.get('id')! || '';
 
 const year = new Date().getFullYear().toString()
-const yearWithTitle = `${year} ${TITLE}`
+const yearWithTitle = `${year} ${config.name}`
 
 const limitint = Astro.url.searchParams.get('limit')! || ''
 let limit;
@@ -139,7 +138,6 @@ currentcpu = await pterorelationshipsserverdata[0].attributes.limits.cpu/100 + `
 currentcpu = await pterorelationshipsserverdata[0].attributes.limits.cpu + `%`
 }
 const currentname = pterorelationshipsserverdata[0].attributes.name;
-const coins = await db.get("balance-" + email)
 let storestatus;
 if (config.coins.store.enabled || config.coins.enabled) {
         storestatus = true;
@@ -286,7 +284,7 @@ async function deleteserver() {
                   <div class="text-center">
                     <p class="text-gray-400">
                         &copy;
-                        {year} {TITLE} | Powered by <a
+                        {year} {config.name} | Powered by <a
                         class="text-amber-500"
                         href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
                 </p>
@@ -315,7 +313,7 @@ async function deleteserver() {
                   <div class="text-center">
                     <p class="text-gray-400">
                         &copy;
-                        {year} {TITLE} | Powered by <a
+                        {year} {config.name} | Powered by <a
                         class="text-amber-500"
                         href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
                 </p>

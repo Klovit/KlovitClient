@@ -30,6 +30,6 @@ console.log(chalk.gray('  '));
 console.log(
   chalk.gray('  ') +
     chalk.cyan('[KlovitClient]') +
-    chalk.white(' You can now access the dashboard at ') +
-    chalk.underline(config.website.url + '/'),
-);
+    chalk.white(' You can now access the dashboard at the following addresses - '));
+    console.log("                 " + chalk.underline(`http://localhost:${config.website.port}/`));
+    console.log("                 " + chalk.underline(`http://0.0.0.0:${config.website.port}/`));

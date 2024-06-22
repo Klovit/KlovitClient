@@ -35,8 +35,6 @@ const auth = []
       },
     });
 
-
-    
     if (error) {
       cookies.delete("sb-access-token", {
         path: "/",
@@ -50,7 +48,7 @@ const auth = []
     
 
     if (error) {
-      return redirect(`/signin?error="${error.message}"`);
+      return redirect(`/signin?error=${error.message}`);
     }
 
 
@@ -59,7 +57,7 @@ const auth = []
   }
 
   if (!email || !password) {
-    return new Response("Email and password are required", { status: 400 });
+    return redirect(`/signin?error=Email and password are required`);
   }
   const { data, error } = await supabase.auth.signInWithPassword({
     email,

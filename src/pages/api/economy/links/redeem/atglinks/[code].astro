@@ -43,16 +43,27 @@ if (atgcodes[email].code !== code) return Astro.redirect(`/economy?error=Invalid
 await db.delete("atgcodes-" + email)
 
 if (((Date.now() - atgcodes.generated) / 1000) < config.coins.earn.links.atglinks.minimumtime) {
-        return Response('<p>Hm... our systems detected something going on! Please make sure you are not using an ad blocker (or ATGLinks bypasser). <a href="/earn">Generate another link</a></p> <img src="https://i.imgur.com/lwbn3E9.png" alt="robot" height="300">')
+        return Astro.redirect(`/economy?error=Our systems detected something going on! Please make sure you are not using an ad blocker (or ATGLinks bypasser)`)
     }
 
     // Adding coins
-    const coins = await db.get(`balance-${email}`)
-    await db.set(`balance-${email}`, +coins + +config.coins.earn.links.atglinks.amount)
+    const currentinfo = await db.get("user-" + email)
+    const newinfo = {
+      package: currentinfo.package,
+      balance: config.coins.earn.links.atglinks.amount,
+      password: currentinfo.password,
+      extraresources: {
+        ram: currentinfo.extraresources.ram,
+        disk: currentinfo.extraresources.disk,
+        cpu: currentinfo.extraresources.cpu,
+        servers: currentinfo.extraresources.servers
+      }
+    }
+    await db.set("user-" + email, newinfo)
 
-    return Astro.redirect(`/economy?success=You have successfully completed a ATGLinks link and you have earned ${config.coins.earn.links.atglinks.amount} Coins.`)
+    return Astro.redirect(`/economy?success=You have successfully completed an ATGLinks link and you have earned ${config.coins.earn.links.atglinks.amount} Coins.`)
 } catch {
     console.log(error)
-    return new Response(`<p>${error}</p>`)
+    return new Response(`/economy?error=${error}`)
 }
 ---

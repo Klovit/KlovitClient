@@ -60,7 +60,7 @@ let cacheaccountinfo = JSON.parse(await cacheaccount.text());
     
 const pterodactyl = cacheaccountinfo.attributes;
 if (!pterodactyl.root_admin) {
-    return redirect(`/dashboard?error="Forbidden"`)
+    return redirect(`/dashboard?error=Forbidden`)
 }
 
 // Getting data from Request
@@ -73,26 +73,31 @@ const slots = formData.get("slots")?.toString()
 
 if (ram && disk && cpu && slots && usremail) {
 try {
-    const extra = await db.get("extraresources-" + usremail)
-    const newram = +ram + +extra.ram
-    const newdisk = +disk + +extra.disk
-    const newcpu = +cpu + +extra.cpu
-    const newslots = +slots + +extra.servers
-    const newextra = {
+  const currentinfo = await db.get("user-" + usremail)
+  const newram = +ram - +currentinfo.extraresources.ram
+  const newdisk = +disk - +currentinfo.extraresources.disk
+  const newcpu = +cpu - +currentinfo.extraresources.cpu
+  const newslots = +slots - +currentinfo.extraresources.servers
+    const newinfo = {
+      package: currentinfo.package,
+      balance: currentinfo.balance,
+      password: currentinfo.password,
+      extraresources: {
         ram: newram,
         disk: newdisk,
         cpu: newcpu,
         servers: newslots
-    }
-    await db.set("extraresources-" + usremail, newextra)
+      }
+    }  
+    await db.set("user-" + usremail, newinfo)
 }
 catch (err) {
     console.log(err)
     return redirect("/admin/resources?error=" + err)
 }
-return redirect(`/admin/resources?success="Successfully removed the resources from the user with the email: ${usremail}`)
+return redirect(`/admin/resources?success=Successfully removed the resources from the user with the email: ${usremail}`)
 } else {
-  return redirect(`/admin/resources?error="Missing fields."`);
+  return redirect(`/admin/resources?error=Missing fields.`);
 }
 }
 

@@ -2,7 +2,6 @@
 import chalk from 'chalk';
 import config from '../config';
 import { getImage } from 'astro:assets';
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import Nav from "../components/nav.astro";
@@ -11,7 +10,6 @@ import Header from "../components/head.astro"
 import Resources from '../components/resources.astro';
 import Servers from '../components/servers.astro'
 import Mobnav from "../components/mobnav.astro";
-import { mdiWrapDisabled } from '@mdi/js';
 const { cookies, redirect } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
@@ -38,7 +36,7 @@ if (error) {
 }
 
 
-const icon = await getImage({src: `${LOGO}`,height: '50', width: '50', format: 'png'})
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
 const errorstate = Astro.url.searchParams.get('error')! || '';
 const errormsg = Astro.url.searchParams.get('error')! || '';
 const success = Astro.url.searchParams.get('success')! || '';
@@ -84,24 +82,24 @@ const adminstatus = pterodactyl.root_admin
 const servers = pterodactyl.relationships.servers.data[0]
 
 const year = new Date().getFullYear().toString()
-const yearWithTitle = `${year} ${TITLE}`
+const yearWithTitle = `${year} ${config.name}`
 
 // RESOURCES
-const extraresources = await db.get("extraresources-" + email)
+const info = await db.get("user-" + email)
 const pkglist = config.packages.list.pkg
-const pkg = await db.get(`package-${email}`)
+const pkg = info.package
 const resconf = restype.restype
 // Package Limits
-const pkgram = config.packages.list[await db.get("package-" + email)].ram
-const pkgdisk = config.packages.list[await db.get("package-" + email)].disk
-const pkgserverslimit = config.packages.list[await db.get("package-" + email)].servers
+const pkgram = config.packages.list[info.package].ram
+const pkgdisk = config.packages.list[info.package].disk
+const pkgserverslimit = config.packages.list[info.package].servers
 // Actual Limits
 let ccore;
-ccore = config.packages.list[await db.get("package-" + email)].cpu + extraresources.cpu
+ccore = config.packages.list[info.package].cpu + info.extraresources.cpu
 ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
-const ramlimit = pkgram + extraresources.ram
-const disklimit = pkgdisk + extraresources.disk
-const serverslimit = pkgserverslimit + extraresources.servers
+const ramlimit = pkgram + info.extraresources.ram
+const disklimit = pkgdisk + info.extraresources.disk
+const serverslimit = pkgserverslimit + info.extraresources.servers
 // Used resources
 let ramused = 0;
 let diskused = 0;
@@ -136,7 +134,6 @@ if (config.resource_type === "GB"){
     serverdisk = "%serverdisk% MB(s)"
     servercpu = "%servercpu%%"
     }
-const coins = await db.get("balance-" + email)
 let storestatus;
 if (config.coins.store.enabled || config.coins.enabled) {
         storestatus = true;
@@ -163,142 +160,145 @@ if (storestatus === false) {
 <html>
     <Header />
     <style> 
-      @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
-      body { font-family: 'Fredoka', system-ui, sans-serif; }
-       body {
-          overflow-y: scroll;
-          overflow-x: hidden;
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+        body { font-family: 'Fredoka', system-ui, sans-serif; }
+         body {
+            overflow-y: scroll;
+            overflow-x: hidden;
+         }
+         @tailwind base;
+       @tailwind components;
+       @tailwind utilities;
+       :is(.dark main) {
+           background-color: #18181b;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%2309090b' fill-opacity='0.44'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
        }
-       @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-     </style>
-
-<body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
-    <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+       main {
+           background-color: #ffffff;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%239ca3af' fill-opacity='0.4'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
+       }
+       </style> 
+<body class="flex items-center justify-center h-full">
+    <div class="hidden md:block animation-blob w-screen">
         <div class="antialiased">
-            <main>
-                <div class="h-12 w-full">
+            <main class="h-full">
                     <Nav />
                     {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
                     {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
-<Resources /><br><br>
+<Resources />
 <section class="p-8 rounded-xl">
-<div class="rounded-xl grid grid-cols-2 bg-white dark:bg-zinc-900/50 dark:bg-zinc-900/50">
-  <div class="p-2">
-    <form method="POST" action="/api/store/buy/ram">
-      <h1 class="dark:text-white text-black">RAM:</h1>
-      <select class="bg-zinc-300 mb-2 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
-        <option value={ram}>{config.coins.store.ram.per}{resconf} {config.coins.store.ram.cost}</option>
-        <option value={ram * 2}>{config.coins.store.ram.per * 2}{resconf} {config.coins.store.ram.cost * 2}</option>
-        <option value={ram * 3}>{config.coins.store.ram.per * 3}{resconf} {config.coins.store.ram.cost * 3}</option>
-      </select>
-      <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
-    </form>
-</div>
-  <div class="p-2">
-    <form method="POST" action="/api/store/buy/disk">
-      <h1 class="dark:text-white text-black">Disk:</h1>
-      <select class="bg-zinc-300 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
-        <option value={disk}>{config.coins.store.disk.per}{resconf} - {config.coins.store.disk.cost} Coins</option>
-        <option value={disk * 2}>{config.coins.store.disk.per * 2}{resconf} - {config.coins.store.disk.cost * 2} Coins</option>
-        <option value={disk * 3}>{config.coins.store.disk.per * 3}{resconf} - {config.coins.store.disk.cost * 3} Coins</option>
-      </select>
-      <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
-    </form>
-  </div>
-  <div class="p-2">
-    <form method="POST" action="/api/store/buy/cpu">
-      <h1 class="dark:text-white text-black">CPU:</h1>
-      <select class="bg-zinc-300 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
-        <option value={cpu}>{config.coins.store.cpu.per}{cputype} - {config.coins.store.cpu.cost} Coins</option>
-        <option value={cpu * 2}>{config.coins.store.cpu.per * 2}{cputype} - {config.coins.store.cpu.cost * 2} Coins</option>
-        <option value={cpu * 3}>{config.coins.store.cpu.per * 3}{cputype} - {config.coins.store.cpu.cost * 3} Coins</option>
-      </select>
-      <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
-    </form>
-  </div>
-  <div class="p-2">
-    <form method="POST" action="/api/store/buy/slots">
-      <h1 class="dark:text-white text-black">Slots:</h1>
-      <select class="bg-zinc-300 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
-        <option value={slots}>{config.coins.store.servers.per} - {config.coins.store.servers.cost} Coins</option>
-        <option value={slots * 2}>{config.coins.store.servers.per * 2} - {config.coins.store.servers.cost * 2} Coins</option>
-        <option value={slots * 3}>{config.coins.store.servers.per * 3} - {config.coins.store.servers.cost * 3} Coins</option>
-      </select>
-      <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
-    </form>
-  </div>
-</div>
-
-</section>
-                  <div class="text-center">
-                    <p class="text-gray-400">
-                        &copy;
-                        {year} {TITLE} | Powered by <a
-                        class="text-amber-500"
-                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
-                </p>
-                 </div>
-                </div>
-            </main>
-        </div>
-    </div>
-    <div class="md:hidden w-screen overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
-
-        <div class="antialiased">
-            <main>
-              <main>
-                <div class="h-12 w-full">
-                    
-<Mobnav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
-<Resources /><br><br>
-<section>
-  <div class="rounded-xl grid grid-cols-2 bg-white dark:bg-zinc-900/50 dark:bg-zinc-900/50">
+  <div class="rounded-xl grid grid-cols-2 bg-zinc-300 dark:bg-zinc-900/50 dark:bg-zinc-900/50">
     <div class="p-2">
       <form method="POST" action="/api/store/buy/ram">
         <h1 class="dark:text-white text-black">RAM:</h1>
-        <select class="bg-zinc-300 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+        <select class="bg-zinc-100 mb-2 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
           <option value={ram}>{config.coins.store.ram.per}{resconf} {config.coins.store.ram.cost}</option>
           <option value={ram * 2}>{config.coins.store.ram.per * 2}{resconf} {config.coins.store.ram.cost * 2}</option>
           <option value={ram * 3}>{config.coins.store.ram.per * 3}{resconf} {config.coins.store.ram.cost * 3}</option>
         </select>
-        <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
       </form>
   </div>
     <div class="p-2">
       <form method="POST" action="/api/store/buy/disk">
         <h1 class="dark:text-white text-black">Disk:</h1>
-        <select class="bg-zinc-300 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+        <select class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
           <option value={disk}>{config.coins.store.disk.per}{resconf} - {config.coins.store.disk.cost} Coins</option>
           <option value={disk * 2}>{config.coins.store.disk.per * 2}{resconf} - {config.coins.store.disk.cost * 2} Coins</option>
           <option value={disk * 3}>{config.coins.store.disk.per * 3}{resconf} - {config.coins.store.disk.cost * 3} Coins</option>
         </select>
-        <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
       </form>
     </div>
     <div class="p-2">
       <form method="POST" action="/api/store/buy/cpu">
         <h1 class="dark:text-white text-black">CPU:</h1>
-        <select class="bg-zinc-300 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+        <select class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
           <option value={cpu}>{config.coins.store.cpu.per}{cputype} - {config.coins.store.cpu.cost} Coins</option>
           <option value={cpu * 2}>{config.coins.store.cpu.per * 2}{cputype} - {config.coins.store.cpu.cost * 2} Coins</option>
           <option value={cpu * 3}>{config.coins.store.cpu.per * 3}{cputype} - {config.coins.store.cpu.cost * 3} Coins</option>
         </select>
-        <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
       </form>
     </div>
     <div class="p-2">
       <form method="POST" action="/api/store/buy/slots">
         <h1 class="dark:text-white text-black">Slots:</h1>
-        <select class="bg-zinc-300 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+        <select class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
           <option value={slots}>{config.coins.store.servers.per} - {config.coins.store.servers.cost} Coins</option>
           <option value={slots * 2}>{config.coins.store.servers.per * 2} - {config.coins.store.servers.cost * 2} Coins</option>
           <option value={slots * 3}>{config.coins.store.servers.per * 3} - {config.coins.store.servers.cost * 3} Coins</option>
         </select>
-        <button class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Buy</button>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
+      </form>
+    </div>
+  </div>
+  
+  </section>
+                  <div class="text-center">
+                    <p class="text-gray-400">
+                        &copy;
+                        {year} {config.name} | Powered by <a
+                        class="text-amber-500"
+                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
+                </p>
+                 </div>
+            </main>
+        </div>
+    </div>
+    <div class="md:hidden w-screen overflow-x-hidden animation-blob h-screen">
+        <div class="antialiased">
+            <main class="h-screen">
+<Mobnav />
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
+<Resources /><br><br>
+<section>
+  <div class="rounded-xl grid grid-cols-2 bg-zinc-300 dark:bg-zinc-900/50">
+    <div class="p-2">
+      <form method="POST" action="/api/store/buy/ram">
+        <h1 class="dark:text-white text-black">RAM:</h1>
+        <select class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+          <option value={ram}>{config.coins.store.ram.per}{resconf} {config.coins.store.ram.cost}</option>
+          <option value={ram * 2}>{config.coins.store.ram.per * 2}{resconf} {config.coins.store.ram.cost * 2}</option>
+          <option value={ram * 3}>{config.coins.store.ram.per * 3}{resconf} {config.coins.store.ram.cost * 3}</option>
+        </select>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
+      </form>
+  </div>
+    <div class="p-2">
+      <form method="POST" action="/api/store/buy/disk">
+        <h1 class="dark:text-white text-black">Disk:</h1>
+        <select class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+          <option value={disk}>{config.coins.store.disk.per}{resconf} - {config.coins.store.disk.cost} Coins</option>
+          <option value={disk * 2}>{config.coins.store.disk.per * 2}{resconf} - {config.coins.store.disk.cost * 2} Coins</option>
+          <option value={disk * 3}>{config.coins.store.disk.per * 3}{resconf} - {config.coins.store.disk.cost * 3} Coins</option>
+        </select>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
+      </form>
+    </div>
+    <div class="p-2">
+      <form method="POST" action="/api/store/buy/cpu">
+        <h1 class="dark:text-white text-black">CPU:</h1>
+        <select class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+          <option value={cpu}>{config.coins.store.cpu.per}{cputype} - {config.coins.store.cpu.cost} Coins</option>
+          <option value={cpu * 2}>{config.coins.store.cpu.per * 2}{cputype} - {config.coins.store.cpu.cost * 2} Coins</option>
+          <option value={cpu * 3}>{config.coins.store.cpu.per * 3}{cputype} - {config.coins.store.cpu.cost * 3} Coins</option>
+        </select>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
+      </form>
+    </div>
+    <div class="p-2">
+      <form method="POST" action="/api/store/buy/slots">
+        <h1 class="dark:text-white text-black">Slots:</h1>
+        <select class="bg-zinc-100 dark:bg-zinc-900/50 border mb-2 border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="amount">
+          <option value={slots}>{config.coins.store.servers.per} - {config.coins.store.servers.cost} Coins</option>
+          <option value={slots * 2}>{config.coins.store.servers.per * 2} - {config.coins.store.servers.cost * 2} Coins</option>
+          <option value={slots * 3}>{config.coins.store.servers.per * 3} - {config.coins.store.servers.cost * 3} Coins</option>
+        </select>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Buy</button>
       </form>
     </div>
   </div>
@@ -307,7 +307,7 @@ if (storestatus === false) {
                   <div class="text-center">
                     <p class="text-gray-400">
                         &copy;
-                        {year} {TITLE} | Powered by <a
+                        {year} {config.name} | Powered by <a
                         class="text-amber-500"
                         href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
                 </p>

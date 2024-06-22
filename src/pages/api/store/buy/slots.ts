@@ -39,24 +39,27 @@ const formData = await request.formData();
 const amount = formData.get("amount")?.toString()
 if (amount) {
 try {
-    const number = Number(amount) / config.coins.store.ram.per
-    const cost = config.coins.store.ram.cost * number
-    const oldbalance = await db.get("balance-" + email)
-    if (oldbalance < cost) {
-        return redirect(`/store?error=You have insufficient Coins`)
-    } else {
-    const newbalance = oldbalance - cost
-    const oldextra = await db.get("extraresources-" + email)
-    const oldextraservers = oldextra.servers
-    const newextraservers = oldextraservers + amount
-    const newextra = {
-        ram: oldextra.ram,
-        disk: oldextra.disk,
-        cpu: oldextra.cpu,
-        servers: newextraservers
-      };
-    await db.set("extraresources-" + email, newextra)
-    await db.set("balance-" + email, newbalance)
+  const currentinfo = await db.get("user-" + email)
+  const number = Number(amount) / config.coins.store.servers.per
+  const cost = config.coins.store.servers.cost * number
+  const oldbalance = currentinfo.balance
+  if (oldbalance < cost) {
+      return redirect(`/store?error=You have insufficient Coins`)
+  } else {
+  const newbalance = oldbalance - cost
+  const newextraservers = currentinfo.extraresources.servers + amount
+  const newinfo = {
+    package: currentinfo.package,
+    balance: newbalance,
+    password: currentinfo.password,
+    extraresources: {
+      ram: currentinfo.ram,
+      disk: currentinfo.disk,
+      cpu: currentinfo.cpu,
+      servers: newextraservers
+    }
+  } 
+  await db.set("user-" + email, newinfo)
     return redirect(`/store?success=You have successfully bought ${amount} Slots for ${cost} Coins`)
     }
 }

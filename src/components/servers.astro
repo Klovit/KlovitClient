@@ -1,12 +1,6 @@
 ---
 import config from '../config';
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
 import { supabase } from "../lib/supabase";
-import db from '../database';
-import Nav from "../components/nav.astro";
-import restype from "../restype"
-import Header from "../components/head.astro"
-import Resources from '../components/resources.astro';
 const { cookies, redirect } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
@@ -73,7 +67,7 @@ const adminstatus = pterodactyl.root_admin
 const servers = pterodactyl.relationships.servers.data[0]
 
 const year = new Date().getFullYear().toString()
-const yearWithTitle = `${year} ${TITLE}`
+const yearWithTitle = `${year} ${config.name}`
 
 
 let srvs = pterodactyl.relationships.servers.data
@@ -130,7 +124,7 @@ for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i+
         <p class="text-black dark:text-white"> You don't have a server yet, create one here.</p><br>
         </div>
       <div>
-       <button onclick="location.href='/create'" class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center w-40 h-10">Create</button>
+       <button onclick="location.href='/create'" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Create</button>
 </div>
 </div>    }
 </div>
@@ -156,7 +150,7 @@ for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i+
         <p class="text-black dark:text-white"> You don't have a server yet, create one here.</p><br>
         </div>
       <div>
-       <button onclick="location.href='/create'" class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center w-40 h-10">Create</button>
+       <button onclick="location.href='/create'" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Create</button>
 </div>
 </div>    }
 </div>

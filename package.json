@@ -2,7 +2,7 @@
     "name": "klovitclient",
     "author": "Klovit",
     "description": "A modern dashboard made for Pterodactyl Panel",
-    "version": "0.5.2",
+    "version": "0.6.0",
     "scripts": {
         "dev": "astro dev",
         "start": "astro dev",
@@ -13,8 +13,8 @@
     "dependencies": {
         "@astro-utils/express-endpoints": "^2.1.0",
         "@astro-utils/forms": "^3.3.0",
-        "@astrojs/node": "^8.0.0",
-        "@astrojs/sitemap": "^1.1.0",
+        "@astrojs/node": "^8.3.1",
+        "@astrojs/sitemap": "^3.1.6",
         "@astrojs/tailwind": "^5.1.0",
         "@faker-js/faker": "^7.6.0",
         "@fortawesome/fontawesome-free": "^6.5.1",
@@ -26,19 +26,23 @@
         "@supabase/supabase-js": "^2.39.3",
         "@types/node": "^20.11.5",
         "apexcharts": "^3.37.2",
-        "astro": "^4.2.1",
+        "astro": "^4.11.0",
         "axios": "^1.6.7",
         "csrf-csrf": "^3.0.3",
+        "dotenv": "^16.4.5",
         "figlet": "^1.7.0",
-        "flowbite": "^2.1.1",
+        "flowbite": "^2.3.0",
         "flowbite-typography": "^1.0.3",
         "js-yaml": "^4.1.0",
         "keyv": "^4.5.4",
         "node-fetch": "^3.3.2",
+        "process": "^0.11.10",
         "shiki": "^0.14.1",
         "sqlite3": "^5.1.7",
+        "stripe": "^15.11.0",
         "tailwind-scrollbar": "^3.0.0",
         "tailwindcss": "^3.4.1",
+        "toml": "^3.0.0",
         "typescript": "^5.3.3",
         "yaml": "^2.3.4"
     },
@@ -47,6 +51,7 @@
         "@typescript-eslint/eslint-plugin": "^5.54.1",
         "@typescript-eslint/parser": "^5.54.1",
         "astro-eslint-parser": "^0.11.0",
+        "chokidar": "^3.6.0",
         "eslint": "^8.35.0",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-config-airbnb-typescript": "^17.0.0",
@@ -55,6 +60,7 @@
         "eslint-plugin-astro": "^0.23.0",
         "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-prettier": "^4.2.1",
-        "eslint-plugin-tsdoc": "^0.2.17"
+        "eslint-plugin-tsdoc": "^0.2.17",
+        "tailwindcss-bg-patterns": "^0.3.0"
     }
 }

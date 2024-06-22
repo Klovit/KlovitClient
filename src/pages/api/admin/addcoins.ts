@@ -60,10 +60,10 @@ let cacheaccountinfo = JSON.parse(await cacheaccount.text());
     
 const pterodactyl = cacheaccountinfo.attributes;
 if (!pterodactyl.root_admin) {
-    return redirect(`/dashboard?error="Forbidden"`)
+    return redirect(`/dashboard?error=Forbidden`)
 }
 if (!config.coins.enabled) {
- return redirect(`/admin?error="Coins are disabled."`)
+ return redirect(`/admin?error=Coins are disabled.`)
 }
 
 // Getting data from Request
@@ -74,18 +74,28 @@ const amount = formData.get("amount")?.toString()
 if (amount && usremail) {
 try {
     const addbal = amount
-    const currentbal = await db.get("balance-" + usremail)
-    const newbal = +currentbal + +addbal
-    console.log(newbal)
-    await db.set("balance-" + usremail, newbal)
+    const currentinfo = await db.get("user-" + email)
+    const newbal = +currentinfo.balance + +addbal
+    const newinfo = {
+      package: currentinfo.package,
+      balance: newbal,
+      password: currentinfo.password,
+      extraresources: {
+        ram: currentinfo.extraresources.ram,
+        disk: currentinfo.extraresources.disk,
+        cpu: currentinfo.extraresources.cpu,
+        servers: currentinfo.extraresources.servers
+      }
+    }    
+    await db.set("user-" + usremail, newinfo)
 }
 catch (err) {
     console.log(err)
     return redirect("/admin/coins?error=" + err)
 }
-return redirect(`/admin/coins?success="Successfully added ${amount} coins to the user with the email: ${email}`)
+return redirect(`/admin/coins?success=Successfully added ${amount} coins to the user with the email: ${email}`)
 } else {
-  return redirect(`/admin/coins?error="Missing fields."`);
+  return redirect(`/admin/coins?error=Missing fields.`);
 }
 }
 

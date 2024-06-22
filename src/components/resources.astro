@@ -2,12 +2,9 @@
 import chalk from 'chalk';
 import config from '../config';
 import { Image,getImage } from 'astro:assets';
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
 import { supabase } from "../lib/supabase";
 import db from '../database';
-import Nav from "../components/nav.astro";
 import restype from "../restype"
-import Header from "../components/head.astro"
 const { cookies, redirect } = Astro;
 
 const accessToken = cookies.get("sb-access-token");
@@ -34,7 +31,7 @@ if (error) {
 }
 
 
-const icon = await getImage({src: `${LOGO}`,height: '50', width: '50', format: 'png'})
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
 const errorstate = Astro.url.searchParams.get('error')! || '';
 const errormsg = Astro.url.searchParams.get('error')! || '';
 const success = Astro.url.searchParams.get('success')! || '';
@@ -80,24 +77,22 @@ const adminstatus = pterodactyl.root_admin
 const servers = pterodactyl.relationships.servers.data[0]
 
 const year = new Date().getFullYear().toString()
-const yearWithTitle = `${year} ${TITLE}`
+const yearWithTitle = `${year} ${config.name}`
 
 // RESOURCES
-const extraresources = await db.get("extraresources-" + email)
-const pkglist = config.packages.list.pkg
-const pkg = await db.get(`package-${email}`)
+const info = await db.get("user-" + email)
 const resconf = restype.restype
 // Package Limits
-const pkgram = config.packages.list[await db.get("package-" + email)].ram
-const pkgdisk = config.packages.list[await db.get("package-" + email)].disk
-const pkgserverslimit = config.packages.list[await db.get("package-" + email)].servers
+const pkgram = config.packages.list[info.package].ram
+const pkgdisk = config.packages.list[info.package].disk
+const pkgserverslimit = config.packages.list[info.package].servers
 // Actual Limits
 let ccore;
-ccore = config.packages.list[await db.get("package-" + email)].cpu + extraresources.cpu
+ccore = config.packages.list[await db.get("package-" + email)].cpu + info.extraresources.cpu
 ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
-const ramlimit = pkgram + extraresources.ram
-const disklimit = pkgdisk + extraresources.disk
-const serverslimit = pkgserverslimit + extraresources.servers
+const ramlimit = pkgram + info.extraresources.ram
+const disklimit = pkgdisk + info.extraresources.disk
+const serverslimit = pkgserverslimit + info.extraresources.servers
 // Used resources
 let ramused = 0;
 let diskused = 0;
@@ -132,9 +127,8 @@ if (config.resource_type === "GB"){
     serverdisk = "%serverdisk% MB(s)"
     servercpu = "%servercpu%%"
     }
-const coins = await db.get("balance-" + email)
 ---
-<section class="hidden md:block shadow-lg shadow-gray-500/40 mt-10">
+<section class="hidden md:block mt-10">
     <span class="text-amber-500 ml-4">Resources</span>
     <div class="justify-center w-screen rounded-xl h-fit bg-zinc-300 flex items-center p-4 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80">
         <div class="bg-zinc-100 dark:bg-zinc-950 m-4 h-28 w-60 rounded-xl p-2 text-center">
@@ -155,7 +149,7 @@ const coins = await db.get("balance-" + email)
         </div>
     </div>
   </section>
-  <section class="md:hidden shadow-lg shadow-gray-500/40 mt-10">
+  <section class="md:hidden mt-10">
     <span class="text-amber-500 ml-4">Resources</span>
     <div class="justify-center w-fit rounded-xl h-fit bg-zinc-300 flex items-center p-4 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80">
         <div class="bg-zinc-100 dark:bg-zinc-950 m-2 h-full w-full rounded-xl text-center">
