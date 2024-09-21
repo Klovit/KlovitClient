@@ -13,7 +13,7 @@
     "dependencies": {
         "@astro-utils/express-endpoints": "^2.1.0",
         "@astro-utils/forms": "^3.3.0",
-        "@astrojs/node": "^8.3.1",
+        "@astrojs/node": "^8.3.4",
         "@astrojs/sitemap": "^3.1.6",
         "@astrojs/tailwind": "^5.1.0",
         "@faker-js/faker": "^7.6.0",
