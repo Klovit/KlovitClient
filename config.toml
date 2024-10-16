@@ -1,0 +1,121 @@
+version = "0.5.2" # Version of the KlovitClient instance
+name = "KlovitClient" # Your Host's name
+resource_type = "GB" # This can be either GB or MB, NOTE:- If you have chosen GB then 100% cpu will be 1 thread, if you have chosen MB then 1 thread will be 100% cpu
+
+[website]
+secret = "Website secret" # Randomize this as this will be the secret of the website for the session and middleware cookie
+url = "http://localhost:8081"  # URL of the dashboard
+port = "8081" # The port on which this KlovitClient instance will run
+description = "The most reliable hosting" # The description for your Hosting
+icon = "https://docs.klovit.tech/img/Klovit%20Logo.png"  # Logo of your hosting
+
+[pterodactyl]
+url = "http://localhost"  # Your Pterodactyl Panel URL with "http://" or "https://"
+api = "ptla_Hr0TVGzDe3PIgHL11uKtrQtbqflQSW9Cjw3RzaDAK2p" # Your Pterodactyl Panel Admin API Key
+
+[packages]
+default = "default"
+
+[packages.list.default]
+ram = 10 # Formatted according to "resource_type"
+disk = 20
+cpu = 2  # NOTE - If you have selected GB as resource_type, then 100% cpu is 1. If you have selected MB as resource_type then 100% cpu is 100
+servers = 10
+
+[auth.supabase]  # REQUIRED
+supabase_url = "https://draddxvigssaaldxaacx.supabase.co" # URL of your SupaBase Project
+supabase_anon_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyYWRkeHZpZ3NzYWFsZHhhYWN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU5OTc3NzksImV4cCI6MjAyMTU3Mzc3OX0.lZe61O215ZCwcpz513VaRU4N9EWJxTSVhL3Xplw-NqM" # Anon/API Key of your SupaBase Project
+
+[auth.supabase.oauth2.google]
+enabled = true
+
+[auth.supabase.oauth2.github]
+enabled = true
+
+[auth.supabase.oauth2.discord]
+enabled = true
+
+[database]  # WE DO NOT RECOMMEND TOUCHING THIS.
+type = "sqlite" # Available types are 'sqlite' and 'mysql'
+
+  [database.sqlite] # ONLY CONFIGURE IS YOU HAVE DATABASE TYPE AS 'sqlite'
+  sqlite_db_name = "database.sqlite" 
+
+  [database.mysql] # ONLY CONFIGURE IS YOU HAVE DATABASE TYPE AS 'mysql'
+  mysql_db_name = "klovitclient" # Your MYSQL DB name
+  mysql_db_host = "localhost" # Your MYSQL DB HOST
+  mysql_db_port = "3306" # Your MYSQL DB PORT
+  mysql_db_username = "klovitclient" # Your MYSQL Username
+  mysql_db_password = "password@123" # You MYSQL password
+
+[locations.1] # ID of the location on the pterodactyl panel ( to add more locations, use [locations.2] you just have to increase numbers)
+name = "Default Location 1" # Display name for the location
+
+[eggs.klovitegg] # To add more eggs use [eggs.eggname] and for the other options use [eggs.eggname.option.option]
+display = "MultiEgg | KlovitEgg" # KlovitClient's identifier of the egg
+
+[eggs.klovitegg.limits.minimum] # The minimum resources a user can use while deploying a server
+ram = 1
+disk = 1
+cpu = 1
+
+[eggs.klovitegg.limits.maximum] # The maximum resources a user can use while deploying a server (uncomment the fields to add limits)
+# ram = 2
+# disk = 2
+# cpu = 2
+[eggs.klovitegg.limits.feature] # The limits on the following features
+databases = 1
+backups = 1
+allocations = 1
+
+  [eggs.klovitegg.info] # All this information can be found on the Egg's information page.
+  egg = 16 # ID of the egg
+  docker_image = "ghcr.io/beastgamer81/klovitegg:latest" # Docker image of the egg
+  startup = './install.sh"' # Startup command of the egg 
+
+    [eggs.klovitegg.info.environment] # Environment variables of the egg
+    NODE_VERSION = "latest"
+    PMMP_VERSION = "PM5" 
+    NODE_MAIN_FILE = "index.js"
+
+[payments] # Allow transactions on KlovitClient using various payment gateways.
+enabled = false
+
+[payments.gateways.stripe]  # Allow transactions through Stripe gateway.
+enabled = false
+key = "stripe key here"
+price = "1" # price for 100 coins
+currency = "USD" # The currency for payments (Must be in 3 character format)
+[gifting] # Allow the gifting of coins and resources.
+enabled = false
+
+[coins]  # Coins, the virtual currency of the host. Must enable coins if you need the following things - Store, Link shorteners.
+enabled = true
+
+  [coins.earn]  # Earning of coins via various methods 
+  enabled = true # Whether enable earning of coins or not. Coins must be enabled aswell or else the API Endpoints will throw errors
+
+[coins.earn.links.atglinks] # Earning of coins via ATGLinks
+api = "785159b542f060cb98b55b27a09b2034df506bff" # Your ATGLinks API Key
+amount = "5" # Amount of coins per link
+# dailylimit = "500"  # Daily limit for users (remove the first "#" to enable this option)
+minimumTime = "100" # Minimum time a user has to spend completing the link. (in seconds)
+
+  [coins.store] # The cost and per is not intended to used with 0. This is not intended to sell resources for coins. Make sure coins are enabled too, or else the store page and api endpoints will not work.
+  enabled = false
+
+    [coins.store.ram] 
+    cost = 1000 # Cost of the resource in coins
+    per = 1 # Will be in the format according to "resource_type"
+
+    [coins.store.disk]
+    cost = 1000
+    per = 1
+
+    [coins.store.cpu]
+    cost = 1000
+    per = 1
+
+    [coins.store.servers]
+    cost = 100
+    per = 1

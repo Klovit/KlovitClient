@@ -1,16 +1,16 @@
 ---
-version: '0.5.1' # Version of the KlovitClient instance
+version: '0.5.2' # Version of the KlovitClient instance
 name: KlovitClient # Your Host's name
 resource_type: 'GB' # This can be either GB or MB, NOTE:- If you have chosen GB then 100% cpu will be 1 thread, if you have chosen MB then 1 thread will be 100% cpu
 website: 
   secret: "Website secret" # Randomize this as this will be the secret of the website for the session and middleware cookie
-  url:  # URL of the dashboard
+  url:  'http://localhost:8081' # URL of the dashboard
   port: '8081' # The port on which this KlovitClient instance will run
   description: The most reliable hosting # The description for your Hosting
   icon: https://docs.klovit.tech/img/Klovit%20Logo.png # Logo of your hosting
 pterodactyl:
-  url: 'https://panel.example.com' # Your Pterodactyl Panel URL with "http://" or "https://"
-  api: '' # Your Pterodactyl Panel Admin API Key
+  url: 'http://localhost' # Your Pterodactyl Panel URL with "http://" or "https://"
+  api: 'ptla_Hr0TVGzDe3PIgHL11uKtrQtbqflQSW9Cjw3RzaDAK2p' # Your Pterodactyl Panel Admin API Key
 packages:
   default: default
   list:
@@ -21,16 +21,16 @@ packages:
       servers: 100
 auth:
   supabase: # REQUIRED
-    supabase_url: '' # URL of your SupaBase Project
-    supabase_anon_key: '' # Anon/API Key of your SupaBase Project
+    supabase_url: 'https://draddxvigssaaldxaacx.supabase.co' # URL of your SupaBase Project
+    supabase_anon_key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRyYWRkeHZpZ3NzYWFsZHhhYWN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDU5OTc3NzksImV4cCI6MjAyMTU3Mzc3OX0.lZe61O215ZCwcpz513VaRU4N9EWJxTSVhL3Xplw-NqM' # Anon/API Key of your SupaBase Project
     oauth2:
       google:
-        enabled: false
+        enabled: true
       github:
-        enabled: false
+        enabled: true
       discord:
         enabled: true
-database:
+database: # WE DO NOT RECOMMEND TOUCHING THIS.
   type: 'sqlite' # Available types are 'sqlite' and 'mysql'
   sqlite: # ONLY CONFIGURE IS YOU HAVE DATABASE TYPE AS 'sqlite'
     sqlite_db_name: 'database.sqlite' # The database will be stored in './database/' directory
@@ -60,7 +60,7 @@ eggs:
         backups: 1
         allocations: 1
     info: # All this information can be found on the Egg's information page.
-      egg: 16 # ID of the egg
+      egg: 15 # ID of the egg
       docker_image: ghcr.io/beastgamer81/klovitegg:latest # Docker image of the egg
       startup: ./install.sh" # Startup command of the egg 
       environment: # Environment variables of the egg
@@ -68,10 +68,13 @@ eggs:
         PMMP_VERSION: PM5
         NODE_MAIN_FILE: index.js
 payments: # Allow transactions on KlovitClient using various payment gateways.
-  enabled: false # CURRENTLY PAYMENTS DO NOT WORK
+  enabled: false
   gateways:
-    cryptomus: # Allow transactions through Cryptomus gateway.
+    stripe: # Allow transactions through Stripe gateway.
       enabled: false
+      key: '' # Stripe secret key
+      price: 1 # Price for 100 coins in the given currency
+      currency: 'USD' # The currency for payments (Must be in 3 character format)
 gifting: # Allow the gifting of coins and resources.
   enabled: false 
 coins: # Coins, the virtual currency of the host.

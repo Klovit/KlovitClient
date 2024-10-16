@@ -1,14 +1,15 @@
 ---
 import chalk from 'chalk';
 import config from '../config';
-import { getImage } from 'astro:assets';
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../consts';
+import '../styles/globals.css'
+
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import Nav from "../components/nav.astro";
 import restype from "../restype";
 import Header from "../components/head.astro";
 import Resources from '../components/resources.astro';
+import Footer from '../components/footer.astro'
 import Servers from '../components/servers.astro';
 import Mobnav from "../components/mobnav.astro";
 
@@ -74,164 +75,34 @@ let cacheaccountinfo = JSON.parse(await cacheaccount.text());
     
 const pterodactyl = cacheaccountinfo.attributes;
 const adminstatus = pterodactyl.root_admin
-const servers = pterodactyl.relationships.servers.data[0]
-const year = new Date().getFullYear().toString()
-const yearWithTitle = `${year} ${TITLE}`
-// RESOURCES
-const extraresources = await db.get("extraresources-" + email)
-const pkglist = config.packages.list.pkg
-const pkg = await db.get(`package-${email}`)
-// Package Limits
-const pkgram = config.packages.list[await db.get("package-" + email)].ram
-const pkgdisk = config.packages.list[await db.get("package-" + email)].disk
-const pkgserverslimit = config.packages.list[await db.get("package-" + email)].servers
-// Actual Limits
-let ccore;
-ccore = config.packages.list[await db.get("package-" + email)].cpu + extraresources.cpu
-ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
-const ramlimit = pkgram + extraresources.ram
-const disklimit = pkgdisk + extraresources.disk
-const serverslimit = pkgserverslimit + extraresources.servers
-// Used resources
-let serversused = pterodactyl.relationships.servers.data.length;
-let ramused = 0;
-let diskused = 0;
-let cpuused = 0;
-if (config.resource_type ==="GB") {
-for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
-    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0)/1024;
-    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0)/1024;
-    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0)/100;
-}
-} else {
-    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
-    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
-    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
-    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
-}
-}
-const coins = await db.get("balance-" + email)
-
-let storestatus;
-if (config.coins.store.enabled || config.coins.enabled) {
-        storestatus = true;
-     }
-     else {
-        storestatus = false;
-     }
-let ecostatus;
-if (config.coins.enabled) {
-    ecostatus = true;
-} else {
-    ecostatus = false;
-}
-
-let giftstatus;
-if (config.gifting.enabled) {
-    giftstatus = true;
-} else {
-    giftstatus = false;
-}
-let buystatus;
-if (config.payments.enabled) {
-    buystatus = true;
-} else {
-    buystatus = false;
-}
-const password = await db.get("password-" + email)
+const userinfo = await db.get("user-" + email)
+const password = userinfo.password
 const usernamev = ` ${username} `
 const emailv = ` ${email}`
 ---
 <!DOCTYPE html>
 <html>
     <Header />
-<style> 
- @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
- body { font-family: 'Fredoka', system-ui, sans-serif; }
-  body {
-     overflow-y: scroll;
-     overflow-x: hidden;
-  }
-</style> 
-
-<script>
-   // On page load or when changing themes, best to add inline in `head` to avoid FOUC
-   if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-   } else {
-      document.documentElement.classList.remove('dark')
-   }
-   var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
-   var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
-                   
-    // Change the icons inside the button based on previous settings
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      themeToggleLightIcon.classList.remove('hidden');
-    } else {
-      themeToggleDarkIcon.classList.remove('hidden');
-    }
-            
-    var themeToggleBtn = document.getElementById('theme-toggle');
-
-    themeToggleBtn.addEventListener('click', function() {
-
-      // toggle icons inside button
-      themeToggleDarkIcon.classList.toggle('hidden');
-      themeToggleLightIcon.classList.toggle('hidden');
-
-      // if set via local storage previously
-      if (localStorage.getItem('color-theme')) {
-          if (localStorage.getItem('color-theme') === 'light') {
-              document.documentElement.classList.add('dark');
-              localStorage.setItem('color-theme', 'dark');
-          } else {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('color-theme', 'light');
-          }
-
-      // if NOT set via local storage previously
-      } else {
-          if (document.documentElement.classList.contains('dark')) {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('color-theme', 'light');
-          } else {
-             document.documentElement.classList.add('dark');
-              localStorage.setItem('color-theme', 'dark');
-          }
-      }
     
-    });
-    // It's best to inline this in `head` to avoid FOUC (flash of unstyled content) when changing pages or themes
-        if (
-      localStorage.getItem('color-theme') === 'dark' ||
-      (!('color-theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-</script>
-<body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
-    <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+<body class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-full min-h-screen relative">
+  <div class="hidden md:block animation-blob w-screen">
         <div class="antialiased">
-            <main>
-                <div class="h-12 w-full">
+            <main class="h-fit">
                     <Nav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}  {newpassword}</div>}
-<Resources /><br>
-<section class="flex justify-center grid grid-cols-1 m-4">
-  <div class="rounded-xl bg-zinc-300 dark:bg-zinc-900/50 px-2.5 py-2">
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success} {newpassword}</div>}
+<Resources />
+<section class="justify-center grid grid-cols-1 ml-2 mr-2 mb-8">
+  <div class="rounded-xl px-2.5 py-2">
     <div class="row"><img class="h-32 w-full object-cover lg:h-48 rounded-xl" src="https://wallpaperaccess.com/full/4650672.jpg" alt=""></div>
-                  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+                  <div class="mx-auto max-w">
                     <div class="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                       <div class="flex">
                         <img class="h-24 w-24 rounded-full ring-2 ring-zinc-700 sm:h-32 sm:w-32" src={avatar} alt="useravatar">
                       </div>
                       <div class="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                         <div class="mt-6 min-w-0 flex-1 sm:hidden md:block">
-                          <h1 class="truncate text-2xl font-bold text-white">{username}</h1>
+                          <h1 class="truncate text-2xl text-black font-bold dark:text-white">{username}</h1>
                         </div>
                         <div class="justify-stretch mt-6 flex flex-col space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
                         {adminstatus ? 
@@ -249,45 +120,38 @@ const emailv = ` ${email}`
                   </div>
                 </div><br>
           <div class="flex items-center justify-between">
-            <form action="/api/user/passwordreset" method="POST" class="bg-zinc-300 dark:bg-zinc-900/50 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl">
-                <div class="text-white justify-between">
+            <form action="/api/user/passwordreset" method="POST" class="border w-full text-black dark:text-white duration-300 border-zinc-900 p-2 rounded-xl">
+                <div class="text-black dark:text-white justify-between">
                     <span>Username </span>
                     <span class="mr-8">
-                      <input class="form-input peer w-fit rounded-xl border border-zinc-700 bg-transparent" value={usernamev} disabled>
+                      <input class="form-input shadow-black shadow peer w-fit rounded-xl relative bg-transparent" value={usernamev} disabled>
                     </span><br>
                     <span>Email </span>
                     <span class="mr-8">
-                      <input class="form-input peer min-w-70 max-w-sm rounded-xl border border-zinc-700 bg-transparent" value={emailv} disabled>
+                      <input class="form-input shadow shadow-black peer min-w-90 max-w-sm rounded-xl relative bg-transparent" value={emailv} disabled>
                     </span>
                 </div><br>
                 <p>Hover to see your password</p>
-                <div class="bg-zinc-900 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl">
-                <input class="opacity-0 hover:opacity-100 bg-zinc-900 border w-full text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl" value={password} disabled>
+                <div class="shadow shadow-black bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full text-black dark:text-white duration-300 p-2 rounded-xl">
+                <input class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black opacity-0 hover:opacity-100 w-full text-black dark:text-white duration-300 p-2 rounded-xl" value={password} disabled>
                 </input>
                 </div>
-                  <button class="mt-2 bg-zinc-900 border text-gray-300 duration-300 border-zinc-900 p-2 rounded-xl" >Click me if the password is wrong.</button>
+                  <button class="shadow shadow-black m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black 
+">Click me if the password is wrong.</button>
                 </form>
           </div>
 </section>
-                  <div class="text-center">
-                    <p class="text-gray-400">
-                        &copy;
-                        {year} {TITLE} | Powered by <a
-                        class="text-amber-500"
-                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
-                </p>
-                 </div>
-                </div>
+<Footer />
             </main>
         </div>
     </div>
-    <div class="md:hidden w-screen overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+    <div class="md:hidden w-screen overflow-x-hidden animation-blob h-screen">
         <div class="antialiased">
-            <main>
+<main class="h-screen">
 <Mobnav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}  {newpassword}</div>}
-<Resources /><br>
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success}</div>}
+<Resources /><br><br>
 <section class="flex justify-center grid grid-cols-1 m-4">
   <div class="rounded-xl bg-zinc-300 dark:bg-zinc-900/50 px-2.5 py-2">
     <div class="row"><img class="h-32 w-full object-cover lg:h-48 rounded-xl" src="https://wallpaperaccess.com/full/4650672.jpg" alt=""></div>
@@ -316,35 +180,27 @@ const emailv = ` ${email}`
                   </div>
                 </div><br>
           <div class="flex items-center justify-between">
-            <form action="/api/user/passwordreset" method="POST" class="bg-zinc-300 dark:bg-zinc-900/50 border w-full dark:text-white duration-300 border-zinc-900 p-2 rounded-xl">
+            <form action="/api/user/passwordreset" method="POST" class="bg-zinc-300 dark:bg-zinc-900/50w-full dark:text-white duration-300 border-zinc-900 p-2 rounded-xl">
                 <div class="dark:text-white justify-between">
                     <span>Username </span>
                     <span class="mr-8">
-                      <input class="form-input peer w-fit rounded-xl border border-zinc-700 bg-transparent" value={usernamev} disabled>
+                      <input class="form-input shadow shadow-black peer w-fit rounded-xl bg-transparent" value={usernamev} disabled>
                     </span><br>
                     <span>Email </span>
                     <span class="mr-8">
-                      <input class="form-input peer min-w-70 max-w-sm rounded-xl border border-zinc-700 bg-transparent" value={emailv} disabled>
+                      <input class="form-input shadow shadow-black peer min-w-70 max-w-sm rounded-xl bg-transparent" value={emailv} disabled>
                     </span>
                 </div><br>
                 <p>Hover to see your password</p>
-                <div class="bg-zinc-100 dark:bg-zinc-950  w-full dark:text-white duration-300 p-2 rounded-xl">
-                <input class="opacity-0 hover:opacity-100 bg-zinc-100 dark:bg-zinc-950 pb-2 w-full dark:text-white duration-300 p-2 rounded-xl" value={password} disabled>
+                <div class="shadow shadow-black bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black  w-full dark:text-white duration-300 p-2 rounded-xl">
+                <input class="opacity-0 hover:opacity-100 bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black pb-2 w-full dark:text-white duration-300 p-2 rounded-xl" value={password} disabled>
                 </input>
                 </div>
-                  <button  class="text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" >Click me if the password is wrong.</button>
+                  <button  class="shadow shadow-black text-white w-full relative bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black font-medium rounded-full text-lg p-2 text-center" >Click me if the password is wrong.</button>
                 </form>
           </div>
 </section>
-                  <div class="text-center">
-                    <p class="text-gray-400">
-                        &copy;
-                        {year} {TITLE} | Powered by <a
-                        class="text-amber-500"
-                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
-                </p>
-
-                 </div>
+<Footer />
                 </div>
             </main>
         </div>

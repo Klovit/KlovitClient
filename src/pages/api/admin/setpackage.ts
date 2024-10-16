@@ -60,7 +60,7 @@ let cacheaccountinfo = JSON.parse(await cacheaccount.text());
     
 const pterodactyl = cacheaccountinfo.attributes;
 if (!pterodactyl.root_admin) {
-    return redirect(`/dashboard?error="Forbidden"`)
+    return redirect(`/dashboard?error=Forbidden`)
 }
 
 // Getting data from Request
@@ -70,15 +70,27 @@ const packagee = formData.get("packagee")?.toString()
 
 if (packagee && usremail) {
 try {
-    await db.set("package-" + usremail, packagee)
+  const currentinfo = await db.get("user-" + usremail)
+  const newinfo = {
+    package: packagee,
+    balance: currentinfo.balance,
+    password: currentinfo.password,
+    extraresources: {
+      ram: currentinfo.extraresources.ram,
+      disk: currentinfo.extraresources.disk,
+      cpu: currentinfo.extraresources.cpu,
+      servers: currentinfo.extraresources.servers
+    }
+  }
+  await db.set("user-" + usremail, newinfo)
 }
 catch (err) {
     console.log(err)
     return redirect("/admin/packages?error=" + err)
 }
-return redirect(`/admin/packages?success="Successfully set the package of user with the email: ${email} to  ${packagee}`)
+return redirect(`/admin/packages?success=Successfully set the package of user with the email: ${usremail} to  ${packagee}`)
 } else {
-  return redirect(`/admin/packages?error="Missing fields."`);
+  return redirect(`/admin/packages?error=Missing fields.`);
 }
 }
 

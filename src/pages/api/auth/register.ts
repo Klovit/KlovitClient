@@ -94,7 +94,7 @@ const full_name = username
   });
 
   if (error) {
-    return redirect(`/register?error="${error.message}"`);
+    return redirect(`/register?error=${error.message}`);
 }
       let genpassword = null;
       genpassword = makeid(16);
@@ -125,39 +125,30 @@ const full_name = username
             }
           }
         );
-        let currentextra = await db.get("extra-" + username);
-        let extra;
-        if (typeof currentextra == "object") {
-            extra = currentextra;
+        let currentinfo = await db.get("user-" + email);
+        let info;
+    
+        if (typeof currentinfo == "object") {
+            info = currentinfo;
         } else {
-            extra = {
+            info = {
+              package: config.packages.default,
+              balance: 0,
+              password: genpassword,
+              extraresources: {
                 ram: 0,
                 disk: 0,
                 cpu: 0,
                 servers: 0
+              }
             }
-        }
-        let currentplan = await db.get("package-" + email);
-        let plan;
-
-        if (typeof currentplan == "object") {
-            plan = currentplan;
-        } else {
-          plan = config.packages.default
         }
         let accountlist = await accountlistjson.json();
         let user = accountlist.data.filter(acc => acc.attributes.email == email);
         if (user.length == 1) {
-          let usernames = await db.get("users") ? await db.get("users") : [];
-          if (usernames.filter(id => id == username).length == 0) {
-            usernames.push(username);
-            await db.set("user-" + username, email);
-            await db.get("package-" + username, config.packages.default)
-          } 
-
-          await db.set(`package-${email}`, plan)
-          await db.set(`extraresources-${username}`, extra)
-        } else {
+            await db.set("user-" + email, info);
+          }
+         else {
           console.log(`An error has occured when attempting to create ${email}'s account account.`);
         };
 

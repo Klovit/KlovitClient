@@ -1,7 +1,6 @@
 ---
 import chalk from 'chalk';
 import config from '../../../../../../config';
-import { getImage } from 'astro:assets';
 import { supabase } from "../../../../../../lib/supabase";
 import db from '../../../../../../database';
 const { cookies, redirect } = Astro;
@@ -43,16 +42,30 @@ if (atgcodes[email].code !== code) return Astro.redirect(`/economy?error=Invalid
 await db.delete("atgcodes-" + email)
 
 if (((Date.now() - atgcodes.generated) / 1000) < config.coins.earn.links.atglinks.minimumtime) {
-        return Response('<p>Hm... our systems detected something going on! Please make sure you are not using an ad blocker (or ATGLinks bypasser). <a href="/earn">Generate another link</a></p> <img src="https://i.imgur.com/lwbn3E9.png" alt="robot" height="300">')
+        return Astro.redirect(`/economy?error=Our systems detected something going on! Please make sure you are not using an ad blocker (or ATGLinks bypasser)`)
     }
 
     // Adding coins
-    const coins = await db.get(`balance-${email}`)
-    await db.set(`balance-${email}`, +coins + +config.coins.earn.links.atglinks.amount)
+    const currentinfo = await db.get("user-" + email)
+    let extra;
+  extra = ('extraresources' in currentinfo && 
+    'ram' in currentinfo.extraresources &&
+    'disk' in currentinfo.extraresources &&
+    'cpu' in currentinfo.extraresources &&
+    'servers' in currentinfo.extraresources) 
+  ? currentinfo.extraresources 
+  : { ram: 0, disk: 0, cpu: 0, servers: 0 };
+    const newinfo = {
+      package: currentinfo.package,
+      balance: config.coins.earn.links.atglinks.amount,
+      password: currentinfo.password,
+      extraresources: extra
+    }
+    await db.set("user-" + email, newinfo)
 
-    return Astro.redirect(`/economy?success=You have successfully completed a ATGLinks link and you have earned ${config.coins.earn.links.atglinks.amount} Coins.`)
+    return Astro.redirect(`/economy?success=You have successfully completed an ATGLinks link and you have earned ${config.coins.earn.links.atglinks.amount} Coins.`)
 } catch {
     console.log(error)
-    return new Response(`<p>${error}</p>`)
+    return new Response(`/economy?error=${error}`)
 }
 ---

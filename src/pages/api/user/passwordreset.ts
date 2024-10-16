@@ -7,7 +7,6 @@ import config from '../../../config';
 import { ExpressRoute } from "@astro-utils/express-endpoints";
 import doubleCsrfProtection from "../../../middleware";
 import restype from "src/restype";
-import { mdiHeadHeart } from "@mdi/js";
 
 const router = new ExpressRoute();
 router.use(doubleCsrfProtection)
@@ -98,10 +97,22 @@ const result = fetch(config.pterodactyl.url + "/api/application/users/" + pterod
 // Checking response status and redirecting on successful and unsuccessful response.
 if((await result).status === 200) {
   console.log("Successfully reset password of user: " + username)
-  db.set("password-" + email, newpass)
-  return redirect(`/account?success="Successfully reset your account's password."&password=` + newpass)
+  const currentinfo = await db.get("user-" + email)
+  const newinfo = {
+    package: currentinfo.package,
+    balance: currentinfo.balance,
+    password: newpass,
+    extraresources: {
+      ram: currentinfo.ram,
+      disk: currentinfo.disk,
+      cpu: currentinfo.cpu,
+      servers: currentinfo.servers
+    }
+  } 
+  await db.set("user-" + email, newinfo)
+  return redirect(`/account?success=Successfully reset your account's password.&password=` + newpass)
 } else {
   console.error('Error:', (await result).status + (await result).statusText);
-  return redirect(`/account?error="Unknown error occured while resetting your account's password."`)
+  return redirect(`/account?error=Unknown error occured while resetting your account's password.`)
 }
 }

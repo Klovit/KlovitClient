@@ -6,7 +6,6 @@ import db from '../../database';
 import Adminnav from "../../components/adminnav.astro";
 import Adminmobnav from "../../components/adminmobnav.astro";
 import restype from "../../restype"
-import { TITLE,SITE_DESCRIPTION,LOGO } from '../../consts';
 import Header from "../../components/head.astro"
 
 const { cookies, redirect } = Astro;
@@ -77,41 +76,6 @@ let cacheaccountinfo = JSON.parse(await cacheaccount.text());
     
 const pterodactyl = cacheaccountinfo.attributes;
 const adminstatus = pterodactyl.root_admin
-const servers = pterodactyl.relationships.servers.data[0]
-
-// RESOURCES
-const extraresources = await db.get("extraresources-" + email)
-const pkglist = config.packages.list.pkg
-const pkg = await db.get(`package-${email}`)
-// Package Limits
-const pkgram = config.packages.list[await db.get("package-" + email)].ram
-const pkgdisk = config.packages.list[await db.get("package-" + email)].disk
-const pkgserverslimit = config.packages.list[await db.get("package-" + email)].servers
-// Actual Limits
-let ccore;
-ccore = config.packages.list[await db.get("package-" + email)].cpu + extraresources.cpu
-ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
-const ramlimit = pkgram + extraresources.ram
-const disklimit = pkgdisk + extraresources.disk
-const serverslimit = pkgserverslimit + extraresources.servers
-// Used resources
-let serversused = pterodactyl.relationships.servers.data.length;
-let ramused = 0;
-let diskused = 0;
-let cpuused = 0;
-if (config.resource_type ==="GB") {
-for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
-    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0)/1024;
-    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0)/1024;
-    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0)/100;
-}
-} else {
-    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
-    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
-    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
-    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
-}
-}
 if (adminstatus === false) {
  Astro.redirect("/dashboard")
 }
@@ -126,19 +90,22 @@ if (currentver < latestver) {
 if (currentver === latestver) {
         outdated = false
 }
-const coins = await db.get("balance-" + email)
 ---
 <!DOCTYPE html>
 <html>
     <Header />
-<style> 
- @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
- body { font-family: 'Fredoka', system-ui, sans-serif; }
-  body {
-     overflow-y: scroll;
-     overflow-x: hidden;
-  }
-</style> 
+      <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+        body { font-family: 'Roboto', system-ui, sans-serif; }
+         body {
+            overflow-y: scroll;
+            overflow-x: hidden;
+         }
+         @tailwind base;
+       @tailwind components;
+       @tailwind utilities;
+
+       </style> 
 
 <script>
    // On page load or when changing themes, best to add inline in `head` to avoid FOUC
@@ -198,74 +165,75 @@ const coins = await db.get("balance-" + email)
       document.documentElement.classList.remove('dark');
     }
 </script>
-<body class="flex items-center bg-zinc-100 dark:bg-gray-950 justify-center h-screen">
-    <div class="hidden md:block bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+<body class="ml-1 min-w-screen bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-full min-h-screen relative">
+    <div class="hidden md:block animation-blob h-screen w-screen">
         <div class="antialiased">
             <main>
-                <div class="h-12 w-full">
                     <Adminnav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success}</div>}
                   <br><br>
-<section>
-    <h1 class="dark:text-white text-[25px] lg:text-2xl">Admin | Resources</h1>
-    <h1 class="dark:text-white text-[20px]">This is only for extra resources</h1>
-    <h1 class="dark:text-white text-xl">&nbsp;Add Resources</h1>
-    <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+<section class="ml-2">
+    <h1 class="dark:text-white text-black text-[25px] lg:text-2xl">Admin | Resources</h1>
+    <h1 class="dark:text-white text-black text-[20px]">This is only for extra resources</h1>
+    <h1 class="dark:text-white text-black text-xl">&nbsp;Add Resources</h1>
+    <div class="rounded-xl bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black px-2.5 py-2">
         <form class="p-4" method="POST" action="/api/admin/addres">
-                    <div class="dark:bg-zinc-950 h-max p-4 rounded-l-xl">
+                    <div class="h-max shadow shadow-black p-4 rounded-xl">
                         <div class="w-full">
-                            <h1 class="dark:text-white ml-1">Email: </h1>
-                            <input class="dark:bg-zinc-950 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                            <h1 class="dark:text-white text-black ml-1">Email: </h1>
+                            <input class="bg-transparent border w-80 h-6 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Eg. support@example.com" maxlength={50}></input>
                         </div>
                         <div class="w-fit ">
-                            <h1 class="dark:text-white ml-1">RAM: </h1>
-                            <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of RAM in " maxlength={30}><span class="dark:text-white">{resconf}</span>
+                            <h1 class="dark:text-white text-black ml-1">RAM: </h1>
+                            <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="text-black ml-1 dark:text-white">{resconf}</span>
                         </input>
                         </div>
                         <div class="w-fit ">
-                            <h1 class="dark:text-white ml-1">Disk: </h1>
-                            <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of Disk in" maxlength={30}></input><span class="dark:text-white">{resconf}</span>
+                            <h1 class="dark:text-white text-black ml-1">Disk: </h1>
+                            <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black ml-1 dark:text-white">{resconf}</span>
                         </div>
                         <div class="w-fit ">
-                            <h1 class="dark:text-white ml-1">CPU: </h1>
-                            <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of CPU in" maxlength={30}></input><span class="dark:text-white">{cputype}</span>
+                            <h1 class="dark:text-white text-black ml-1">CPU: </h1>
+                            <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black ml-1 dark:text-white">{cputype}</span>
                         </div>
                         <div class="w-fit ">
-                            <h1 class="dark:text-white ml-1">Slots: </h1>
-                            <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of slots" maxlength={30}></input>
+                            <h1 class="dark:text-white text-black ml-1">Slots: </h1>
+                            <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input><span class="text-black ml-1 dark:text-white">Slots</span>
                         </div>
+                        <button class="m-2 shadow shadow-black w-full rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black 
+                        " type="submit">Add Resources</button>
                        </div>
-                       <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Add Resources</button>
         </form>
     </div><br>
-    <h1 class="dark:text-white text-xl">&nbsp;Remove Resources</h1>
-    <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+    <h1 class="dark:text-white text-black text-xl">&nbsp;Remove Resources</h1>
+    <div class="rounded-xl shadow shadow-black px-2.5 py-2">
         <form method="POST" action="/api/admin/removeres">
-          <div class="dark:bg-zinc-950 h-max p-4 rounded-l-xl">
+          <div class="h-max p-4 rounded-xl">
             <div class="w-full">
-                <h1 class="dark:text-white ml-1">Email: </h1>
-                <input class="dark:bg-zinc-950 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                <h1 class="dark:text-white text-black ml-1">Email: </h1>
+                <input class="bg-transparent border w-80 h-6 text-black dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Eg. support@example.com" maxlength={50}></input>
             </div>
             <div class="w-fit ">
-                <h1 class="dark:text-white ml-1">RAM: </h1>
-                <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of RAM in " maxlength={30}><span class="dark:text-white">{resconf}</span>
+                <h1 class="dark:text-white text-black ml-1">RAM: </h1>
+                <input class="bg-transparent border w-40 text-black dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="text-black ml-1 dark:text-white">{resconf}</span>
             </input>
             </div>
             <div class="w-fit ">
-                <h1 class="dark:text-white ml-1">Disk: </h1>
-                <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of Disk in" maxlength={30}></input><span class="dark:text-white">{resconf}</span>
+                <h1 class="dark:text-white text-black ml-1">Disk: </h1>
+                <input class="bg-transparent border w-40 text-black dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black ml-1 dark:text-white">{resconf}</span>
             </div>
             <div class="w-fit ">
-                <h1 class="dark:text-white ml-1">CPU: </h1>
-                <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of CPU in" maxlength={30}></input><span class="dark:text-white">{cputype}</span>
+                <h1 class="dark:text-white text-black ml-1">CPU: </h1>
+                <input class="bg-transparent border w-40 text-black dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black ml-1 dark:text-white">{cputype}</span>
             </div>
             <div class="w-fit ">
-                <h1 class="dark:text-white ml-1">Slots: </h1>
-                <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="amount" placeholder="Amount of slots" maxlength={30}></input>
+                <h1 class="dark:text-white text-black ml-1">Slots: </h1>
+                <input class="bg-transparent border w-40 text-black dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input><span class="text-black ml-1 dark:text-white">Slots</span>
             </div>
            </div>
-           <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Remove Resources</button>
+           <button class="m-2 shadow shadow-black w-full rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black 
+" type="submit">Remove Resources</button>
           </form>
     </div><br>
 </section>
@@ -274,76 +242,72 @@ const coins = await db.get("balance-" + email)
             </main>
         </div>
     </div>
-    <div class="md:hidden w-screen overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
-
+    <div class="md:hidden w-screen overflow-x-hidden animation-blob h-screen">
         <div class="antialiased">
             <main>
-              <main>
-                <div class="h-12 w-full">
-                    
 <Adminmobnav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success}</div>}
 <br><br>
 <section>
-  <h1 class="dark:text-white text-[15px] lg:text-2xl">Admin | Resources</h1>
-  <h1 class="dark:text-white text-[10px]">This is only for extra resources</h1>
-  <h1 class="dark:text-white text-xl">&nbsp;Add Resources</h1>
-  <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+  <h1 class="dark:text-white text-black text-[15px] lg:text-2xl">Admin | Resources</h1>
+  <h1 class="dark:text-white text-black text-[10px]">This is only for extra resources</h1>
+  <h1 class="dark:text-white text-black text-xl">&nbsp;Add Resources</h1>
+  <div class="rounded-xl bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black px-2.5 py-2">
       <form class="p-4" method="POST" action="/api/admin/addres">
-                  <div class="dark:bg-zinc-950 h-max p-4 rounded-l-xl">
+                  <div class="shadow shadow-black h-max p-4 rounded-l-xl">
                       <div class="w-full">
-                          <h1 class="dark:text-white ml-1">Email: </h1>
-                          <input class="dark:bg-zinc-950 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+                          <h1 class="dark:text-white text-black ml-1">Email: </h1>
+                          <input class="bg-transparent text-black dark:text-white border w-80 h-6 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
                       </div>
                       <div class="w-fit ">
-                          <h1 class="dark:text-white ml-1">RAM: </h1>
-                          <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="dark:text-white">{resconf}</span>
+                          <h1 class="dark:text-white text-black ml-1">RAM: </h1>
+                          <input class="bg-transparent text-black dark:text-white border w-40 duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="text-black dark:text-white">{resconf}</span>
                       </input>
                       </div>
                       <div class="w-fit ">
-                          <h1 class="dark:text-white ml-1">Disk: </h1>
-                          <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="dark:text-white">{resconf}</span>
+                          <h1 class="dark:text-white text-black ml-1">Disk: </h1>
+                          <input class="bg-transparent text-black dark:text-white border w-40 duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black dark:text-white">{resconf}</span>
                       </div>
                       <div class="w-fit ">
-                          <h1 class="dark:text-white ml-1">CPU: </h1>
-                          <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="dark:text-white">{cputype}</span>
+                          <h1 class="dark:text-white text-black ml-1">CPU: </h1>
+                          <input class="bg-transparent text-black dark:text-white border w-40 duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black dark:text-white">{cputype}</span>
                       </div>
                       <div class="w-fit ">
-                          <h1 class="dark:text-white ml-1">Slots: </h1>
-                          <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input>
+                          <h1 class="dark:text-white text-black ml-1">Slots: </h1>
+                          <input class="bg-transparent text-black dark:text-white border w-40duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input>
                       </div>
+                      <button class="dark:text-white text-black w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Add Resources</button>
                      </div>
-                     <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Add Resources</button>
       </form>
   </div><br>
-  <h1 class="dark:text-white text-xl">&nbsp;Remove Resources</h1>
-  <div class="rounded-xl bg-zinc-300 dark:bg-zinc-950 px-2.5 py-2">
+  <h1 class="dark:text-white text-black text-xl">&nbsp;Remove Resources</h1>
+  <div class="rounded-xl bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black px-2.5 py-2">
       <form method="POST" action="/api/admin/removeres">
-        <div class="dark:bg-zinc-950 h-max p-4 rounded-l-xl">
+        <div class="shadow shadow-black h-max p-4 rounded-l-xl">
           <div class="w-full">
-              <h1 class="dark:text-white ml-1">Email: </h1>
-              <input class="dark:bg-zinc-950 border w-80 h-6 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
+              <h1 class="text-black dark:text-white ml-1">Email: </h1>
+              <input class="bg-transparent border w-80 h-6 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="email" placeholder="Email of the user eg. support@example.com" maxlength={50}></input>
           </div>
           <div class="w-fit ">
-              <h1 class="dark:text-white ml-1">RAM: </h1>
-              <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="dark:text-white">{resconf}</span>
+              <h1 class="text-black dark:text-white ml-1">RAM: </h1>
+              <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="ram" placeholder="Amount of RAM in " maxlength={30}><span class="text-black dark:text-white">{resconf}</span>
           </input>
           </div>
           <div class="w-fit ">
-              <h1 class="dark:text-white ml-1">Disk: </h1>
-              <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="dark:text-white">{resconf}</span>
+              <h1 class="text-black dark:text-white ml-1">Disk: </h1>
+              <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="disk" placeholder="Amount of Disk in" maxlength={30}></input><span class="text-black dark:text-white">{resconf}</span>
           </div>
           <div class="w-fit ">
-              <h1 class="dark:text-white ml-1">CPU: </h1>
-              <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="dark:text-white">{cputype}</span>
+              <h1 class="text-black dark:text-white ml-1">CPU: </h1>
+              <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="cpu" placeholder="Amount of CPU in" maxlength={30}></input><span class="text-black dark:text-white">{cputype}</span>
           </div>
           <div class="w-fit ">
-              <h1 class="dark:text-white ml-1">Slots: </h1>
-              <input class="dark:bg-zinc-950 border w-40 text-gray-300 duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input>
+              <h1 class="text-black dark:text-white ml-1">Slots: </h1>
+              <input class="bg-transparent border w-40 dark:text-white duration-300 border-zinc-800 rounded-xl" type="text" name="slots" placeholder="Amount of slots" maxlength={30}></input>
           </div>
+          <button class="shadow shadow-black dark:text-white w-full relative bg-blue-400 text-black font-medium rounded-full text-lg p-2 text-center" type="submit">Remove Resources</button>
          </div>
-         <button class="dark:text-white w-full relative bg-blue-400 shadow-md font-medium rounded-full text-lg p-2 text-center" type="submit">Remove Resources</button>
         </form>
   </div><br>
 </section>

@@ -39,24 +39,36 @@ const formData = await request.formData();
 const amount = formData.get("amount")?.toString()
 if (amount) {
 try {
-    const number = Number(amount) / config.coins.store.disk.per
-    const cost = config.coins.store.disk.cost * number
-    const oldbalance = await db.get("balance-" + email)
-    if (oldbalance < cost) {
-        return redirect(`/store?error=You have insufficient Coins`)
-    } else {
-    const newbalance = oldbalance - cost
-    const oldextra = await db.get("extraresources-" + email)
-    const oldextradisk = oldextra.disk
-    const newextradisk = oldextradisk + amount
-    const newextra = {
-        ram: oldextra.ram,
-        disk: newextradisk,
-        cpu: oldextra.cpu,
-        servers: oldextra.servers
-      };
-    await db.set("extraresources-" + email, newextra)
-    await db.set("balance-" + email, newbalance)
+  const currentinfo = await db.get("user-" + email)
+  const number = Number(amount) / config.coins.store.disk.per
+  const cost = config.coins.store.disk.cost * number
+  const oldbalance = currentinfo.balance
+  if (oldbalance < cost) {
+      return redirect(`/store?error=You have insufficient Coins`)
+  } else {
+  const newbalance = oldbalance - cost
+  let extra;
+  extra = ('extraresources' in currentinfo && 
+    'ram' in currentinfo.extraresources &&
+    'disk' in currentinfo.extraresources &&
+    'cpu' in currentinfo.extraresources &&
+    'servers' in currentinfo.extraresources) 
+  ? currentinfo.extraresources 
+  : { ram: 0, disk: 0, cpu: 0, servers: 0 };
+  const newextradisk = +extra.disk + +amount
+  const newextra = {
+    ram: extra.ram,
+    disk: newextradisk,
+    cpu: extra.cpu,
+    servers: extra.servers 
+  }
+    const newinfo = {
+    package: currentinfo.package,
+    balance: newbalance,
+    password: currentinfo.password,
+    extraresources: newextra
+  } 
+  await db.set("user-" + email, newinfo)
     return redirect(`/store?success=You have successfully bought ${amount} ${resconf} Disk for ${cost} Coins`)
     }
 }

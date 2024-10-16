@@ -65,24 +65,36 @@ const pterodactyl = cacheaccountinfo.attributes;
 const formData = await request.formData();
 const srvid = formData.get("srvid")?.toString()
 const srvname = formData.get("name")?.toString()
-const srvram = formData.get("ram")?.toString()
-const srvdisk = formData.get("disk")?.toString()
-const srvcpu = formData.get("cpu")?.toString()
+const srvramraw = formData.get("ram")?.toString()
+const srvdiskraw = formData.get("disk")?.toString()
+const srvcpuraw = formData.get("cpu")?.toString()
 const srvegg = formData.get("egg")?.toString()
-let pterorelationshipsserverdata = pterodactyl.relationships.servers.data.filter(name => name.attributes.id.toString() !== srvid);
+let pterorelationshipsserverdata = pterodactyl.relationships.servers.data.filter(name => name.attributes.id.toString() === srvid);
 
-  if (pterorelationshipsserverdata.length !== 1) return new Response(JSON.stringify({
-    statustext: "Could not find server with that ID.",
-    status: 422
-  }));
+  if (pterorelationshipsserverdata.length !== 1) {
+    console.log(pterorelationshipsserverdata.length)
+    return redirect("/dashboard?error=Server Not Found")
+  }
+let srvram;
+let srvdisk;
+let srvcpu;
+if (config.resource_type === 'GB') {
+  srvram = Number(srvramraw) * 1024
+  srvdisk = Number(srvdiskraw) * 1024
+  srvcpu = Number(srvcpuraw) * 100
+} else {
+  srvram = srvramraw
+  srvcpu = srvcpuraw
+  srvdisk = srvdiskraw
+}
 
-
-  let ram = srvram ? (isNaN(parseFloat(srvram)) ? undefined : parseFloat(srvram)) : undefined;
+  let ram = srvram  ? (isNaN(parseFloat(srvram)) ? undefined : parseFloat(srvram)) : undefined;
   let disk = srvdisk ? (isNaN(parseFloat(srvdisk)) ? undefined : parseFloat(srvdisk)) : undefined;
   let cpu = srvcpu ? (isNaN(parseFloat(srvcpu)) ? undefined : parseFloat(srvcpu)) : undefined;
 
   if (ram || disk || cpu) {
-    let packagename = await db.get("package-" + email);
+    let usrinfo = await db.get("user-" + email)
+    let packagename = usrinfo.package
     let usrpackage = config.packages.list[packagename ? packagename : config.packages.default];
 
     let ram2 = 0;
@@ -104,23 +116,21 @@ let pterorelationshipsserverdata = pterodactyl.relationships.servers.data.filter
     let egginfo = attemptegg ? attemptegg : null;
 
     if (!egginfo) return redirect(`/edit?id=${srvid}&error=Missing Egg.`);
-
-    let extra =
-      await db.get("extraresources-" + email) ?
-        await db.get("extraresources-" + email) :
-        {
-          ram: 0,
-          disk: 0,
-          cpu: 0,
-          servers: 0
-        };
+    let extra;
+    extra = ('extraresources' in usrinfo && 
+      'ram' in usrinfo.extraresources &&
+      'disk' in usrinfo.extraresources &&
+      'cpu' in usrinfo.extraresources &&
+      'servers' in usrinfo.extraresources) 
+    ? usrinfo.extraresources 
+    : { ram: 0, disk: 0, cpu: 0, servers: 0 };
         let extraram;
         let extradisk;
         let extracpu;
         if (config.resource_type === "GB") {
-          extraram = extra.ram * 1024
-          extradisk = extra.disk * 1024
-          extracpu = extra.cpu * 100
+          extraram = extra.ram
+          extradisk = extra.disk
+          extracpu = extra.cpu
         } else {
           extraram = extra.ram
           extradisk = extra.disk
@@ -138,18 +148,30 @@ if (config.resource_type === "GB") {
   disk3 = disk2
   cpu3 = cpu2
 }
-
-    if (+ram3 + +ram > +usrpackage.ram + +extraram) return redirect(`/edit?id=${srvid}&error=Exceeding your RAM limit.&limit=${usrpackage.ram + extraram - ram2}`);
-    if (+disk3 + +disk > +usrpackage.disk + +extradisk) return redirect(`/edit?id=${srvid}&error=Exceeding your Disk limit.&limit=${usrpackage.disk + extradisk - disk2}`);
-    if (+cpu3 + +cpu > +usrpackage.cpu + +extracpu) return redirect(`/edit?id=${srvid}&error=Exceeding your CPU limit.&limit=${usrpackage.cpu + extracpu - cpu2}`);
-    if (egginfo.minimum.ram) if (ram < egginfo.minimum.ram) return redirect(`/edit?id=${srvid}&error=RAM is lower than Egg's minimum limit.&limit=${egginfo.minimum.ram}`);
-    if (egginfo.minimum.disk) if (disk < egginfo.minimum.disk) return redirect(`/edit?id=${srvid}&error=Disk is lower than Egg's minimum limit.&limit=${egginfo.minimum.disk}`);
-    if (egginfo.minimum.cpu) if (cpu < egginfo.minimum.cpu) return redirect(`/edit?id=${srvid}&error=CPU is lower than Egg's minimum limit.&limit=${egginfo.minimum.cpu}`);
-    if (egginfo.maximum) {
-      if (egginfo.maximum.ram) if (ram > egginfo.maximum.ram) return redirect(`/edit?id=${srvid}&error=RAM is Higher than Egg's minimum limit.&limit=${egginfo.maximum.ram}`);
-      if (egginfo.maximum.disk) if (disk > egginfo.maximum.disk) return redirect(`/edit?id=${srvid}&error=Disk is Higher than Egg's minimum limit.&limit=${egginfo.maximum.disk}`);
-      if (egginfo.maximum.cpu) if (cpu > egginfo.maximum.cpu) return redirect(`/edit?id=${srvid}&error=CPU is Higher than Egg's minimum limit.&limit=${egginfo.maximum.cpu}`);
+   if (config.resource_type === 'GB') {
+    if (+ram3 + +ram/1024 > +usrpackage.ram + +extraram) return redirect(`/edit?id=${srvid}&error=Exceeding your RAM limit.&limit=${+usrpackage.ram + +extraram - +ram3}`);
+    if (+disk3 + +disk/1024 > +usrpackage.disk + +extradisk) return redirect(`/edit?id=${srvid}&error=Exceeding your Disk limit.&limit=${+usrpackage.disk + +extradisk - +disk3}`);
+    if (+cpu3 + +cpu/100 > +usrpackage.cpu + +extracpu) return redirect(`/edit?id=${srvid}&error=Exceeding your CPU limit.&limit=${+usrpackage.cpu + +extracpu - +cpu3}`);
+    if (egginfo.limits.minimum.ram) if (ram < egginfo.limits.minimum.ram) return redirect(`/edit?id=${srvid}&error=RAM is lower than Egg's minimum limit.&limit=${egginfo.minimum.ram}`);
+    if (egginfo.limits.minimum.disk) if (disk < egginfo.limits.minimum.disk) return redirect(`/edit?id=${srvid}&error=Disk is lower than Egg's minimum limit.&limit=${egginfo.minimum.disk}`);
+    if (egginfo.limits.minimum.cpu) if (cpu < egginfo.limits.minimum.cpu) return redirect(`/edit?id=${srvid}&error=CPU is lower than Egg's minimum limit.&limit=${egginfo.minimum.cpu}`);
+    if (egginfo.limits.maximum) {
+      if (egginfo.limits.maximum.ram) if (ram > egginfo.limits.maximum.ram) return redirect(`/edit?id=${srvid}&error=RAM is Higher than Egg's minimum limit.&limit=${egginfo.maximum.ram}`);
+      if (egginfo.limits.maximum.disk) if (disk > egginfo.limits.maximum.disk) return redirect(`/edit?id=${srvid}&error=Disk is Higher than Egg's minimum limit.&limit=${egginfo.maximum.disk}`);
+      if (egginfo.limits.maximum.cpu) if (cpu > egginfo.limits.maximum.cpu) return redirect(`/edit?id=${srvid}&error=CPU is Higher than Egg's minimum limit.&limit=${egginfo.maximum.cpu}`);
     };
+   } else { if (+ram3 + +ram > +usrpackage.ram + +extraram) return redirect(`/edit?id=${srvid}&error=Exceeding your RAM limit.&limit=${+usrpackage.ram + +extraram - +ram3}`);
+    if (+disk3 + +disk > +usrpackage.disk + +extradisk) return redirect(`/edit?id=${srvid}&error=Exceeding your Disk limit.&limit=${+usrpackage.disk + +extradisk - +disk3}`);
+    if (+cpu3 + +cpu > +usrpackage.cpu + +extracpu) return redirect(`/edit?id=${srvid}&error=Exceeding your CPU limit.&limit=${+usrpackage.cpu + +extracpu - +cpu3}`);
+    if (egginfo.limits.minimum.ram) if (ram < egginfo.limits.minimum.ram) return redirect(`/edit?id=${srvid}&error=RAM is lower than Egg's minimum limit.&limit=${egginfo.minimum.ram}`);
+    if (egginfo.limits.minimum.disk) if (disk < egginfo.limits.minimum.disk) return redirect(`/edit?id=${srvid}&error=Disk is lower than Egg's minimum limit.&limit=${egginfo.minimum.disk}`);
+    if (egginfo.limits.minimum.cpu) if (cpu < egginfo.limits.minimum.cpu) return redirect(`/edit?id=${srvid}&error=CPU is lower than Egg's minimum limit.&limit=${egginfo.minimum.cpu}`);
+    if (egginfo.limits.maximum) {
+      if (egginfo.limits.maximum.ram) if (ram > egginfo.limits.maximum.ram) return redirect(`/edit?id=${srvid}&error=RAM is Higher than Egg's minimum limit.&limit=${egginfo.maximum.ram}`);
+      if (egginfo.limits.maximum.disk) if (disk > egginfo.limits.maximum.disk) return redirect(`/edit?id=${srvid}&error=Disk is Higher than Egg's minimum limit.&limit=${egginfo.maximum.disk}`);
+      if (egginfo.limits.maximum.cpu) if (cpu > egginfo.limits.maximum.cpu) return redirect(`/edit?id=${srvid}&error=CPU is Higher than Egg's minimum limit.&limit=${egginfo.maximum.cpu}`);
+    };
+  }
 
     let limits = {
       memory: ram ? ram : pterorelationshipsserverdata[0].attributes.limits.memory,
@@ -162,8 +184,8 @@ if (config.resource_type === "GB") {
     let serverinfo = await fetch(
       config.pterodactyl.url + "/api/application/servers/" + srvid + "/build",
       {
-        method: "patch",
-        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${config.pterodactyl.key}`, "Accept": "application/json" },
+        method: "PATCH",
+        headers: { 'Content-Type': 'application/json', "Authorization": `Bearer ${config.pterodactyl.api}`, "Accept": "application/json" },
         body: JSON.stringify({
           limits: limits,
           feature_limits: pterorelationshipsserverdata[0].attributes.feature_limits,
@@ -171,11 +193,11 @@ if (config.resource_type === "GB") {
         })
       }
     );
-    if (await serverinfo.statusText !== "OK") return redirect(`/edit?id=${srvid}&err=Error while modifying your server.`);
-    let text = JSON.parse(await serverinfo.text());
-    pterorelationshipsserverdata.push(text);
-    redirect("/dashboard?success=Edited your server.");
+    if (await serverinfo.statusText !== "OK") {
+      return redirect(`/edit?id=${srvid}&error=Error while modifying your server.`);
+    }
+    return redirect("/dashboard?success=Edited your server.");
   } else {
-    redirect(`/edit?id=${srvid}&err=MISSINGVARIABLE`);
+    return redirect(`/edit?id=${srvid}&error=Missing Variable`);
   }
 }

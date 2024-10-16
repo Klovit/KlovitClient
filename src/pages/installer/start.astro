@@ -1,0 +1,132 @@
+---
+import config from '../../config';
+import '../../styles/globals.css'
+import  NavigationMenuComponent  from '@/components/installer/NavigationMenu';
+import { StartForm } from '@/components/installer/StartForm';
+
+import ErrorAlert from '@/components/ErrorAlert';
+
+import db from '../../database';
+import Footer from '../../components/footer.astro';
+const { cookies, redirect } = Astro;
+
+const installed = await db.get("installed")
+
+if (installed === true) {
+    return Astro.redirect(`/?error=KlovitClient is already installed.`)
+}
+
+function makeid(length) {
+    let result = '';
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#';
+    let charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;  
+    }
+    let newstarttoken = null;
+    newstarttoken = makeid(8);
+    let starttoken;
+    const oldstarttoken = await db.get("starttoken")
+    if (oldstarttoken) {
+        starttoken = oldstarttoken;
+    } else {
+        starttoken = newstarttoken
+    }
+    await db.set("starttoken", starttoken)
+    console.log(`Your token to start the installation is: ${starttoken}`)
+
+const error = Astro.url.searchParams.get('error')! || '';
+
+const year = new Date().getFullYear().toString()
+const yearWithTitle = `${year} KlovitClient`
+---
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content=`KlovitClient installer`>
+        <meta name="keywords" content=`KlovitClient, Hosting, Klovit, Freemium Minecraft Hosting, Installer, Cloud, Minecraft, Servers, Free Servers, Hostings that use KlovitClient`>
+        <meta name="author" content=`Klovit`>
+        <meta name="copyright" content=`KlovitClient`>
+        <meta property="og:type" content=`website`>
+        <meta property="og:title" content=`KlovitClient`>
+        <meta property="og:description" content=`KlovitClient installer`>
+        <meta property="og:image" content=`https://docs.klovit.tech/img/Klovit%20Logo.png`>
+        <meta name="twitter:card" content=`https://docs.klovit.tech/img/Klovit%20Logo.png`>
+        <meta name="twitter:title" content=`KlovitClient`>
+        <meta name="twitter:description" content=`KlovitClient installer`>
+        <meta name="twitter:image" content=`https://docs.klovit.tech/img/Klovit%20Logo.png`>
+        <meta name="twitter:image:src" content=`https://docs.klovit.tech/img/Klovit%20Logo.png`>
+        <title>KlovitClient | Start Installation</title>
+      
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href=https://docs.klovit.tech/img/Klovit%20Logo.png rel="icon">
+        <script rel=preconnect src="https://kit.fontawesome.com/cf4342c927.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+      </head>
+      
+      
+      <body class="h-full min-h-screen relative">
+          <div class="hidden md:block animation-blob h-screen w-screen">
+              <div class="antialiased">
+                  <main class="h-full">
+                    <NavigationMenuComponent client:load />
+                      
+                      
+                      <script is:inline>
+                        const getThemePreference = () => {
+                            if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+                                return localStorage.getItem('theme');
+                            }
+                            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                        };
+                        const isDark = getThemePreference() === 'dark';
+                        document.documentElement.classList[isDark ? 'add' : 'remove']('dark');
+                     
+                        if (typeof localStorage !== 'undefined') {
+                            const observer = new MutationObserver(() => {
+                                const isDark = document.documentElement.classList.contains('dark');
+                                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                            });
+                            observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+                        }
+                    </script>
+                    <div class="mr-10">
+                        <ErrorAlert client:load />
+                    </div>
+
+
+      <section class="min-h-screen">
+        <div class="flex items-center justify-center">
+            <div class="relative border mt-2 border-gray-600 shadow-lg p-8 rounded-lg z-10 max-w-md w-full">
+              <StartForm />
+            </div>
+          </div>
+    </section>
+      <Footer />
+                      </div>
+                  </main>
+              </div>
+          </div>
+          <div class="md:hidden overflow-x-hidden h-screen w-screen">
+              <div class="antialiased">
+                  <main class="h-full">
+                     <NavigationMenuComponent client:load />
+      <section class="min-h-screen">
+        <div class="flex items-center justify-center m-2">
+            <div class="relative border mt-2 border-gray-600 shadow-lg p-8 rounded-lg z-10 max-w-md w-full">
+              <StartForm />
+            </div>
+          </div>
+    </section>
+                          <Footer />
+                      </div>
+                  </main>
+              </div>
+          </div>
+      </body>
+      
+      </html>

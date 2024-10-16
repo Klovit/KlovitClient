@@ -1,0 +1,33 @@
+---
+import config from '../config';
+import '../styles/globals.css'
+
+
+
+const website = config.website ?? {};
+const icon = website.icon ?? "https://docs.klovit.tech/img/Klovit%20Logo.png"
+const description = website.description ?? "KlovitClient"
+const hostname = website.name ?? "KlovitClient"
+
+const year = new Date().getFullYear().toString()
+const yearWithTitle = `${year} ${hostname}`
+---
+ 
+                    <footer class="mt-5 hidden md:flex fixed bottom-0 w-screen px-4 py-2 items-center justify-between">
+                        <div class="copyright text-start">
+                            &copy; Copyright {yearWithTitle} | Powered by <a class="text-red-500" href="https://github.com/klovit/klovitlclient">KlovitClient</a>
+                        </div>
+                        <div class="text-end pr-1">
+                          <span id="loadtime"></span>
+                        </div>
+                    </footer>
+                    <script is:inline type="text/javascript">  
+                        var before_loadtime = new Date().getTime();  
+                        window.onload = Pageloadtime;  
+                        function Pageloadtime() {  
+                            var aftr_loadtime = new Date().getTime();  
+                            // Time calculating in seconds  
+                            pgloadtime = (aftr_loadtime - before_loadtime) / 1000  
+                            document.getElementById("loadtime").innerHTML = pgloadtime + "s";
+                        }  
+                   </script> 

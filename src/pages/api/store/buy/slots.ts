@@ -7,6 +7,7 @@ import config from '../../../../config';
 import { ExpressRoute } from "@astro-utils/express-endpoints";
 import doubleCsrfProtection from "../../../../middleware";
 import restype from "src/restype";
+import { object } from "astro/zod";
 
 const router = new ExpressRoute();
 router.use(doubleCsrfProtection)
@@ -39,24 +40,37 @@ const formData = await request.formData();
 const amount = formData.get("amount")?.toString()
 if (amount) {
 try {
-    const number = Number(amount) / config.coins.store.ram.per
-    const cost = config.coins.store.ram.cost * number
-    const oldbalance = await db.get("balance-" + email)
-    if (oldbalance < cost) {
-        return redirect(`/store?error=You have insufficient Coins`)
-    } else {
-    const newbalance = oldbalance - cost
-    const oldextra = await db.get("extraresources-" + email)
-    const oldextraservers = oldextra.servers
-    const newextraservers = oldextraservers + amount
-    const newextra = {
-        ram: oldextra.ram,
-        disk: oldextra.disk,
-        cpu: oldextra.cpu,
-        servers: newextraservers
-      };
-    await db.set("extraresources-" + email, newextra)
-    await db.set("balance-" + email, newbalance)
+  const currentinfo = await db.get("user-" + email)
+  const number = Number(amount) / config.coins.store.servers.per
+  const cost = config.coins.store.servers.cost * number
+  const oldbalance = currentinfo.balance
+  if (oldbalance < cost) {
+      return redirect(`/store?error=You have insufficient Coins`)
+  } else {
+  const newbalance = oldbalance - cost
+  let extra;
+  extra = ('extraresources' in currentinfo && 
+    'ram' in currentinfo.extraresources &&
+    'disk' in currentinfo.extraresources &&
+    'cpu' in currentinfo.extraresources &&
+    'servers' in currentinfo.extraresources) 
+  ? currentinfo.extraresources 
+  : { ram: 0, disk: 0, cpu: 0, servers: 0 };
+  
+  const newextraservers = +extra.servers + +amount
+  const newextra = {
+    ram: extra.ram,
+    disk: extra.disk,
+    cpu: extra.cpu,
+    servers: newextraservers 
+  }
+  const newinfo = {
+    package: currentinfo.package,
+    balance: newbalance,
+    password: currentinfo.password,
+    extraresources: newextra
+  } 
+  await db.set("user-" + email, newinfo)
     return redirect(`/store?success=You have successfully bought ${amount} Slots for ${cost} Coins`)
     }
 }
