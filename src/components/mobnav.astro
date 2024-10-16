@@ -1,9 +1,7 @@
 ---
 import chalk from 'chalk';
 import config from '../config';
-import '../styles/globals.css'
-
-
+import { getImage } from 'astro:assets';
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import restype from "../restype";
@@ -122,9 +120,9 @@ const emailv = ` ${email}`
         <div class="mt-2 h-12 w-full flex justify-center">
             <nav class="inline-flex items-center justify-center rounded-lg w-fit text-sm font-medium text-white">
                 <div class="ml-1 mr-1">
-                <ul class="relative rounded-lg bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-fit py-3 flex justify-center">
+                <ul class="relative rounded-lg bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 w-fit py-3 flex justify-center">
                     <li class="hover:shadow-md rounded-2xl">
-                        <a href="/dashboard" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-mobnav-dashboard" class="fa-solid fa-house"></i></a>
+                        <a href="/dashboard" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-mobnav-dashboard" class="fa-solid fa-user-plus"></i></a>
                         <div id="tooltip-mobnav-dashboard" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                             Dashboard
                         <div class="tooltip-arrow" data-popper-arrow></div>
@@ -156,7 +154,7 @@ const emailv = ` ${email}`
                   {username}
               </span>
               <span class="block text-sm dark:text-white text-black text-left">{username} - {email}</span>
-              {ecostatus && <span class="block text-sm text-black dark:text-white text-left">Balance - {balance}</span>}
+              {ecostatus && <span class="block text-sm text-black dark:text-white text-left">Balance - {coins}</span>}
               </div>
               <ul class="py-1" aria-labelledby="dropdown">
               <li>
@@ -166,7 +164,7 @@ const emailv = ` ${email}`
               </li>
               {adminstatus && 
               <li>
-                  <a href="/admin/home"
+                  <a href="/admin"
                       class="block py-2 px-4 text-sm text-black dark:text-white">Admin Section</a>
               </li>}
               </ul>
@@ -270,3 +268,14 @@ const emailv = ` ${email}`
         document.documentElement.classList.remove('dark');
       }
     </script>
+    <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+        body { font-family: 'Fredoka', system-ui, sans-serif; }
+         body {
+            overflow-y: scroll;
+            overflow-x: hidden;
+         }
+         @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+       </style>

@@ -74,7 +74,7 @@ const amount = formData.get("amount")?.toString()
 if (amount && usremail) {
 try {
   const addbal = amount
-  const currentinfo = await db.get("user-" + usremail)
+  const currentinfo = await db.get("user-" + email)
   const newinfo = {
     package: currentinfo.package,
     balance: amount,
@@ -92,7 +92,7 @@ catch (err) {
     console.log(err)
     return redirect("/admin/coins?error=" + err)
 }
-return redirect(`/admin/coins?success=Successfully set the coins of user with the email: ${usremail} to  ${amount} coins`)
+return redirect(`/admin/coins?success=Successfully set the coins of user with the email: ${email} to  ${amount} coins`)
 } else {
   return redirect(`/admin/coins?error=Missing fields.`);
 }

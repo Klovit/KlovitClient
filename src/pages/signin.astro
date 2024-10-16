@@ -1,19 +1,10 @@
 ---
 import config from '../config';
-import '../styles/globals.css'
-
-
-
+import { Image,getImage } from 'astro:assets';
 import Header from "../components/head.astro";
 import Footer from '../components/footer.astro';
-import dotenv from 'dotenv';
-
-dotenv.config();
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
 const { cookies, redirect } = Astro;
-
-if (process.env.INSTALLED === 'false') {
-    return Astro.redirect(`/installer/start`)
-}
 
 const accessToken = cookies.get("sb-access-token");
 const refreshToken = cookies.get("sb-refresh-token");
@@ -30,7 +21,19 @@ const errorstate = Astro.url.searchParams.get('error')! || '';
 const errormsg = Astro.url.searchParams.get('error')! || '';
 const year = new Date().getFullYear()
 let oauth
-if (googleauth || discordauth || githubauth) {
+if (googleauth) {
+    oauth = true;
+} 
+else {
+    oauth = false
+}
+if (discordauth) {
+    oauth = true;
+} 
+else {
+    oauth = false
+}
+if (githubauth) {
     oauth = true;
 } 
 else {
@@ -40,46 +43,66 @@ else {
 <!DOCTYPE html>
 <html>
 <Header />
+<style> 
+ @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+ body { font-family: 'Fredoka', system-ui, sans-serif; }
+  body {
+     overflow-y: scroll;
+     overflow-x: hidden;
+  }
+  @tailwind base;
+@tailwind components;
+@tailwind utilities;
+:is(.dark main) {
+    background-color: #18181b;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%2309090b' fill-opacity='0.44'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+background-size: 100%;
+}
+main {
+    background-color: #ffffff;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%239ca3af' fill-opacity='0.4'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+background-size: 100%;
+}
+</style> 
 
-
-<body class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-full min-h-screen relative">
+<body class="flex items-center justify-center h-screen">
     <div class="hidden md:block animation-blob h-screen w-screen">
         <div class="antialiased">
-<main class="h-screen">
+            <main class="h-full">
                 <div class="h-12 w-full flex">
                     <img class="mt-2" src={config.website.icon} height="30px" width="40px" alt="icon"></img>
                     <div class="mt-2 h-12 w-full flex justify-center">
                     <nav class="inline-flex items-center justify-center rounded-lg w-fit text-sm font-medium text-white">
                         <div class="ml-1 mr-1">
-                        <ul class="relative rounded-lg bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-fit py-3 flex justify-center">
+                        <ul class="relative rounded-lg bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 w-fit py-3 flex justify-center">
                             <li class="hover:shadow-md rounded-2xl">
                                  <a href="/" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-home" class="fa-solid fa-house"></i></a>
-                                 <div id="tooltip-nav-home" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
+                                 <div id="tooltip-nav-home" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                                     Home
                                     <div class="tooltip-arrow" data-popper-arrow></div>
                             </li>
                             <li class="hover:shadow-md rounded-2xl">
                                 <a href="/panel" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-panel" class="fa-solid fa-gamepad"></i></a>
-                                <div id="tooltip-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
+                                <div id="tooltip-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                                    Panel
                                    <div class="tooltip-arrow" data-popper-arrow></div>
                            </li>
                            <li class="hover:shadow-md rounded-2xl">
                             <a href="/signin" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-login" class="fa-solid fa-right-to-bracket"></i></a>
-                            <div id="tooltip-nav-login" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
+                            <div id="tooltip-nav-login" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                                Login
                                <div class="tooltip-arrow" data-popper-arrow></div>
                             </li>
                             <li class="hover:shadow-md rounded-2xl">
                                 <a href="/register" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-register" class="fa-solid fa-user-plus"></i></a>
-                                <div id="tooltip-nav-register" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
+                                <div id="tooltip-nav-register" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                                     Register
                                 <div class="tooltip-arrow" data-popper-arrow></div>
                             </li>
                         </ul>
                     </div>
                    </nav></div>
-                   <button aria-label="theme-switcher" id="theme-toggleb" type="button" class="text-gray-500 dark:text-gray-400 rounded-lg text-sm p-2.5">
+                   <button aria-label="theme-switcher" id="theme-toggleb" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
                     <svg id="theme-toggle-dark-iconb" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                       <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                     </svg>
@@ -154,10 +177,10 @@ Success fully registered
     Error: {errormsg}
     </div>}
 <section class="min-h-screen flex justify-center mt-16">
-    <div class="w-fit bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black rounded-2xl h-fit p-2 ">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md grid grid-cols-1 items-center"><br>
+    <div class="w-fit bg-gray-300/45 dark:bg-zinc-950/45 rounded-2xl h-fit p-2 ">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md flex grid grid-cols-1 items-center"><br>
         <h2 class="text-center text-2xl text-black dark:text-white">Login to {config.name}</h2>
-        <span class="text-center text-xs text-black dark:text-white">Don't have a account? <a href="/register" class="text-red-500">Register now</a></span>
+        <span class="text-center text-xs text-black dark:text-white">Don't have a account? <a href="/register" class="text-amber-500">Register now</a></span>
       </div><br>
       <div class="flex justify-center">
    <form action="/api/auth/signin" method="post" class="w-fit">
@@ -166,10 +189,10 @@ Success fully registered
     <label class="ml-8 text-black dark:text-white" for="password">Password</label>
     <input class="rounded-xl bg-zinc-200 border-black border-solid border-2 dark:bg-zinc-900/50 test-size-xs px-2 py-1 mb-5" type="password" name="password" id="password" />
     <div class="flex justify-center">
-    <button class="relative rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 font-semibold hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black px-5 py-1"> Login </button><br>
+    <button class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1"> Login </button><br>
 </div>
     <div class="flex w-full justify-center mt-2 mb-2">
-      {oauth && <span class="text-black dark:text-white col-span-3 text-lg text-center">login with</span>}
+      {oauth && <span class="text-black dark:text-gray-300 col-span-3 text-lg text-center">login with</span>}
   </div>
   <div class="flex justify-center">
           {googleauth && <button value="google" name="provider" type="submit" class="text-black dark:text-white relative font-medium rounded-full text-lg p-2 text-center"><i class="fa-brands fa-google"></i></button>}
@@ -188,49 +211,49 @@ Success fully registered
     <div class="md:hidden w-screen overflow-x-hidden h-screen">
 
         <div class="antialiased">
-<main class="h-screen">
-                <div class="h-12 w-full flex">
-                    <img class="mt-2" src={config.website.icon} height="30px" width="40px" alt="icon"></img>
-                    <div class="mt-2 h-12 w-full flex justify-center">
-                    <nav class="inline-flex items-center justify-center rounded-lg w-fit text-sm font-medium text-white">
-                        <div class="ml-1 mr-1">
-                        <ul class="relative rounded-lg bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-gradient-to-r dark:from-gray-900 dark:via-gray-800 w-fit py-3 flex justify-center">
-                            <li class="hover:shadow-md rounded-2xl">
-                                 <a href="/" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-home" class="fa-solid fa-house"></i></a>
-                                 <div id="tooltip-nav-home" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
-                                    Home
-                                    <div class="tooltip-arrow" data-popper-arrow></div>
-                            </li>
-                            <li class="hover:shadow-md rounded-2xl">
-                                <a href="/panel" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-panel" class="fa-solid fa-gamepad"></i></a>
-                                <div id="tooltip-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
-                                   Panel
+            <main class="h-full pattern-isometric pattern-gray-400 pattern-bg-white dark:pattern-zinc-900 pattern-bg-white dark:pattern-bg-zinc-950 pattern-size-6 pattern-opacity-100">
+                    <div class="h-12 w-full flex">
+                        <img class="mt-2" src={config.website.icon} height="30px" width="40px" alt="icon"></img>
+                        <div class="mt-2 h-12 w-full flex justify-center">
+                        <nav class="inline-flex items-center justify-center rounded-lg text-sm font-medium text-white">
+                            <div class="ml-1 mr-1">
+                            <ul class="relative rounded-lg bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 w-fit py-3 flex justify-center">
+                                <li class="hover:shadow-md rounded-2xl">
+                                     <a href="/" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-home" class="fa-solid fa-house"></i></a>
+                                     <div id="tooltip-nav-home" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
+                                        Home
+                                        <div class="tooltip-arrow" data-popper-arrow></div>
+                                </li>
+                                <li class="hover:shadow-md rounded-2xl">
+                                    <a href="/panel" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-panel" class="fa-solid fa-gamepad"></i></a>
+                                    <div id="tooltip-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
+                                       Panel
+                                       <div class="tooltip-arrow" data-popper-arrow></div>
+                               </li>
+                               <li class="hover:shadow-md rounded-2xl">
+                                <a href="/signin" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-login" class="fa-solid fa-right-to-bracket"></i></a>
+                                <div id="tooltip-nav-login" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
+                                   Login
                                    <div class="tooltip-arrow" data-popper-arrow></div>
-                           </li>
-                           <li class="hover:shadow-md rounded-2xl">
-                            <a href="/signin" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-login" class="fa-solid fa-right-to-bracket"></i></a>
-                            <div id="tooltip-nav-login" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
-                               Login
-                               <div class="tooltip-arrow" data-popper-arrow></div>
-                            </li>
-                            <li class="hover:shadow-md rounded-2xl">
-                                <a href="/register" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-register" class="fa-solid fa-user-plus"></i></a>
-                                <div id="tooltip-nav-register" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip">
-                                    Register
-                                <div class="tooltip-arrow" data-popper-arrow></div>
-                            </li>
-                        </ul>
+                                </li>
+                                <li class="hover:shadow-md rounded-2xl">
+                                    <a href="/register" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-register" class="fa-solid fa-user-plus"></i></a>
+                                    <div id="tooltip-nav-register" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
+                                        Register
+                                    <div class="tooltip-arrow" data-popper-arrow></div>
+                                </li>
+                            </ul>
+                        </div>
+                       </nav></div>
+                       <button aria-label="theme-switcher" id="theme-toggleb" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+                        <svg id="theme-toggle-dark-icona" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="theme-toggle-light-icona" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                        </svg>
+                      </button>
                     </div>
-                   </nav></div>
-                   <button aria-label="theme-switcher" id="theme-toggleb" type="button" class="text-gray-500 dark:text-gray-400 rounded-lg text-sm p-2.5">
-                    <svg id="theme-toggle-dark-iconb" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                    <svg id="theme-toggle-light-iconb" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
-                    </svg>
-                  </button>
-                </div>
                    <script is:inline>
                     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
                     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -291,11 +314,11 @@ Success fully registered
                         document.documentElement.classList.remove('dark');
                       }
                     </script>
-<section class="min-h-screen flex justify-center mt-16">
-    <div class="w-fit bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black rounded-2xl h-fit p-2">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md grid grid-cols-1 items-center">
+<section class="shadow-lg shadow-gray-500/40 min-h-screen flex justify-center mt-16">
+    <div class="w-fit bg-gray-300/45 dark:bg-zinc-950/45 rounded-2xl h-fit p-2">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md flex grid grid-cols-1 items-center">
         <h2 class="text-center text-2xl text-black dark:text-white">Login to {config.name}</h2>
-        <span class="text-center text-xs text-black dark:text-white">Don't have a account? <a href="/register" class="text-red-500">Register now</a></span>
+        <span class="text-center text-xs text-black dark:text-white">Don't have a account? <a href="/register" class="text-amber-500">Register now</a></span>
       </div><br><br>
       <div class="flex justify-center">
    <form action="/api/auth/signin" method="post" class="w-fit">
@@ -304,10 +327,10 @@ Success fully registered
     <label class="ml-8 text-black dark:text-white" for="password">Password</label>
     <input class="rounded-xl bg-zinc-200 border-black border-solid border-2 dark:bg-white test-size-xs px-2 py-1 mb-5" type="password" name="password" id="password" />
     <div class="flex justify-center">
-        <button class="relative rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 font-semibold hover:from-teal-400 hover:via-blue-500 hover:to-purple-400 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black px-5 py-1"> Login </button><br>
+        <button class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1"> Login </button><br>
     </div>
     <div class="flex w-full justify-center mt-2 mb-2">
-      {oauth && <span class="text-black dark:text-white col-span-3 text-lg text-center">login with</span>}
+      {oauth && <span class="text-black dark:text-gray-300 col-span-3 text-lg text-center">login with</span>}
   </div>
   <div class="flex justify-center">
     {googleauth && <button value="google" name="provider" type="submit" class="text-black dark:text-white relative font-medium rounded-full text-lg p-2 text-center"><i class="fa-brands fa-google"></i></button>}

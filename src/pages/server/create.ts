@@ -71,17 +71,29 @@ if (srvram || srvdisk || srvcpu || srvegg || srvlocation) {
 try {
 
 
-  let usrinfo = await db.get("user-" + email);
-  let packagename = usrinfo.package
+  let packagename = await db.get("package-" + email);
   let usrpackage = config.packages.list[packagename ? packagename : config.packages.default];
-  let extra;
-  extra = ('extraresources' in usrinfo && 
-    'ram' in usrinfo.extraresources &&
-    'disk' in usrinfo.extraresources &&
-    'cpu' in usrinfo.extraresources &&
-    'servers' in usrinfo.extraresources) 
-  ? usrinfo.extraresources 
-  : { ram: 0, disk: 0, cpu: 0, servers: 0 };
+
+  let extra =
+    await db.get("extraresources-" + email) ||
+    {
+      ram: 0,
+      disk: 0,
+      cpu: 0,
+      servers: 0
+    };
+let extraram;
+let extradisk;
+let extracpu;
+if (config.resource_type === "GB") {
+  extraram = extra.ram * 1024
+  extradisk = extra.disk * 1024
+  extracpu = extra.cpu * 100
+} else {
+  extraram = extra.ram
+  extradisk = extra.disk
+  extracpu = extra.cpu
+}
   let ram2 = 0;
   let disk2 = 0;
   let cpu2 = 0;
@@ -118,11 +130,11 @@ try {
   let location = srvlocation;
 
   if (Object.entries(config.locations).filter(vname => vname[0] == location).length !== 1) {
-    return redirect(`create?error=Invalid Location`);
+    return redirect(`create?error=INVALIDLOCATION`);
   }
   let egginfo = config.eggs[srvegg];
   if (!config.eggs[srvegg]) {
-    return redirect(`/create?error=Invalid Egg`);
+    return redirect(`/create?error=INVALIDEGG`);
   }
   let ram;
   if (config.resource_type === "GB") {
@@ -149,10 +161,10 @@ try {
     if (+ram3 + +srvram > +usrpackage.ram + +extra.ram) {
       return redirect(`/create?error=The RAM given exceeds your Package's RAM limit.`);
     }
-    if (+disk3 + +srvdisk > +usrpackage.disk + +extra.disk) {
+    if (+disk3 + +srvdisk > +usrpackage.disk + +extradisk) {
       return redirect(`/create?error=The Disk given exceeds your Package's Disk limit.`);
     }
-    if (+cpu3 + +srvcpu > +usrpackage.cpu + +extra.cpu) {
+    if (+cpu3 + +srvcpu > +usrpackage.cpu + +extracpu) {
       return redirect(`/create?error=The CPU given exceeds your Package's CPU limit.`);
     }
     if (egginfo.limits.minimum.ram) if (srvram < egginfo.limits.minimum.ram) {
@@ -211,7 +223,7 @@ try {
     );
     await serverinfo
     if (serverinfo.statusText !== "Created") {
-      console.log(await serverinfo.json())
+      console.log(serverinfo)
       return redirect(`/create?error=Error while creating your server.`);
     }
     let serverinfotext = await serverinfo.json();
@@ -223,7 +235,7 @@ try {
 } 
 catch(err) {
   console.log(err)
-  return redirect(`/create?error=${err}`);
+  return redirect(`/create?error=err`);
 }
 } else {
   return redirect(`/create?error=A Field is missing.`);

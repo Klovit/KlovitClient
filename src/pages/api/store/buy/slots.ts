@@ -7,7 +7,6 @@ import config from '../../../../config';
 import { ExpressRoute } from "@astro-utils/express-endpoints";
 import doubleCsrfProtection from "../../../../middleware";
 import restype from "src/restype";
-import { object } from "astro/zod";
 
 const router = new ExpressRoute();
 router.use(doubleCsrfProtection)
@@ -48,27 +47,17 @@ try {
       return redirect(`/store?error=You have insufficient Coins`)
   } else {
   const newbalance = oldbalance - cost
-  let extra;
-  extra = ('extraresources' in currentinfo && 
-    'ram' in currentinfo.extraresources &&
-    'disk' in currentinfo.extraresources &&
-    'cpu' in currentinfo.extraresources &&
-    'servers' in currentinfo.extraresources) 
-  ? currentinfo.extraresources 
-  : { ram: 0, disk: 0, cpu: 0, servers: 0 };
-  
-  const newextraservers = +extra.servers + +amount
-  const newextra = {
-    ram: extra.ram,
-    disk: extra.disk,
-    cpu: extra.cpu,
-    servers: newextraservers 
-  }
+  const newextraservers = currentinfo.extraresources.servers + amount
   const newinfo = {
     package: currentinfo.package,
     balance: newbalance,
     password: currentinfo.password,
-    extraresources: newextra
+    extraresources: {
+      ram: currentinfo.ram,
+      disk: currentinfo.disk,
+      cpu: currentinfo.cpu,
+      servers: newextraservers
+    }
   } 
   await db.set("user-" + email, newinfo)
     return redirect(`/store?success=You have successfully bought ${amount} Slots for ${cost} Coins`)

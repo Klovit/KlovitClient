@@ -55,6 +55,7 @@ try {
     let rawreferer = request.headers.get("referer")
     var arr = rawreferer.split('/economy');
     arr.pop();
+    console.log(arr[0]);
     let referer = arr[0]
     if (!referer) return redirect('/economy?error=An error occured with your browser!')
       referer = referer.toLowerCase()
@@ -62,9 +63,11 @@ try {
 
     const link =  referer + `/api/economy/links/redeem/atglinks/${userCode}`;
     const api = config.coins.earn.links.atglinks.api
+    console.log(referer)
     try {
       const response = await fetch(`https://atglinks.com/api?api=${api}&url=${encodeURIComponent(link)}`);
       const data = await response.json();
+      console.log(data)
       if (response.ok) {
         console.log(`${email} generated a ATGLinks link: `, data.shortenedUrl);
         return redirect(data.shortenedUrl);

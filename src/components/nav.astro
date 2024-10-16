@@ -1,10 +1,7 @@
 ---
 import chalk from 'chalk';
 import config from '../config';
-import '../styles/globals.css'
-
-
-
+import { Image,getImage } from 'astro:assets';
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import restype from "../restype"
@@ -33,6 +30,7 @@ if (error) {
   return redirect("/signin");
 }
 
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
 const errorstate = Astro.url.searchParams.get('error')! || '';
 const errormsg = Astro.url.searchParams.get('error')! || '';
 
@@ -109,29 +107,29 @@ const info = await db.get("user-" + email)
 const balance = info.balance
 ---
 <div class="hidden md:block">
-<div class="h-12 w-full flex pt-2 px-4">
+<div class="h-12 w-full flex">
     <img class="mt-2 ml-3" src={config.website.icon} height="30px" width="40px" alt="icon"></img>
     <div class="mt-2 h-12 w-full flex justify-center">
     <nav class="inline-flex items-center justify-center rounded-lg w-fit text-sm font-medium text-white">
         <div class="ml-1 mr-1">
-        <ul class="relative rounded-lg bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-fit py-3 flex justify-center">
-            <li class="px-4 py-2 hover:shadow-md rounded-2xl">
-                <a href="/dashboard" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-dashboard" class="fa-solid fa-house"></i></a>
-                <div id="tooltip-nav-dashboard" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black">
+        <ul class="relative rounded-lg bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 w-fit py-3 flex justify-center">
+            <li class="hover:shadow-md rounded-2xl">
+                <a href="/dashboard" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-dashboard" class="fa-solid fa-user-plus"></i></a>
+                <div id="tooltip-nav-dashboard" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                     Dashboard
                 <div class="tooltip-arrow" data-popper-arrow></div>
                 </div>
             </li>
-            <li class="px-4 py-2 hover:shadow-md rounded-2xl">
+            <li class="hover:shadow-md rounded-2xl">
                 <a href="/create" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-create" class="fa-solid fa-plus"></i></a>
-                <div id="tooltip-nav-create" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black">
+                <div id="tooltip-nav-create" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                     Create
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
             </li>
-            {storestatus &&            <li class="px-4 py-2 hover:shadow-md rounded-2xl">
+            {storestatus &&            <li class="hover:shadow-md rounded-2xl">
                 <a href="/store" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-store" class="fa-solid fa-store"></i></a>
-                <div id="tooltip-nav-store" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black">
+                <div id="tooltip-nav-store" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                     Store
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
@@ -158,7 +156,7 @@ const balance = info.balance
       </li>
       {adminstatus && 
       <li>
-          <a href="/admin/home"
+          <a href="/admin"
               class="block py-2 px-4 text-sm text-black dark:text-white">Admin Section</a>
       </li>}
       </ul>
@@ -169,23 +167,23 @@ const balance = info.balance
       </li>
       </ul>
       </div>
-            {ecostatus &&              <li class="px-4 py-2 hover:shadow-md rounded-2xl">
+            {ecostatus &&              <li class="hover:shadow-md rounded-2xl">
                 <a href="/economy" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-economy" class="fa-solid fa-coins"></i></a>
-                <div id="tooltip-nav-economy" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black">
+                <div id="tooltip-nav-economy" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                     Economy
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
             </li>}
-            <li class="px-4 py-2 hover:shadow-md rounded-2xl">
+            <li class="hover:shadow-md rounded-2xl">
                 <a href="/account" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-account" class="fa-solid fa-user"></i></a>
-                <div id="tooltip-nav-account" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black">
+                <div id="tooltip-nav-account" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                     Account
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
             </li>
-            <li class="px-4 py-2 hover:shadow-md rounded-2xl">
+            <li class="hover:shadow-md rounded-2xl">
                 <a href="/panel" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-panel" class="fa-solid fa-gamepad"></i></a>
-                <div id="tooltip-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 rounded-lg shadow-sm opacity-0 tooltip bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black">
+                <div id="tooltip-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                     Panel
                 <div class="tooltip-arrow" data-popper-arrow></div>
             </div>
@@ -194,7 +192,7 @@ const balance = info.balance
     </div>
    </nav>
 </div>
-   <button aria-label="theme-switcher" id="theme-toggleb" type="button" class="mr-1 text-black dark:text-white rounded-lg text-sm p-2.5">
+   <button aria-label="theme-switcher" id="theme-toggleb" type="button" class="mr-1 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
     <svg id="theme-toggle-dark-iconb" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
       <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
     </svg>
@@ -262,3 +260,14 @@ const balance = info.balance
         document.documentElement.classList.remove('dark');
       }
   </script>
+<style> 
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+    body { font-family: 'Fredoka', system-ui, sans-serif; }
+     body {
+        overflow-y: scroll;
+        overflow-x: hidden;
+     }
+     @tailwind base;
+@tailwind components;
+@tailwind utilities;
+   </style>

@@ -1,17 +1,12 @@
 ---
 import config from '../config';
-import '../styles/globals.css'
-
-
+import { Image,getImage } from 'astro:assets';
 import db from '../database';
-import dotenv from 'dotenv';
-
-dotenv.config();
 const { cookies, redirect } = Astro;
-const installed = await db.get("installed")
-if (installed != true) {
-    return Astro.redirect(`/installer/start`)
-}
+
+
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
+
 
 const year = new Date().getFullYear().toString()
 const yearWithTitle = `${year} ${config.name}`
@@ -43,7 +38,7 @@ if (pagepath === "/gift") {
 if (pagepath === "/buy") {
     PAGE = "Buy"
 }
-if (pagepath === "/admin/home") {
+if (pagepath === "/admin") {
     PAGE = "Admin | Home"
 }
 if (pagepath === "/admin/coins") {
@@ -86,9 +81,21 @@ if (pagepath === "/delete") {
   <meta name="twitter:image" content=`${config.website.icon}`>
   <meta name="twitter:image:src" content=`${config.website.icon}`>
   <title>{config.name} | {PAGE}</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
   <link href={config.website.icon} rel="icon">
-  <script rel=preconnect is:inline src="https://cdn.tailwindcss.com"></script>
-  <script rel=preconnect src="https://kit.fontawesome.com/24f3705531.js" crossorigin="anonymous"></script>
+  <script is:inline src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/cf4342c927.js" crossorigin="anonymous"></script>
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"></script>
 </head>
+<style> 
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+    body { font-family: 'Fredoka', system-ui, sans-serif; }
+     body {
+        overflow-y: scroll;
+        overflow-x: hidden;
+     }
+     @tailwind base;
+@tailwind components;
+@tailwind utilities;
+   </style>

@@ -70,7 +70,7 @@ const packagee = formData.get("packagee")?.toString()
 
 if (packagee && usremail) {
 try {
-  const currentinfo = await db.get("user-" + usremail)
+  const currentinfo = await db.get("user-" + email)
   const newinfo = {
     package: packagee,
     balance: currentinfo.balance,
@@ -88,7 +88,7 @@ catch (err) {
     console.log(err)
     return redirect("/admin/packages?error=" + err)
 }
-return redirect(`/admin/packages?success=Successfully set the package of user with the email: ${usremail} to  ${packagee}`)
+return redirect(`/admin/packages?success=Successfully set the package of user with the email: ${email} to  ${packagee}`)
 } else {
   return redirect(`/admin/packages?error=Missing fields.`);
 }

@@ -1,16 +1,13 @@
 ---
 import chalk from 'chalk';
 import config from '../config';
-import '../styles/globals.css'
-
-
+import { getImage } from 'astro:assets';
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import Nav from "../components/nav.astro";
 import restype from "../restype"
 import Header from "../components/head.astro"
 import Resources from '../components/resources.astro';
-import Footer from '../components/footer.astro'
 import Servers from '../components/servers.astro'
 import Mobnav from "../components/mobnav.astro";
 const { cookies, redirect } = Astro;
@@ -39,6 +36,7 @@ if (error) {
 }
 
 
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
 const errorstate = Astro.url.searchParams.get('error')! || '';
 const errormsg = Astro.url.searchParams.get('error')! || '';
 const success = Astro.url.searchParams.get('success')! || '';
@@ -80,41 +78,120 @@ if (await cacheaccount.statusText == "Not Found") {
 let cacheaccountinfo = JSON.parse(await cacheaccount.text());
     
 const pterodactyl = cacheaccountinfo.attributes;
-const srvid = Astro.url.searchParams.get('id') || '';
-let pterorelationshipsserverdata = pterodactyl.relationships.servers.data.filter(name => name.attributes.id.toString() === srvid);
-if (pterorelationshipsserverdata.length !== 1) return redirect("/dashboard?error=Server Not Found")
-let numramph = 0;
-let numdiskph = 0;
-let numcpuph = 0;
-if (config.resource_type === 'GB') {
-    for (let i = 0, len = pterorelationshipsserverdata.length; i < len; i++) {
-    numramph = numramph + pterorelationshipsserverdata[i].attributes.limits.memory/1024;
-    numdiskph = numdiskph + pterorelationshipsserverdata[i].attributes.limits.disk/1024;
-    numcpuph = numcpuph + pterorelationshipsserverdata[i].attributes.limits.cpu/100;
+const adminstatus = pterodactyl.root_admin
+const servers = pterodactyl.relationships.servers.data[0]
+
+const year = new Date().getFullYear().toString()
+const yearWithTitle = `${year} ${config.name}`
+
+// RESOURCES
+const info = await db.get("user-" + email)
+const pkglist = config.packages.list.pkg
+const pkg = info.package
+const resconf = restype.restype
+// Package Limits
+const pkgram = config.packages.list[info.package].ram
+const pkgdisk = config.packages.list[info.package].disk
+const pkgserverslimit = config.packages.list[info.package].servers
+// Actual Limits
+let ccore;
+ccore = config.packages.list[info.package].cpu + info.extraresources.cpu
+ccore += config.resource_type === 'MB' ? '%' : ' Core(s)'
+const ramlimit = pkgram + info.extraresources.ram
+const disklimit = pkgdisk + info.extraresources.disk
+const serverslimit = pkgserverslimit + info.extraresources.servers
+// Used resources
+let ramused = 0;
+let diskused = 0;
+let cpuused = 0;
+if (config.resource_type ==="GB") {
+for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0)/1024;
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0)/1024;
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0)/100;
 }
 } else {
-    for (let i = 0, len = pterorelationshipsserverdata.length; i < len; i++) {
-    numramph = numramph + pterorelationshipsserverdata[i].attributes.limits.memory;
-    numdiskph = numdiskph + pterorelationshipsserverdata[i].attributes.limits.disk;
-    numcpuph = numcpuph + pterorelationshipsserverdata[i].attributes.limits.cpu;
+    for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i++) {
+    ramused = ramused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.memory == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.memory : 0);
+    diskused = diskused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.disk == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.disk : 0);
+    cpuused = cpuused + (typeof pterodactyl.relationships.servers.data[i].attributes.limits.cpu == "number" ? pterodactyl.relationships.servers.data[i].attributes.limits.cpu : 0);
 }
 }
 
-let ramph = numramph.toString()
-let diskph = numdiskph.toString()
-let cpuph = numcpuph.toString()
-let nameph = pterorelationshipsserverdata[0].attributes.name
+
+const serversused = pterodactyl.relationships.servers.data.length
+let srvs = pterodactyl.relationships.servers.data
+
+let serverram;
+let serverdisk;
+let servercpu;
+if (config.resource_type === "GB"){
+    serverram = "%serverram% GB(s)"
+    serverdisk = "%serverdisk% GB(s)"
+    servercpu = "%servercpu% Core(s)"
+} else {
+    serverram = "%serverram% MB(s)"
+    serverdisk = "%serverdisk% MB(s)"
+    servercpu = "%servercpu%%"
+    }
+let storestatus;
+if (config.coins.store.enabled || config.coins.enabled) {
+        storestatus = true;
+     }
+     else {
+        storestatus = false;
+     }
+let ecostatus;
+if (config.coins.enabled) {
+    ecostatus = true;
+} else {
+    ecostatus = false;
+}
+
+let giftstatus;
+if (config.gifting.enabled) {
+    giftstatus = true;
+} else {
+    giftstatus = false;
+}
+let buystatus;
+if (config.payments.enabled) {
+    buystatus = true;
+} else {
+    buystatus = false;
+}
 ---
 <!DOCTYPE html>
 <html>
     <Header />
-<body class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-full min-h-screen relative">
+    <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+        body { font-family: 'Fredoka', system-ui, sans-serif; }
+         body {
+            overflow-y: scroll;
+            overflow-x: hidden;
+         }
+         @tailwind base;
+       @tailwind components;
+       @tailwind utilities;
+       :is(.dark main) {
+           background-color: #18181b;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%2309090b' fill-opacity='0.44'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
+       }
+       main {
+           background-color: #ffffff;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%239ca3af' fill-opacity='0.4'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
+       }
+       </style> 
+<body class="flex items-center justify-center h-screen">
     <div class="hidden md:block animation-blob w-screen">
         <div class="antialiased">
-<main class="h-screen">
+            <main class="h-screen">
                     <Nav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success}</div>}
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <Resources />
 <section class="flex justify-center">
     <div class="w-fit flex justify-center">
@@ -124,25 +201,24 @@ let nameph = pterorelationshipsserverdata[0].attributes.name
                 <div class="h-fit bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl rounded-l-xl">
                     <div class="w-full space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">Server Name: </h1>
-                        <input disabled class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="text" name="srvname" placeholder={nameph} maxlength={30}></input>
-                        <input class="hidden" value={srvid} type="text" name="srvid" maxlength={30}></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="text" name="srvname" maxlength={30}></input>
                     </div>
                     <div class="grid grid-cols-2 w-full col-span-2">
                       <div class="w-30 space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">RAM: </h1>
-                        <input class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="number" name="ram" placeholder={ramph} maxlength={30}/></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="ram" maxlength={30}/></input>
                     </div>
                       <div class="ml-1 w-30 space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">Disk: </h1>
-                        <input class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="number" name="disk" placeholder={diskph} maxlength={30}/></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="disk" maxlength={30}/></input>
                     </div>
                       <div class="w-30 space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">CPU: </h1>
-                        <input class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="number" name="cpu" placeholder={cpuph} maxlength={30}/></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="cpu" maxlength={30}/></input>
                     </div>
                       <div class="ml-1 w-full space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">Server Software: </h1>
-                        <select disabled class="bg-transparent bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" name="egg" required={true}>
+                        <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="egg" required={true}>
                             {Object.keys(config.eggs).map(egg => (<option value={egg}>{config.eggs[egg].display}</option>))}
                         </select>
                     </div>
@@ -152,26 +228,32 @@ let nameph = pterorelationshipsserverdata[0].attributes.name
             <div class="h-full rounded-r-xl bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl">
                 <div class="h-full w-full">
                     <h1 class="dark:text-gray-200 text-black ml-8">Server Location: </h1>
-                    <select disabled class="bg-transparent bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" name="location" >
+                    <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="location" >
                         {Object.keys(config.locations).map(location => (<option value={location}>{config.locations[location].name}</option>))}
                     </select><br>
-                    <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black 
-" type="submit">Edit</button>
+                    <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Edit</button>
                 </div>
             </div>
         </div>
     </form></div>
 </section>
-<Footer />
+                  <div class="text-center">
+                    <p class="text-gray-400">
+                        &copy;
+                        {year} {config.name} | Powered by <a
+                        class="text-amber-500"
+                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
+                </p>
+                 </div>
             </main>
         </div>
     </div>
     <div class="md:hidden w-screen overflow-x-hidden animation-blob h-screen">
         <div class="antialiased">
-<main class="h-screen">
+            <main class="h-screen">
 <Mobnav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success}</div>}
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <Resources /><br><br>
 <section class="flex justify-center">
 
@@ -182,24 +264,24 @@ let nameph = pterorelationshipsserverdata[0].attributes.name
                 <div class="h-fit bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl rounded-l-xl">
                     <div class="w-full space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">Server Name: </h1>
-                        <input disabled class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="text" name="srvname" maxlength={30} required></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="text" name="srvname" maxlength={30} required></input>
                     </div>
                     <div class="grid grid-cols-2 w-full col-span-2">
                       <div class="w-30 space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">RAM: </h1>
-                        <input  class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="number" name="ram" maxlength={30} required></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="ram" maxlength={30} required></input>
                     </div>
                       <div class="ml-1 w-30 space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">Disk: </h1>
-                        <input  class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="number" name="disk" maxlength={30} required/></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="disk" maxlength={30} required/></input>
                     </div>
                       <div class="w-30 space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">CPU: </h1>
-                        <input class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" type="number" name="cpu" maxlength={30} required/></input>
+                        <input class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" type="number" name="cpu" maxlength={30} required/></input>
                     </div>
                       <div class="ml-1 w-full space-y-1">
                         <h1 class="dark:text-gray-200 text-black ml-1">Server Software: </h1>
-                        <select disabled class="bg-transparent bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" name="egg" required={true}>
+                        <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="egg" required={true}>
                             {Object.keys(config.eggs).map(egg => (<option value={egg}>{config.eggs[egg].display}</option>))}
                         </select>
                     </div>
@@ -209,17 +291,24 @@ let nameph = pterorelationshipsserverdata[0].attributes.name
             <div class="h-full rounded-r-xl bg-zinc-300 p-4 dark:bg-zinc-900/50 backdrop-blur-xl">
                 <div class="w-full space-y-1">
                     <h1 class="dark:text-gray-200 text-black ml-1">Server Location: </h1>
-                    <select disabled class="bg-transparent bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black w-full dark:text-white duration-300 p-2 rounded-xl" name="location" required>
+                    <select class="bg-zinc-300 dark:bg-zinc-900/50 border border-black w-full dark:text-gray-300 duration-300 p-2 rounded-xl" name="location" required>
                         {Object.keys(config.locations).map(location => (<option value={location}>{config.locations[location].name}</option>))}
                     </select>
-                    <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black 
-" type="submit">Edit</button>
+                    <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Edit</button>
                 </div>
             </div>
         </div>
     </form></div>
   </section>
-<Footer />
+                  <div class="text-center">
+                    <p class="text-gray-400">
+                        &copy;
+                        {year} {config.name} | Powered by <a
+                        class="text-amber-500"
+                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
+                </p>
+
+                 </div>
                 </div>
             </main>
         </div>

@@ -63,7 +63,10 @@ let cacheaccountinfo = JSON.parse(await cacheaccount.text());
 const pterodactyl = cacheaccountinfo.attributes;
 if (request.headers.get("Content-Type") === "application/json") {
   const reqbody = await request.json()
-if (pterodactyl.relationships.servers.data.filter(server => server.attributes.id == reqbody.id).length == 0) return redirect("/dashboard?error=Could not find server with that ID.")
+if (pterodactyl.relationships.servers.data.filter(server => server.attributes.id == reqbody.id).length == 0) return new Response(JSON.stringify({
+  statustext: "Could not find server with that ID.",
+  status: 422
+}));
 
 let deletionresults = await fetch(
   config.pterodactyl.url + "/api/application/servers/" + reqbody.id,
@@ -76,9 +79,17 @@ let deletionresults = await fetch(
   }
 );
 let ok = await deletionresults.ok;
-if (ok !== true) return redirect("/dashboard?error=An error has occured while deleting your server.")
-return redirect("/dashboard?success=Successfully deleted your server.")
-} else {
-  return redirect("/dashboard?error=Unknown Error Occured.")
+if (ok !== true) return new Response(JSON.stringify({
+  statustext: "An error has occured while deleting your server.",
+  status: 422
+}));
+pterodactyl.relationships.servers.data = pterodactyl.relationships.servers.data.filter(server => server.attributes.id.toString() !== reqbody.id);
+
+return new Response(JSON.stringify({
+  statustext: "Successfully deleted your server.",
+  status: 200
+}));} else {
+  return new Response(null, { 
+    statusText: "Invalid content type." });
 }
 }

@@ -1,56 +1,73 @@
 ---
 import config from '../config';
-import '../styles/globals.css'
-
-
+import { Image,getImage } from 'astro:assets';
 import db from '../database';
 import Footer from '../components/footer.astro';
 const { cookies, redirect } = Astro;
-const website = config.website ?? {};
 
-const icon = website.icon ?? "https://docs.klovit.tech/img/Klovit%20Logo.png"
-const description = website.description ?? "KlovitClient"
-const hostname = website.name ?? "KlovitClient"
+
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
+
 
 const year = new Date().getFullYear().toString()
-const yearWithTitle = `${year} ${hostname}`
+const yearWithTitle = `${year} ${config.name}`
 ---
 <!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content=`${description} | Powered by KlovitClient.`>
-        <meta name="keywords" content=`KlovitClient, Hosting, Klovit, Freemium Minecraft Hosting, ${hostname}, Cloud, Minecraft, Servers, Free Servers, Hostings that use KlovitClient`>
+        <meta name="description" content=`${config.website.description} | Powered by KlovitClient.`>
+        <meta name="keywords" content=`KlovitClient, Hosting, Klovit, Freemium Minecraft Hosting, ${config.name}, Cloud, Minecraft, Servers, Free Servers, Hostings that use KlovitClient`>
         <meta name="author" content=`Klovit`>
-        <meta name="copyright" content=`${hostname}`>
+        <meta name="copyright" content=`${config.name}`>
         <meta property="og:type" content=`website`>
-        <meta property="og:title" content=`${hostname}`>
-        <meta property="og:description" content=`${description} | Powered by KlovitClient`>
-        <meta property="og:image" content=`${icon}`>
-        <meta name="twitter:card" content=`${icon}`>
-        <meta name="twitter:title" content=`${hostname}`>
-        <meta name="twitter:description" content=`${description} | Powered by KlovitClient`>
-        <meta name="twitter:image" content=`${icon}`>
-        <meta name="twitter:image:src" content=`${icon}`>
-        <title>{hostname} | 404: NOT FOUND</title>
+        <meta property="og:title" content=`${config.name}`>
+        <meta property="og:description" content=`${config.website.description} | Powered by KlovitClient`>
+        <meta property="og:image" content=`${config.website.icon}`>
+        <meta name="twitter:card" content=`${config.website.icon}`>
+        <meta name="twitter:title" content=`${config.name}`>
+        <meta name="twitter:description" content=`${config.website.description} | Powered by KlovitClient`>
+        <meta name="twitter:image" content=`${config.website.icon}`>
+        <meta name="twitter:image:src" content=`${config.website.icon}`>
+        <title>{config.name} | 404: NOT FOUND</title>
       
         <script src="https://cdn.tailwindcss.com"></script>
-        <link href={icon} rel="icon">
+        <link href={config.website.icon} rel="icon">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
         <script src="https://kit.fontawesome.com/cf4342c927.js" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
       </head>
-
+      <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+        body { font-family: 'Fredoka', system-ui, sans-serif; }
+         body {
+            overflow-y: scroll;
+            overflow-x: hidden;
+         }
+         @tailwind base;
+       @tailwind components;
+       @tailwind utilities;
+       :is(.dark main) {
+           background-color: #18181b;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%2309090b' fill-opacity='0.44'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
+       }
+       main {
+           background-color: #ffffff;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%239ca3af' fill-opacity='0.4'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
+       }
+       </style>
       
       
-      <body class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-full min-h-screen relative">
+      <body class="flex items-center justify-center h-screen">
           <div class="hidden md:block animation-blob h-screen w-screen">
               <div class="antialiased">
                   <main class="h-full">
                       <div class="h-12 w-full flex">
-                          <img class="mt-2" src={icon} height="30px" width="40px" alt="icon"></img>
+                          <img class="mt-2" src={config.website.icon} height="30px" width="40px" alt="icon"></img>
                           <div class="mt-2 h-12 w-full flex justify-center">
                           <nav class="inline-flex items-center justify-center rounded-lg w-fit text-sm font-medium text-white">
                               <div class="ml-1 mr-1">
@@ -62,7 +79,7 @@ const yearWithTitle = `${year} ${hostname}`
                                           <div class="tooltip-arrow" data-popper-arrow></div>
                                   </li>
                                   <li class="hover:shadow-md rounded-2xl">
-                                      <a href="/panel" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-panel" class="fa-solid fa-gamepad"></i></a>
+                                      <a href={config.pterodactyl.url} class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-nav-panel" class="fa-solid fa-gamepad"></i></a>
                                       <div id="tooltip-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                                          Panel
                                          <div class="tooltip-arrow" data-popper-arrow></div>
@@ -157,7 +174,7 @@ const yearWithTitle = `${year} ${hostname}`
             404: NOT FOUND
         </h1>
         <div class="mt-4 flex justify-center">
-            <a href="/dashboard" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Go back</a>
+            <button href="/dashboard" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Go back</button>
         </div>
     </div>
     </section>
@@ -166,12 +183,12 @@ const yearWithTitle = `${year} ${hostname}`
                   </main>
               </div>
           </div>
-          <div class="md:hidden overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
+          <div class="md:hidden w-screen overflow-x-hidden bg-zinc-100 dark:bg-gray-950 animation-blob h-screen w-screen">
       
               <div class="antialiased">
                   <main class="h-full">
                       <div class="h-12 w-full flex">
-                          <img class="mt-2" src={icon} height="30px" width="40px" alt="icon"></img>
+                          <img class="mt-2" src={config.website.icon} height="30px" width="40px" alt="icon"></img>
                           <div class="mt-2 h-12 w-full flex justify-center">
                           <nav class="inline-flex items-center justify-center rounded-lg w-fit text-sm font-medium text-white">
                               <div class="ml-1 mr-1">
@@ -183,7 +200,7 @@ const yearWithTitle = `${year} ${hostname}`
                                           <div class="tooltip-arrow" data-popper-arrow></div>
                                   </li>
                                   <li class="hover:shadow-md rounded-2xl">
-                                      <a href="/panel" class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-mob-nav-panel" class="fa-solid fa-gamepad"></i></a>
+                                      <a href={config.pterodactyl.url} class="p-2 text-black dark:text-white"><i data-tooltip-target="tooltip-mob-nav-panel" class="fa-solid fa-gamepad"></i></a>
                                       <div id="tooltip-mob-nav-panel" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-black dark:text-white transition-opacity duration-300 bg-gray-300 rounded-lg shadow-sm opacity-0 tooltip dark:bg-zinc-950">
                                          Panel
                                          <div class="tooltip-arrow" data-popper-arrow></div>
@@ -272,16 +289,19 @@ const yearWithTitle = `${year} ${hostname}`
                               document.documentElement.classList.remove('dark');
                             }
                           </script>
-      <section class="shadow-lg shadow-gray-500/40 mt-2 min-h-screen flex justify-center">
-        <div class="text-center mt-20">
-        <h1 class="text-[80px] text-black dark:text-white">
-            404: NOT FOUND
-        </h1>
-        <div class="mt-4 flex justify-center">
-            <a href="/dashboard" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Go back</a>
-        </div>
-    </div>
-    </section>
+                   <section class="shadow-lg shadow-gray-500/40 mt-2 min-h-screen flex justify-center">
+                    <div class="text-center mt-20">
+                    <h1 class="text-[60px] text-black dark:text-white">
+                        {config.name}
+                    </h1>
+                    <h2 class="text-[30px] dark:text-white text-black">
+                        {config.website.description}
+                    </h2>
+                    <div class="mt-4 flex justify-center">
+                        <button href="/dashboard" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Go back</button>
+                    </div>
+                </div>
+                </section>
                           <Footer />
                       </div>
                   </main>

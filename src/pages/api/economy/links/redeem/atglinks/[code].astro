@@ -1,6 +1,7 @@
 ---
 import chalk from 'chalk';
 import config from '../../../../../../config';
+import { getImage } from 'astro:assets';
 import { supabase } from "../../../../../../lib/supabase";
 import db from '../../../../../../database';
 const { cookies, redirect } = Astro;
@@ -47,19 +48,16 @@ if (((Date.now() - atgcodes.generated) / 1000) < config.coins.earn.links.atglink
 
     // Adding coins
     const currentinfo = await db.get("user-" + email)
-    let extra;
-  extra = ('extraresources' in currentinfo && 
-    'ram' in currentinfo.extraresources &&
-    'disk' in currentinfo.extraresources &&
-    'cpu' in currentinfo.extraresources &&
-    'servers' in currentinfo.extraresources) 
-  ? currentinfo.extraresources 
-  : { ram: 0, disk: 0, cpu: 0, servers: 0 };
     const newinfo = {
       package: currentinfo.package,
       balance: config.coins.earn.links.atglinks.amount,
       password: currentinfo.password,
-      extraresources: extra
+      extraresources: {
+        ram: currentinfo.extraresources.ram,
+        disk: currentinfo.extraresources.disk,
+        cpu: currentinfo.extraresources.cpu,
+        servers: currentinfo.extraresources.servers
+      }
     }
     await db.set("user-" + email, newinfo)
 

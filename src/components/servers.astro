@@ -1,8 +1,5 @@
 ---
 import config from '../config';
-import '../styles/globals.css'
-
-
 import { supabase } from "../lib/supabase";
 const { cookies, redirect } = Astro;
 
@@ -105,47 +102,18 @@ for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i+
 }
 }
 ---
-<div class="hidden md:block mb-10">
-  <div class="grid grid-cols-5 w-screen">
+<div class="hidden md:block grid grid-cols-4">
 {servers ?
-    srvs.map((serverData, i) => <div class="shadow shadow-black mt-1 mb-1 text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-40 w-fit shrink-0 rounded-lg mr-2" role="group" aria-label=`${i} + 1 / {pterodactyl.relationships.servers.data.length}`>
-      <div class="rounded-lg p-2">
-        <div class="flex items-center">
-          Server Name: {serverData.attributes.name.length > 30 ? serverData.attributes.name.slice(0, 30) + "..." : serverData.attributes.name}<br>
-          RAM: {serverram.includes("GB") ? serverram.replace("%serverram%", serverData.attributes.limits.memory/1024) : serverram.replace("%serverram%", serverData.attributes.limits.memory)}<br>
-          Disk: {serverdisk.includes("GB") ? serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk/1024) : serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk)}<br>
-          CPU: {servercpu.includes("Core") ? servercpu.replace("%servercpu%", serverData.attributes.limits.cpu/100) : servercpu.replace("%servercpu%", serverData.attributes.limits.cpu)}<br>
-        </div>
-        <div class="text-black dark:text-white">
-          Actions <button class="text-black dark:text-white shadow shadow-black bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black rounded-xl text-xs" onclick=`window.location.href = '/delete?id=' + ${serverData.attributes.id}`><span class="p-1">Delete Server</span></button> | <button class="shadow shadow-black bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black rounded-xl btn btn-danger btn-lg text-xs text-black dark:text-white" onclick=`window.location.href = '/edit?id=' + ${serverData.attributes.id}`><span class="p-1">Edit Server</span></button>
-        </div>
-
-      </div>
-    </div>)
-            
-     : <div class="grid grid-cols-1">
-      <div>
-        <p class="text-black dark:text-white"> You don't have a server yet, create one here.</p><br>
-        </div>
-      <div>
-       <button onclick="location.href='/create'" class="shadow shadow-black relative rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black px-5 py-1">Create</button>
-</div>
-</div>    }
-</div>
-</div>
-
-<div class="md:hidden w-max h-fit">
-  {servers ?
-    srvs.map((serverData, i) => <div class="shadow shadow-black mt-1 mb-1 text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-40 w-100 shrink-0 rounded-lg" role="group" aria-label=`${i} + 1 / {pterodactyl.relationships.servers.data.length}` style="margin-right: 16px;">
-      <div class="grid grid-cols-1 rounded-lg p-2">
-        <div class="flex items-center">
+    srvs.map((serverData, i) => <div class="mt-1 mb-1 text-black dark:text-white bg-zinc-300 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80 h-40 w-100 shrink-0 rounded-lg" role="group" aria-label=`${i} + 1 / {pterodactyl.relationships.servers.data.length}` style="margin-right: 16px;">
+      <div class="absolute flex justify-between rounded-lg border border-white/10 p-5">
+        <div class="flex items-center items-right justify-between">
           Server Name: {serverData.attributes.name.length > 40 ? serverData.attributes.name.slice(0, 40) + "..." : serverData.attributes.name}<br>
           RAM: {serverram.includes("GB") ? serverram.replace("%serverram%", serverData.attributes.limits.memory/1024) : serverram.replace("%serverram%", serverData.attributes.limits.memory)}<br>
           Disk: {serverdisk.includes("GB") ? serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk/1024) : serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk)}<br>
           CPU: {servercpu.includes("Core") ? servercpu.replace("%servercpu%", serverData.attributes.limits.cpu/100) : servercpu.replace("%servercpu%", serverData.attributes.limits.cpu)}<br>
         </div>
-        <div class="text-black dark:text-white">
-          Actions <button class="shadow shadow-black bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black rounded-xl text-xs" onclick=`window.location.href = '/delete?id=' + ${serverData.attributes.id}`><span class="p-1">Delete Server</span></button> | <button class="shadow shadow-black bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black rounded-xl btn btn-danger btn-lg text-xs" onclick=`window.location.href = '/edit?id=' + ${serverData.attributes.id}`><span class="p-1">Edit Server</span></button>
+        <div class="dark:text-white">
+          Actions <button class="border border-black dark:border-white rounded-xl text-xs" onclick=`window.location.href = '/delete?id=' + ${serverData.attributes.id}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-xs" onclick=`window.location.href = '/edit?id=' + ${serverData.attributes.id}`><span class="p-1">Edit Server</span></button>
         </div>
 
       </div>
@@ -156,7 +124,44 @@ for (let i = 0, len = pterodactyl.relationships.servers.data.length; i < len; i+
         <p class="text-black dark:text-white"> You don't have a server yet, create one here.</p><br>
         </div>
       <div>
-       <button onclick="location.href='/create'" class="shadow shadow-black relative rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black px-5 py-1">Create</button>
+       <button onclick="location.href='/create'" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Create</button>
 </div>
 </div>    }
 </div>
+
+<div class="md:hidden w-fit h-fit">
+{servers ?
+    srvs.map((serverData, i) => <div class="mt-1 mb-1 text-xs dark:text-white bg-zinc-300 dark:shadow dark:bg-zinc-900/50 backdrop-blur-xl border border-zinc-800/80 h-max w-max rounded-lg bg-cover" role="group" aria-label=`i + 1 / {pterodactyl.relationships.servers.data.length}` style="margin-right: 16px;">
+      <div class="flex flex-col justify-between rounded-lg border border-white/10 p-5">
+        <div class="flex items-right">
+          Server Name: {serverData.attributes.name.length > 40 ? serverData.attributes.name.slice(0, 40) + "..." : serverData.attributes.name}<br>
+          RAM: {serverram.includes("GB") ? serverram.replace("%serverram%", serverData.attributes.limits.memory/1024) : serverram.replace("%serverram%", serverData.attributes.limits.memory)}<br>
+          Disk: {serverdisk.includes("GB") ? serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk/1024) : serverdisk.replace("%serverdisk%", serverData.attributes.limits.disk)}<br>
+          CPU: {servercpu.includes("Core") ? servercpu.replace("%servercpu%", serverData.attributes.limits.cpu/100) : servercpu.replace("%servercpu%", serverData.attributes.limits.cpu)}<br>
+        </div>
+        <div class="dark:text-white">
+            Actions <button class="border border-black dark:border-white rounded-xl text-xs" onclick=`window.location.href = /delete?id={serverData.attributes.id}`><span class="p-1">Delete Server</span></button> | <button class=" border border-black dark:border-white rounded-xl btn btn-danger btn-lg text-xs" onclick=`/edit?id={i}`><span class="p-1">Edit Server</span></button>
+        </div>
+
+      </div>
+    </div>)
+     : <div class="grid grid-cols-1">
+      <div>
+        <p class="text-black dark:text-white"> You don't have a server yet, create one here.</p><br>
+        </div>
+      <div>
+       <button onclick="location.href='/create'" class="relative rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900 px-5 py-1">Create</button>
+</div>
+</div>    }
+</div>
+<style> 
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+    body { font-family: 'Fredoka', system-ui, sans-serif; }
+     body {
+        overflow-y: scroll;
+        overflow-x: hidden;
+     }
+     @tailwind base;
+@tailwind components;
+@tailwind utilities;
+   </style>

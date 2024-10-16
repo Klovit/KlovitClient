@@ -53,32 +53,17 @@ try {
         return redirect(`/store?error=You have insufficient Coins`)
     } else {
     const newbalance = oldbalance - cost
-    let currentcpu;
-    if (typeof currentinfo.extraresources.cpu === "object") {
-      currentcpu = currentinfo.extraresources.cpu;
-    } else {
-      currentcpu = 0;
-    }
-    let extra;
-    extra = ('extraresources' in currentinfo && 
-      'ram' in currentinfo.extraresources &&
-      'disk' in currentinfo.extraresources &&
-      'cpu' in currentinfo.extraresources &&
-      'servers' in currentinfo.extraresources) 
-    ? currentinfo.extraresources 
-    : { ram: 0, disk: 0, cpu: 0, servers: 0 };
-    const newextracpu = +extra.cpu + +amount
-    const newextra = {
-      ram: extra.ram,
-      disk: extra.disk,
-      cpu: newextracpu,
-      servers: extra.servers 
-    }
-      const newinfo = {
+    const newextracpu = currentinfo.extraresources.cpu + amount
+    const newinfo = {
       package: currentinfo.package,
       balance: newbalance,
       password: currentinfo.password,
-      extraresources: newextra
+      extraresources: {
+        ram: currentinfo.ram,
+        disk: currentinfo.disk,
+        cpu: newextracpu,
+        servers: currentinfo.servers
+      }
     } 
     await db.set("user-" + email, newinfo)
     return redirect(`/store?success=You have successfully bought ${amount} ${cputype} for ${cost} Coins`)

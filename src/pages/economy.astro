@@ -1,16 +1,13 @@
 ---
 import chalk from 'chalk';
 import config from '../config';
-import '../styles/globals.css'
-
-
+import { getImage } from 'astro:assets';
 import { supabase } from "../lib/supabase";
 import db from '../database';
 import Nav from "../components/nav.astro";
 import restype from "../restype"
 import Header from "../components/head.astro"
 import Resources from '../components/resources.astro';
-import Footer from '../components/footer.astro'
 import Servers from '../components/servers.astro'
 import Mobnav from "../components/mobnav.astro";
 const { cookies, redirect } = Astro;
@@ -39,6 +36,7 @@ if (error) {
 }
 
 
+const icon = await getImage({src: `${config.website.icon}`,height: '50', width: '50', format: 'png'})
 const errorstate = Astro.url.searchParams.get('error')! || '';
 const errormsg = Astro.url.searchParams.get('error')! || '';
 const success = Astro.url.searchParams.get('success')! || '';
@@ -107,44 +105,70 @@ const atgcoin = config.coins.earn.links.atglinks.amount
 <!DOCTYPE html>
 <html>
     <Header />
-<body class="bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black h-full min-h-screen relative">
+    <style> 
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500&display=swap');
+        body { font-family: 'Fredoka', system-ui, sans-serif; }
+         body {
+            overflow-y: scroll;
+            overflow-x: hidden;
+         }
+         @tailwind base;
+       @tailwind components;
+       @tailwind utilities;
+       :is(.dark main) {
+           background-color: #18181b;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%2309090b' fill-opacity='0.44'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
+       }
+       main {
+           background-color: #ffffff;
+       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='105' viewBox='0 0 80 105'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='death-star' fill='%239ca3af' fill-opacity='0.4'%3E%3Cpath d='M20 10a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm15 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zM20 75a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zm30-65a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V10zm0 65a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V75zM35 10a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zM5 45a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10zm60 35a5 5 0 0 1 10 0v50a5 5 0 0 1-10 0V45zm0-35a5 5 0 0 1 10 0v20a5 5 0 0 1-10 0V10z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       background-size: 100%;
+       }
+       </style> 
+<body class="flex items-center justify-center h-screen">
     <div class="hidden md:block animation-blob w-screen">
         <div class="antialiased">
-<main class="h-screen">
+            <main class="h-screen">
                     <Nav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success}</div>}
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <Resources />
 <section class="p-8 rounded-xl">
   <div class="rounded-xl bg-white dark:bg-zinc-900/50 dark:bg-zinc-900/50">
     <div class="p-2">
       <form method="POST" action="/api/economy/links/generate/atglinks" class="grid grid-cols-1 flex justfiy-between">
         <h1 class="dark:text-white text-black text-center">ATGLinks: {atgcoin} Coins per link</h1>
-        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black 
-" type="submit">Generate</button>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Generate</button>
       </form>
   </div>
   </div>
   
   </section>
-<Footer />
+                  <div class="text-center">
+                    <p class="text-gray-400">
+                        &copy;
+                        {year} {config.name} | Powered by <a
+                        class="text-amber-500"
+                        href="https://github.com/Klovit/KlovitClient">KlovitClient</a>
+                </p>
+                 </div>
             </main>
         </div>
     </div>
     <div class="md:hidden w-screen overflow-x-hidden animation-blob h-screen">
         <div class="antialiased">
-<main class="h-screen">
+            <main class="h-screen">
 <Mobnav />
-                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-8">ERROR: {errormsg}</div>}
-                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-8">Success: {success}</div>}
+                    {errorstate && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-2 bg-red-700 alert mr-3 ml-3 mt-1">ERROR: {errormsg}</div>}
+                    {success && <div style="border-radius: 15px; color: white; height: 50px; text-align: center; font-size: large;" style="border-radius: 15px;" class="rounded-xl mb-1 bg-green-700 alert mr-3 ml-3 mt-1">Success: {success}</div>}
 <Resources /><br><br>
 <section>
   <div class="rounded-xl bg-white dark:bg-zinc-900/50 dark:bg-zinc-900/50">
     <div class="p-2">
       <form method="POST" action="/api/economy/links/generate/atglinks" class="grid grid-cols-1 flex justfiy-between">
         <h1 class="dark:text-white text-black text-center">ATGLinks: {atgcoin} Coins per link</h1>
-        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-r from-teal-300 via-blue-400 to-purple-300 dark:bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] dark:from-zinc-700 dark:via-zinc-900 dark:to-black 
-" type="submit">Generate</button>
+        <button class="m-2 w-full rounded-lg text-black dark:text-white bg-gradient-to-b from-gray-400 to-white dark:from-zinc-950 dark:to-zinc-900" type="submit">Generate</button>
       </form>
   </div>
   </div>
